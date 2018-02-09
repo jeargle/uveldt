@@ -23,7 +23,10 @@ end
 type Molecule
     name::AbstractString
     elements::AbstractString
-    Molecule(name::AbstractString, elements::AbstractString) = new(name, elements)
+    element_table::ElementTable
+    Molecule(name::AbstractString,
+             elements::AbstractString,
+             element_table::ElementTable) = new(name, elements, element_table)
 end
 
 # Add an Element to an ElementTable.
