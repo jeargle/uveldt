@@ -4,18 +4,18 @@
 
 module Uveldt
 
-export Element, ElementTable, Molecule, add_element
+export Element, ElementTable, Molecule, add_element, mass
 
 
 type Element
-    name::AbstractString
+    name::Char
     mass::Int64
-    Element(name::AbstractString, mass::Int64) = new(name, mass)
+    Element(name::Char, mass::Int64) = new(name, mass)
 end
 
 # ElementTable acts like a periodic table.
 type ElementTable
-    elements::Dict{AbstractString, Element}
+    elements::Dict{Char, Element}
     ElementTable() = new(Dict())
 end
 
@@ -34,6 +34,18 @@ end
 # element: Element to add
 function add_element(element_table::ElementTable, element::Element)
     element_table.elements[element.name] = element
+end
+
+function mass(element::Element)
+    return element.mass
+end
+
+function mass(molecule::Molecule)
+    total_mass = 0
+    for el in molecule.elements
+        total_mass += molecule.element_table.elements[el].mass
+    end
+    return total_mass
 end
 
 
