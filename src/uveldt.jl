@@ -4,7 +4,7 @@
 
 module Uveldt
 
-export Element, ElementTable, Molecule, Bond, add_element, mass
+export Element, ElementTable, Molecule, Bond, BondTable, add_element, add_bond, get_bond, mass
 
 
 type Element
@@ -44,12 +44,47 @@ type Bond
                                            energy_change, transition_energy)
 end
 
+# Set of all Bonds
+type BondTable
+    bonds::Dict{Char, Dict{Char, Bond}}
+    element_table::ElementTable
+    BondTable(element_table::ElementTable) = new(Dict(), element_table)
+end
+
 
 # Add an Element to an ElementTable.
 # element_table: ElementTable that receives the Element
 # element: Element to add
 function add_element(element_table::ElementTable, element::Element)
     element_table.elements[element.name] = element
+end
+
+# Add a Bond to the a BondTable.
+# bond_table: BondTable that receives the Bond
+# bond: Bond to add
+function add_bond(bond_table::BondTable, bond::Bond)
+    if haskey(bond_table.bonds, bond.element1.name)
+        bond_table.bonds[bond.element1.name][bond.element2.name] = bond
+    else
+        bond_table.bonds[bond.element1.name] = Dict(bond.element2.name=>bond)
+    end
+
+    # Make sure entries are added for both lookup orders
+    if bond.element1 != bond.element2
+        if haskey(bond_table.bonds, bond.element2.name)
+            bond_table.bonds[bond.element2.name][bond.element1.name] = bond
+        else
+            bond_table.bonds[bond.element2.name] = Dict(bond.element1.name=>bond)
+        end
+    end
+end
+
+# Add a Bond to the a BondTable.
+# bond_table: BondTable
+# element1: name of first Element
+# element2: name of second Element
+function get_bond(bond_table::BondTable, element1::Char, element2::Char)
+    return bond_table.bonds[element1][element2]
 end
 
 function mass(element::Element)
