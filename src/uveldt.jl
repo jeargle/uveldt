@@ -4,7 +4,7 @@
 
 module Uveldt
 
-export Element, ElementTable, Molecule, add_element, mass
+export Element, ElementTable, Molecule, Bond, add_element, mass
 
 
 type Element
@@ -28,6 +28,22 @@ type Molecule
              elements::AbstractString,
              element_table::ElementTable) = new(name, elements, element_table)
 end
+
+# Bond between two Elements
+type Bond
+    element1::Element
+    element2::Element
+    element_table::ElementTable
+    energy_change::Float64
+    transition_energy::Float64
+    Bond(element1::Element,
+         element2::Element,
+         element_table::ElementTable,
+         energy_change::Float64,
+         transition_energy::Float64) = new(element1, element2, element_table,
+                                           energy_change, transition_energy)
+end
+
 
 # Add an Element to an ElementTable.
 # element_table: ElementTable that receives the Element

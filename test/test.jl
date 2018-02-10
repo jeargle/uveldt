@@ -71,11 +71,31 @@ function test_molecule()
     println()
 end
 
+function test_bond()
+    println("***")
+    println("*** Bond")
+    println("***")
+
+    el1 = Element('A', 1)
+    el2 = Element('B', 2)
+    el_table1 = ElementTable()
+    add_element(el_table1, el1)
+    add_element(el_table1, el2)
+
+    bond1 = Bond(el1, el1, el_table1, -5.5, 1.5)
+    bond2 = Bond(el1, el2, el_table1, -4.5, 0.5)
+    bond3 = Bond(el2, el2, el_table1, 3.5, 3.5)
+    println("bond1: ", bond1)
+    println("bond2: ", bond2)
+    println("bond3: ", bond3)
+end
+
 
 function main()
     test_element()
     test_element_table()
     test_molecule()
+    test_bond()
 end
 
 main()
