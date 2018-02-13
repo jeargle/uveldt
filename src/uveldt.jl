@@ -13,11 +13,17 @@ type Element
     Element(name::Char, mass::Int64) = new(name, mass)
 end
 
+Base.show(io::IO, el::Element) = show(io, string(el.name))
+Base.show(io::IO, m::MIME"text/plain", el::Element) = show(io, m, string(el.name))
+
 # ElementTable acts like a periodic table.
 type ElementTable
     elements::Dict{Char, Element}
     ElementTable() = new(Dict())
 end
+
+Base.show(io::IO, et::ElementTable) = show(io, keys(et.elements))
+Base.show(io::IO, m::MIME"text/plain", et::ElementTable) = show(io, m, keys(et.elements))
 
 # 1D String of Elements.
 type Molecule
@@ -28,6 +34,9 @@ type Molecule
              elements::AbstractString,
              element_table::ElementTable) = new(name, elements, element_table)
 end
+
+Base.show(io::IO, mol::Molecule) = show(io, string(mol.name, ", ", mol.elements))
+Base.show(io::IO, m::MIME"text/plain", mol::Molecule) = show(io, m, string(mol.name, ", ", mol.elements))
 
 # Bond between two Elements
 type Bond
@@ -44,6 +53,9 @@ type Bond
                                            energy_change, transition_energy)
 end
 
+Base.show(io::IO, b::Bond) = show(io, string(b.element1.name, '-', b.element2.name, ", trans: ", b.transition_energy, ", energy: ", b.energy_change))
+Base.show(io::IO, m::MIME"text/plain", b::Bond) = show(io, m, string(b.element1.name, "-", b.element2.name, ", trans: ", b.transition_energy, ", energy: ", b.energy_change))
+
 # Set of all Bonds
 type BondTable
     bonds::Dict{Char, Dict{Char, Bond}}
@@ -51,6 +63,8 @@ type BondTable
     BondTable(element_table::ElementTable) = new(Dict(), element_table)
 end
 
+Base.show(io::IO, bt::BondTable) = show(io, string(bt.bonds))
+Base.show(io::IO, m::MIME"text/plain", bt::BondTable) = show(io, m, string(bt.bonds))
 
 # Add an Element to an ElementTable.
 # element_table: ElementTable that receives the Element

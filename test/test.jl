@@ -88,6 +88,7 @@ function test_bond()
     println("bond1: ", bond1)
     println("bond2: ", bond2)
     println("bond3: ", bond3)
+    println()
 end
 
 function test_bond_table()
@@ -119,15 +120,15 @@ function test_bond_table()
     println("get_bond(b_table1, 'B', 'B'): ", get_bond(b_table1, 'B', 'B'))
     println("get_bond(b_table1, 'A', 'B'): ", get_bond(b_table1, 'A', 'B'))
     println("get_bond(b_table1, 'B', 'A'): ", get_bond(b_table1, 'B', 'A'))
-
+    println()
 end
 
 
 function main()
-    # test_element()
-    # test_element_table()
-    # test_molecule()
-    # test_bond()
+    test_element()
+    test_element_table()
+    test_molecule()
+    test_bond()
     test_bond_table()
 end
 
