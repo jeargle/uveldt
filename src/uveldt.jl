@@ -4,7 +4,7 @@
 
 module Uveldt
 
-export Element, ElementTable, Molecule, Bond, BondTable, add_element, add_bond, get_bond, mass
+export Element, ElementTable, Molecule, Bond, BondTable, Gene, Genome, build_genome, find_genes, add_elements, add_bond, get_bond, mass
 
 
 type Element
@@ -16,6 +16,7 @@ end
 Base.show(io::IO, el::Element) = show(io, string(el.name))
 Base.show(io::IO, m::MIME"text/plain", el::Element) = show(io, m, string(el.name))
 
+
 # ElementTable acts like a periodic table.
 type ElementTable
     elements::Dict{Char, Element}
@@ -24,6 +25,7 @@ end
 
 Base.show(io::IO, et::ElementTable) = show(io, keys(et.elements))
 Base.show(io::IO, m::MIME"text/plain", et::ElementTable) = show(io, m, keys(et.elements))
+
 
 # 1D String of Elements.
 type Molecule
@@ -37,6 +39,7 @@ end
 
 Base.show(io::IO, mol::Molecule) = show(io, string(mol.name, ", ", mol.elements))
 Base.show(io::IO, m::MIME"text/plain", mol::Molecule) = show(io, m, string(mol.name, ", ", mol.elements))
+
 
 # Bond between two Elements
 type Bond
@@ -56,6 +59,7 @@ end
 Base.show(io::IO, b::Bond) = show(io, string(b.element1.name, '-', b.element2.name, ", trans: ", b.transition_energy, ", energy: ", b.energy_change))
 Base.show(io::IO, m::MIME"text/plain", b::Bond) = show(io, m, string(b.element1.name, "-", b.element2.name, ", trans: ", b.transition_energy, ", energy: ", b.energy_change))
 
+
 # Set of all Bonds
 type BondTable
     bonds::Dict{Char, Dict{Char, Bond}}
@@ -66,11 +70,67 @@ end
 Base.show(io::IO, bt::BondTable) = show(io, string(bt.bonds))
 Base.show(io::IO, m::MIME"text/plain", bt::BondTable) = show(io, m, string(bt.bonds))
 
+
+# Genes are strings bracketed by start '(' and stop ')' characters
+# that code for specific chemical reactions.  The internals consist
+# of Molecule strings with join '*' and split '/' operators specifying
+# how the set of Molecules will be processed.  All operators act at
+# the same time.  Each join creates a new bond, and each split breaks
+# an existing bond.
+#
+# Examples
+#   (A*B): A + B -> AB
+#   (A/B): AB -> A + B
+#   (A*B/C): A + BC -> AB + C
+#   (A*B*C): A + B + C -> ABC
+#   (A*A*A): A + A + A -> AAA
+type Gene
+    location::Int64
+    gene::AbstractString
+    Gene(location::Int64, gene::AbstractString) = new(location, gene)
+end
+
+
+# String specifying all genes in the cell.  Genes are regions of the
+# Genome that fit the Gene pattern.  A Genome can have a lot of
+# intergenic space that doesn't code for anything.
+type Genome
+    name::AbstractString
+    genome::AbstractString
+    element_table::ElementTable
+    genes::Array{Gene, 1}
+    Genome(name::AbstractString, genome::AbstractString, element_table::ElementTable) = new(name, genome, element_table)
+end
+
+function build_genome(size::Int64, element_table::ElementTable)
+    genome = Array{AbstractString}(size)
+    elements = [string(el) for el in keys(element_table.elements)]
+    rand!(genome, vcat(["(", ")", "*", "/"], elements))
+    return join(genome)
+end
+
+# Search through a Genome for patterns that match possible Gene
+# strings and build Genes from them.
+function find_genes(genome::Genome)
+    gene_match = eachmatch(r"\(.*?\)", genome.genome)
+    genes = [gm.match for gm in gene_match]
+    for gene in genes
+        println(gene)
+    end
+end
+
+# Write a FASTA file with the full genome string.
+function write_fasta(genome::Genome)
+end
+
+
 # Add an Element to an ElementTable.
 # element_table: ElementTable that receives the Element
 # element: Element to add
-function add_element(element_table::ElementTable, element::Element)
-    element_table.elements[element.name] = element
+function add_elements(element_table::ElementTable, elements::Array{Element, 1})
+    for element in elements
+        element_table.elements[element.name] = element
+    end
 end
 
 # Add a Bond to the a BondTable.
