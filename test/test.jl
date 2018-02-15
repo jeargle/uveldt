@@ -132,6 +132,11 @@ function test_genome()
     genome_string = build_genome(100, el_table1)
     println("genome_string: ", genome_string)
 
+    genome1 = Genome("genome1", genome_string, el_table1)
+    println("genome1: ", genome1)
+
+    find_genes(genome1)
+
     println()
 end
 

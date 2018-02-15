@@ -112,9 +112,9 @@ end
 # Search through a Genome for patterns that match possible Gene
 # strings and build Genes from them.
 function find_genes(genome::Genome)
-    gene_match = eachmatch(r"\(.*?\)", genome.genome)
-    genes = [gm.match for gm in gene_match]
-    for gene in genes
+    gene_match = eachmatch(r"\([^\(]*?\)", genome.genome)
+    # genes = [gm.match for gm in gene_match]
+    for gene in gene_match
         println(gene)
     end
 end
