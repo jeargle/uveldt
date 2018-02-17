@@ -119,6 +119,31 @@ function test_bond_table()
     println()
 end
 
+function test_gene()
+    println("***")
+    println("*** Gene")
+    println("***")
+
+    el1 = Element('A', 1)
+    el2 = Element('B', 2)
+    el_table1 = ElementTable()
+    add_elements(el_table1, [el1, el2])
+
+    gene1 = Gene(1, "(A*B)")
+    gene2 = Gene(21, "(A/B)")
+    gene3 = Gene(45, "(A*B/C)")
+    gene4 = Gene(132, "(A*B*C)")
+    gene5 = Gene(154, "(A*A*A)")
+
+    println("gene1: ", gene1)
+    println("gene2: ", gene2)
+    println("gene3: ", gene3)
+    println("gene4: ", gene4)
+    println("gene5: ", gene5)
+
+    println()
+end
+
 function test_genome()
     println("***")
     println("*** Genome")
@@ -147,7 +172,8 @@ function main()
     # test_molecule()
     # test_bond()
     # test_bond_table()
-    test_genome()
+    test_gene()
+    # test_genome()
 end
 
 main()

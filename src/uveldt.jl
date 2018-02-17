@@ -113,10 +113,11 @@ end
 # strings and build Genes from them.
 function find_genes(genome::Genome)
     gene_match = eachmatch(r"\([^\(]*?\)", genome.genome)
-    # genes = [gm.match for gm in gene_match]
-    for gene in gene_match
-        println(gene)
+    genes = [Gene(gm.offset, gm.match) for gm in collect(gene_match)]
+    for gene in genes
+        @printf("%d %s\n", gene.location, gene.gene)
     end
+    return genes
 end
 
 # Write a FASTA file with the full genome string.
