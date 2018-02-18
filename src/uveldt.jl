@@ -4,7 +4,7 @@
 
 module Uveldt
 
-export Element, ElementTable, Molecule, Bond, BondTable, Gene, Genome, build_genome, find_genes, add_elements, add_bond, get_bond, mass
+export Element, ElementTable, Molecule, Bond, BondTable, Reaction, Gene, Genome, translate_gene, genome_string, find_genes, add_elements, add_bond, get_bond, mass
 
 
 type Element
@@ -71,6 +71,25 @@ Base.show(io::IO, bt::BondTable) = show(io, string(bt.bonds))
 Base.show(io::IO, m::MIME"text/plain", bt::BondTable) = show(io, m, string(bt.bonds))
 
 
+# Molecular reaction with reactants and products where Bonds are
+# created and/or broken.  A Reaction is specified by a string derived
+# from a Gene.
+type Reaction
+    base_string::AbstractString
+    reactants::Array{Molecule, 1}
+    products::Array{Molecule, 1}
+    new_bonds::Array{Bond, 1}
+    old_bonds::Array{Bond, 1}
+    energy_change::Float64
+    transition_energy::Float64
+    function Reaction(gene, bond_table::BondTable)
+        base_string = translate_gene(gene, bond_table.element_table)
+        new(base_string, reactants, products, new_bonds, old_bonds,
+            energy_change, transition_energy)
+    end
+end
+
+
 # Genes are strings bracketed by start '(' and stop ')' characters
 # that code for specific chemical reactions.  The internals consist
 # of Molecule strings with join '*' and split '/' operators specifying
@@ -86,7 +105,7 @@ Base.show(io::IO, m::MIME"text/plain", bt::BondTable) = show(io, m, string(bt.bo
 #   (A*A*A): A + A + A -> AAA
 type Gene
     location::Int64
-    gene::AbstractString
+    string::AbstractString
     Gene(location::Int64, gene::AbstractString) = new(location, gene)
 end
 
@@ -96,13 +115,62 @@ end
 # intergenic space that doesn't code for anything.
 type Genome
     name::AbstractString
-    genome::AbstractString
+    string::AbstractString
     element_table::ElementTable
     genes::Array{Gene, 1}
-    Genome(name::AbstractString, genome::AbstractString, element_table::ElementTable) = new(name, genome, element_table)
+    Genome(name::AbstractString, string::AbstractString, element_table::ElementTable) = new(name, genome, element_table)
+    function Genome(name::AbstractString, size::Int64, element_table::ElementTable)
+        Genome(name, genome_string(size, element_table), element_table)
+    end
 end
 
-function build_genome(size::Int64, element_table::ElementTable)
+
+# Convert a Gene string into a valid Reaction string by removing
+# redundant directive characters
+function translate_gene(gene::Gene, element_table::ElementTable)
+    # modes for parsing
+    #   0: in Molecule
+    #   1: in directive
+    mode = 0
+    gene_chars = []
+    elements = join(keys(element_table.elements))
+
+    if !startswith(gene.string, "(")
+        println("Error: Gene must start with \"(\"")
+    end
+
+    if !endswith(gene.string, ")")
+        println("Error: Gene must end with \")\"")
+    end
+
+    for el in gene.string[2:end-1]
+        if mode == 0
+            if el == '*' || el == '/'
+                push!(gene_chars, el)
+                mode = 1
+            elseif search(elements, el) > 0
+                push!(gene_chars, el)
+                mode = 0
+            end
+        elseif mode == 1
+            if search(elements, el) > 0
+                push!(gene_chars, el)
+                mode = 0
+            elseif el != '*' && el != '/'
+                @printf("Error: bad character in Gene string - %s", el)
+            end
+        end
+    end
+
+    # Do not end string with a directive character.
+    if mode == 1
+        pop!(gene_chars)
+    end
+
+    return join(gene_chars)
+end
+
+function genome_string(size::Int64, element_table::ElementTable)
     genome = Array{AbstractString}(size)
     elements = [string(el) for el in keys(element_table.elements)]
     rand!(genome, vcat(["(", ")", "*", "/"], elements))

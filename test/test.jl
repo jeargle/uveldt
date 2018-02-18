@@ -126,20 +126,27 @@ function test_gene()
 
     el1 = Element('A', 1)
     el2 = Element('B', 2)
+    el3 = Element('C', 3)
     el_table1 = ElementTable()
-    add_elements(el_table1, [el1, el2])
+    add_elements(el_table1, [el1, el2, el3])
 
-    gene1 = Gene(1, "(A*B)")
-    gene2 = Gene(21, "(A/B)")
-    gene3 = Gene(45, "(A*B/C)")
-    gene4 = Gene(132, "(A*B*C)")
-    gene5 = Gene(154, "(A*A*A)")
+    genes = []
+    push!(genes, Gene(1, "(A*B)"))
+    push!(genes, Gene(21, "(A/B)"))
+    push!(genes, Gene(45, "(A*B/C)"))
+    push!(genes, Gene(132, "(A*B*C)"))
+    push!(genes, Gene(154, "(A*//*A)"))
+    push!(genes, Gene(154, "(A/*A*/A)"))
+    push!(genes, Gene(154, "(*/AAA/*/*/)"))
 
-    println("gene1: ", gene1)
-    println("gene2: ", gene2)
-    println("gene3: ", gene3)
-    println("gene4: ", gene4)
-    println("gene5: ", gene5)
+    for i in 1:length(genes)
+        @printf("gene%d: %s\n", i, genes[i])
+    end
+
+    println("*** translate Genes")
+    for i in 1:length(genes)
+        @printf("translate_gene(gene%d): %s\n", i, translate_gene(genes[i], el_table1))
+    end
 
     println()
 end
@@ -154,7 +161,7 @@ function test_genome()
     el_table1 = ElementTable()
     add_elements(el_table1, [el1, el2])
 
-    genome_string = build_genome(100, el_table1)
+    genome_string = genome_string(100, el_table1)
     println("genome_string: ", genome_string)
 
     genome1 = Genome("genome1", genome_string, el_table1)
