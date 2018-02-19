@@ -4,7 +4,7 @@
 
 module Uveldt
 
-export Element, ElementTable, Molecule, Bond, BondTable, Reaction, Gene, Genome, translate_gene, genome_string, find_genes, add_elements, add_bond, get_bond, mass
+export Element, ElementTable, Molecule, Bond, BondTable, Reaction, Gene, Genome, parse_reaction, translate_gene, genome_string, find_genes, add_elements, add_bond, get_bond, mass
 
 
 type Element
@@ -118,12 +118,18 @@ type Genome
     string::AbstractString
     element_table::ElementTable
     genes::Array{Gene, 1}
-    Genome(name::AbstractString, string::AbstractString, element_table::ElementTable) = new(name, genome, element_table)
+    Genome(name::AbstractString, string::AbstractString, element_table::ElementTable) = new(name, string, element_table)
     function Genome(name::AbstractString, size::Int64, element_table::ElementTable)
         Genome(name, genome_string(size, element_table), element_table)
     end
 end
 
+
+function parse_reaction(reaction_string::AbstractString, element_table::ElementTable)
+    reactants = split(replace(reaction_string, "/", ""), "*")
+    products = split(replace(reaction_string, "*", ""), "/")
+    return (reactants, products)
+end
 
 # Convert a Gene string into a valid Reaction string by removing
 # redundant directive characters
@@ -180,11 +186,8 @@ end
 # Search through a Genome for patterns that match possible Gene
 # strings and build Genes from them.
 function find_genes(genome::Genome)
-    gene_match = eachmatch(r"\([^\(]*?\)", genome.genome)
+    gene_match = eachmatch(r"\([^\(]*?\)", genome.string)
     genes = [Gene(gm.offset, gm.match) for gm in collect(gene_match)]
-    for gene in genes
-        @printf("%d %s\n", gene.location, gene.gene)
-    end
     return genes
 end
 

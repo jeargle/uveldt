@@ -145,7 +145,11 @@ function test_gene()
 
     println("*** translate Genes")
     for i in 1:length(genes)
-        @printf("translate_gene(gene%d): %s\n", i, translate_gene(genes[i], el_table1))
+        translated_gene = translate_gene(genes[i], el_table1)
+        @printf("translate_gene(gene%d): %s\n", i, translated_gene)
+        reactants, products = parse_reaction(translated_gene, el_table1)
+        println("reactants: ", reactants)
+        println("products: ", products)
     end
 
     println()
@@ -161,13 +165,27 @@ function test_genome()
     el_table1 = ElementTable()
     add_elements(el_table1, [el1, el2])
 
-    genome_string = genome_string(100, el_table1)
-    println("genome_string: ", genome_string)
+    genome_str = genome_string(100, el_table1)
+    println("genome_string: ", genome_str)
 
-    genome1 = Genome("genome1", genome_string, el_table1)
+    genome1 = Genome("genome1", genome_str, el_table1)
     println("genome1: ", genome1)
 
-    find_genes(genome1)
+    genes = find_genes(genome1)
+
+    println("*** find Genes")
+    for gene in genes
+        @printf("%d %s\n", gene.location, gene.string)
+    end
+
+    println("*** translate Genes")
+    for i in 1:length(genes)
+        translated_gene = translate_gene(genes[i], el_table1)
+        @printf("translate_gene(gene%d): %s\n", i, translated_gene)
+        reactants, products = parse_reaction(translated_gene, el_table1)
+        println("reactants: ", reactants)
+        println("products: ", products)
+    end
 
     println()
 end
@@ -180,7 +198,7 @@ function main()
     # test_bond()
     # test_bond_table()
     test_gene()
-    # test_genome()
+    test_genome()
 end
 
 main()
