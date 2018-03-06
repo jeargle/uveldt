@@ -4,7 +4,7 @@
 
 module Uveldt
 
-export Element, ElementTable, Molecule, Bond, BondTable, Reaction, Gene, Genome, parse_reaction, translate_gene, genome_string, find_genes, add_elements, add_bond, get_bond, mass
+export Element, ElementTable, Molecule, Bond, BondTable, Reaction, Gene, Genome, parse_reaction, translate_gene, genome_string, find_genes, is_pseudogene, add_elements, add_bond, get_bond, mass
 
 
 type Element
@@ -75,16 +75,14 @@ Base.show(io::IO, m::MIME"text/plain", bt::BondTable) = show(io, m, string(bt.bo
 # created and/or broken.  A Reaction is specified by a string derived
 # from a Gene.
 type Reaction
-    base_string::AbstractString
     reactants::Array{Molecule, 1}
     products::Array{Molecule, 1}
-    new_bonds::Array{Bond, 1}
     old_bonds::Array{Bond, 1}
+    new_bonds::Array{Bond, 1}
     energy_change::Float64
     transition_energy::Float64
-    function Reaction(gene, bond_table::BondTable)
-        base_string = translate_gene(gene, bond_table.element_table)
-        new(base_string, reactants, products, new_bonds, old_bonds,
+    function Reaction(reactants, products, bond_table::BondTable)
+        new(reactants, products, old_bonds, new_bonds,
             energy_change, transition_energy)
     end
 end
@@ -190,6 +188,14 @@ function find_genes(genome::Genome)
     genes = [Gene(gm.offset, gm.match) for gm in collect(gene_match)]
     return genes
 end
+
+
+# Identify pseudogene.
+function is_pseudogene(gene::Gene, element_table::ElementTable)
+    elements = join(keys(element_table.elements))
+    return !ismatch(Regex("[$(elements)]+"), gene.string)
+end
+
 
 # Write a FASTA file with the full genome string.
 function write_fasta(genome::Genome)

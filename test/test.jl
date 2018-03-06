@@ -180,11 +180,15 @@ function test_genome()
 
     println("*** translate Genes")
     for i in 1:length(genes)
-        translated_gene = translate_gene(genes[i], el_table1)
-        @printf("translate_gene(gene%d): %s\n", i, translated_gene)
-        reactants, products = parse_reaction(translated_gene, el_table1)
-        println("reactants: ", reactants)
-        println("products: ", products)
+        if is_pseudogene(genes[i], el_table1)
+            println("*** pseudogene: " * genes[i].string)
+        else
+            translated_gene = translate_gene(genes[i], el_table1)
+            @printf("translate_gene(gene%d): %s\n", i, translated_gene)
+            reactants, products = parse_reaction(translated_gene, el_table1)
+            println("reactants: ", reactants)
+            println("products: ", products)
+        end
     end
 
     println()
