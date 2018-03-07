@@ -4,7 +4,7 @@
 
 module Uveldt
 
-export Element, ElementTable, Molecule, Bond, BondTable, Reaction, Gene, Genome, parse_reaction, translate_gene, genome_string, find_genes, is_pseudogene, add_elements, add_bond, get_bond, mass
+export Element, ElementTable, Molecule, Bond, BondTable, Reaction, Gene, Genome, parse_reaction, transcribe_gene, genome_string, find_genes, is_pseudogene, add_elements, add_bond, get_bond, mass
 
 
 type Element
@@ -104,7 +104,12 @@ end
 type Gene
     location::Int64
     string::AbstractString
-    Gene(location::Int64, gene::AbstractString) = new(location, gene)
+    transcript::AbstractString
+    element_table::ElementTable
+    function Gene(location::Int64, gene_string::AbstractString, element_table::ElementTable)
+        transcript = transcribe_gene(gene_string, element_table)
+        new(location, gene_string, transcript, element_table)
+    end
 end
 
 
@@ -131,7 +136,7 @@ end
 
 # Convert a Gene string into a valid Reaction string by removing
 # redundant directive characters
-function translate_gene(gene::Gene, element_table::ElementTable)
+function transcribe_gene(gene_string::AbstractString, element_table::ElementTable)
     # modes for parsing
     #   0: in Molecule
     #   1: in directive
@@ -139,15 +144,15 @@ function translate_gene(gene::Gene, element_table::ElementTable)
     gene_chars = []
     elements = join(keys(element_table.elements))
 
-    if !startswith(gene.string, "(")
+    if !startswith(gene_string, "(")
         println("Error: Gene must start with \"(\"")
     end
 
-    if !endswith(gene.string, ")")
+    if !endswith(gene_string, ")")
         println("Error: Gene must end with \")\"")
     end
 
-    for el in gene.string[2:end-1]
+    for el in gene_string[2:end-1]
         if mode == 0
             if el == '*' || el == '/'
                 push!(gene_chars, el)
@@ -185,14 +190,15 @@ end
 # strings and build Genes from them.
 function find_genes(genome::Genome)
     gene_match = eachmatch(r"\([^\(]*?\)", genome.string)
-    genes = [Gene(gm.offset, gm.match) for gm in collect(gene_match)]
+    genes = [Gene(gm.offset, gm.match, genome.element_table)
+             for gm in collect(gene_match)]
     return genes
 end
 
 
 # Identify pseudogene.
-function is_pseudogene(gene::Gene, element_table::ElementTable)
-    elements = join(keys(element_table.elements))
+function is_pseudogene(gene::Gene)
+    elements = join(keys(gene.element_table.elements))
     return !ismatch(Regex("[$(elements)]+"), gene.string)
 end
 

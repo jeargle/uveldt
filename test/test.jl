@@ -131,23 +131,22 @@ function test_gene()
     add_elements(el_table1, [el1, el2, el3])
 
     genes = []
-    push!(genes, Gene(1, "(A*B)"))
-    push!(genes, Gene(21, "(A/B)"))
-    push!(genes, Gene(45, "(A*B/C)"))
-    push!(genes, Gene(132, "(A*B*C)"))
-    push!(genes, Gene(154, "(A*//*A)"))
-    push!(genes, Gene(154, "(A/*A*/A)"))
-    push!(genes, Gene(154, "(*/AAA/*/*/)"))
+    push!(genes, Gene(1, "(A*B)", el_table1))
+    push!(genes, Gene(21, "(A/B)", el_table1))
+    push!(genes, Gene(45, "(A*B/C)", el_table1))
+    push!(genes, Gene(132, "(A*B*C)", el_table1))
+    push!(genes, Gene(154, "(A*//*A)", el_table1))
+    push!(genes, Gene(154, "(A/*A*/A)", el_table1))
+    push!(genes, Gene(154, "(*/AAA/*/*/)", el_table1))
 
     for i in 1:length(genes)
         @printf("gene%d: %s\n", i, genes[i])
     end
 
-    println("*** translate Genes")
+    println("*** Gene transcripts")
     for i in 1:length(genes)
-        translated_gene = translate_gene(genes[i], el_table1)
-        @printf("translate_gene(gene%d): %s\n", i, translated_gene)
-        reactants, products = parse_reaction(translated_gene, el_table1)
+        @printf("gene%d.transcript: %s\n", i, genes[i].transcript)
+        reactants, products = parse_reaction(genes[i].transcript, el_table1)
         println("reactants: ", reactants)
         println("products: ", products)
     end
@@ -165,7 +164,7 @@ function test_genome()
     el_table1 = ElementTable()
     add_elements(el_table1, [el1, el2])
 
-    genome_str = genome_string(100, el_table1)
+    genome_str = genome_string(200, el_table1)
     println("genome_string: ", genome_str)
 
     genome1 = Genome("genome1", genome_str, el_table1)
@@ -178,18 +177,23 @@ function test_genome()
         @printf("%d %s\n", gene.location, gene.string)
     end
 
-    println("*** translate Genes")
+    println("*** Gene transcripts")
+    pseudogene_count = 0
     for i in 1:length(genes)
-        if is_pseudogene(genes[i], el_table1)
+        if is_pseudogene(genes[i])
             println("*** pseudogene: " * genes[i].string)
+            pseudogene_count += 1
         else
-            translated_gene = translate_gene(genes[i], el_table1)
-            @printf("translate_gene(gene%d): %s\n", i, translated_gene)
-            reactants, products = parse_reaction(translated_gene, el_table1)
+            @printf("gene%d.transcript: %s\n", i, genes[i].transcript)
+            reactants, products = parse_reaction(genes[i].transcript, el_table1)
             println("reactants: ", reactants)
             println("products: ", products)
         end
     end
+
+    @printf("%d good genes\n", length(genes)-pseudogene_count)
+    @printf("%d pseudogenes\n", pseudogene_count)
+    @printf("%d total\n", length(genes))
 
     println()
 end
