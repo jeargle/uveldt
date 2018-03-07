@@ -199,7 +199,18 @@ end
 # Identify pseudogene.
 function is_pseudogene(gene::Gene)
     elements = join(keys(gene.element_table.elements))
-    return !ismatch(Regex("[$(elements)]+"), gene.string)
+    if length(gene.transcript) < 3
+        return true
+    end
+
+    m = match(Regex("([$(elements)].*[$(elements)])"), gene.transcript)
+    if m === nothing
+        return true
+    end
+
+    return !ismatch(r"[\*/]", m[1])
+
+    # return !ismatch(Regex("[$(elements)]+"), gene.transcript)
 end
 
 
