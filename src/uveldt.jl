@@ -81,11 +81,29 @@ type Reaction
     new_bonds::Array{Bond, 1}
     energy_change::Float64
     transition_energy::Float64
-    function Reaction(reactants, products, bond_table::BondTable)
-        new(reactants, products, old_bonds, new_bonds,
-            energy_change, transition_energy)
+    function Reaction(reactants, products,
+                      element_table::ElementTable,
+                      bond_table::BondTable)
+        r_mols = []
+        for r_str in reactants
+            mol = Molecule("", r_str, element_table)
+            push!(r_mols, mol)
+        end
+
+        p_mols = []
+        for p_str in products
+            mol = Molecule("", p_str, element_table)
+            push!(p_mols, mol)
+        end
+
+        # new(reactants, products, old_bonds, new_bonds,
+        #     energy_change, transition_energy)
+        new(r_mols, p_mols)
     end
 end
+
+Base.show(io::IO, r::Reaction) = show(io, string(r.reactants))
+Base.show(io::IO, m::MIME"text/plain", r::Reaction) = show(io, m, string(r.reactants))
 
 
 # Genes are strings bracketed by start '(' and stop ')' characters
