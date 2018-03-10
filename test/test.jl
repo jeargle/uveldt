@@ -119,6 +119,46 @@ function test_bond_table()
     println()
 end
 
+function test_reaction()
+    println("***")
+    println("*** Reaction")
+    println("***")
+
+    el1 = Element('A', 1)
+    el2 = Element('B', 2)
+    el_table1 = ElementTable()
+    add_elements(el_table1, [el1, el2])
+
+    bond1 = Bond(el1, el1, el_table1, -5.5, 1.5)
+    bond2 = Bond(el1, el2, el_table1, -4.5, 0.5)
+    bond3 = Bond(el2, el2, el_table1, 3.5, 3.5)
+
+    b_table1 = BondTable(el_table1)
+
+    println("*** add Bonds")
+    add_bond(b_table1, bond1)
+    add_bond(b_table1, bond2)
+    add_bond(b_table1, bond3)
+    println("b_table1: ", b_table1)
+
+    println("*** Reactions")
+    reaction1 = Reaction(["A", "A"], ["AA"], el_table1, b_table1)
+    reaction2 = Reaction(["B", "B"], ["BB"], el_table1, b_table1)
+    reaction3 = Reaction(["AB", "BA"], ["ABBA"], el_table1, b_table1)
+    reaction4 = Reaction(["AA"], ["A", "A"], el_table1, b_table1)
+    reaction5 = Reaction(["BB"], ["B", "B"], el_table1, b_table1)
+    reaction6 = Reaction(["ABBA"], ["AB", "BA"], el_table1, b_table1)
+    println("reaction1: ", reaction1)
+    println("reaction2: ", reaction2)
+    println("reaction3: ", reaction3)
+    println("reaction4: ", reaction4)
+    println("reaction5: ", reaction5)
+    println("reaction6: ", reaction6)
+
+    println()
+
+end
+
 function test_gene()
     println("***")
     println("*** Gene")
@@ -129,6 +169,22 @@ function test_gene()
     el3 = Element('C', 3)
     el_table1 = ElementTable()
     add_elements(el_table1, [el1, el2, el3])
+
+    bond1 = Bond(el1, el1, el_table1, -5.5, 1.5)
+    bond2 = Bond(el1, el2, el_table1, -4.5, 0.5)
+    bond3 = Bond(el1, el3, el_table1, -4.5, 0.5)
+    bond4 = Bond(el2, el2, el_table1, 3.5, 3.5)
+    bond5 = Bond(el2, el3, el_table1, 3.5, 3.5)
+    bond6 = Bond(el3, el3, el_table1, 3.5, 3.5)
+
+    b_table1 = BondTable(el_table1)
+
+    add_bond(b_table1, bond1)
+    add_bond(b_table1, bond2)
+    add_bond(b_table1, bond3)
+    add_bond(b_table1, bond4)
+    add_bond(b_table1, bond5)
+    add_bond(b_table1, bond6)
 
     genes = []
     push!(genes, Gene(1, "(A*B)", el_table1))
@@ -144,11 +200,22 @@ function test_gene()
     end
 
     println("*** Gene transcripts")
+    reactions = []
     for i in 1:length(genes)
         @printf("gene%d.transcript: %s\n", i, genes[i].transcript)
         reactants, products = parse_reaction(genes[i].transcript, el_table1)
         println("reactants: ", reactants)
         println("products: ", products)
+        if is_pseudogene(genes[i])
+            println("*** pseudogene: " * genes[i].string)
+        else
+            push!(reactions, Reaction(reactants, products, el_table1, b_table1))
+        end
+    end
+
+    println("*** Reactions")
+    for i in 1:length(reactions)
+        @printf("reaction%d: %s\n", i, reactions[i])
     end
 
     println()
@@ -199,55 +266,15 @@ function test_genome()
 end
 
 
-function test_reaction()
-    println("***")
-    println("*** Reaction")
-    println("***")
-
-    el1 = Element('A', 1)
-    el2 = Element('B', 2)
-    el_table1 = ElementTable()
-    add_elements(el_table1, [el1, el2])
-
-    bond1 = Bond(el1, el1, el_table1, -5.5, 1.5)
-    bond2 = Bond(el1, el2, el_table1, -4.5, 0.5)
-    bond3 = Bond(el2, el2, el_table1, 3.5, 3.5)
-
-    b_table1 = BondTable(el_table1)
-
-    println("*** add Bonds")
-    add_bond(b_table1, bond1)
-    add_bond(b_table1, bond2)
-    add_bond(b_table1, bond3)
-    println("b_table1: ", b_table1)
-
-    println("*** Reactions")
-    reaction1 = Reaction(["A", "A"], ["AA"], el_table1, b_table1)
-    reaction2 = Reaction(["B", "B"], ["BB"], el_table1, b_table1)
-    reaction3 = Reaction(["AB", "BA"], ["ABBA"], el_table1, b_table1)
-    reaction4 = Reaction(["AA"], ["A", "A"], el_table1, b_table1)
-    reaction5 = Reaction(["BB"], ["B", "B"], el_table1, b_table1)
-    reaction6 = Reaction(["ABBA"], ["AB", "BA"], el_table1, b_table1)
-    println("reaction1: ", reaction1)
-    println("reaction2: ", reaction2)
-    println("reaction3: ", reaction3)
-    println("reaction4: ", reaction4)
-    println("reaction5: ", reaction5)
-    println("reaction6: ", reaction6)
-
-    println()
-
-end
-
 function main()
     # test_element()
     # test_element_table()
     # test_molecule()
     # test_bond()
-    test_bond_table()
-    # test_gene()
-    # test_genome()
+    # test_bond_table()
     test_reaction()
+    test_gene()
+    # test_genome()
 end
 
 main()
