@@ -84,26 +84,49 @@ type Reaction
     function Reaction(reactants, products,
                       element_table::ElementTable,
                       bond_table::BondTable)
+        energy_change = 0.0
+        transition_energy = 0.0
+
         r_mols = []
         for r_str in reactants
-            mol = Molecule("", r_str, element_table)
+            mol = Molecule(r_str, r_str, element_table)
             push!(r_mols, mol)
+        end
+
+        new_bonds = []
+        for i in 1:length(reactants)-1
+            el1 = reactants[i][end]
+            el2 = reactants[i+1][1]
+            bond = get_bond(bond_table, el1, el2)
+            push!(new_bonds, bond)
+            energy_change += bond.energy_change
+            transition_energy += bond.transition_energy
         end
 
         p_mols = []
         for p_str in products
-            mol = Molecule("", p_str, element_table)
+            mol = Molecule(p_str, p_str, element_table)
             push!(p_mols, mol)
         end
 
-        # new(reactants, products, old_bonds, new_bonds,
-        #     energy_change, transition_energy)
-        new(r_mols, p_mols)
+        old_bonds = []
+        for i in 1:length(products)-1
+            el1 = products[i][end]
+            el2 = products[i+1][1]
+            bond = get_bond(bond_table, el1, el2)
+            push!(old_bonds, bond)
+            energy_change -= bond.energy_change
+            transition_energy += bond.transition_energy - bond.energy_change
+        end
+
+        new(r_mols, p_mols, old_bonds, new_bonds,
+            energy_change, transition_energy)
+        # new(r_mols, p_mols, old_bonds, new_bonds, energy_change, transition_energy)
     end
 end
 
-Base.show(io::IO, r::Reaction) = show(io, string(r.reactants))
-Base.show(io::IO, m::MIME"text/plain", r::Reaction) = show(io, m, string(r.reactants))
+Base.show(io::IO, r::Reaction) = show(io, "reactants: " * join([m.name for m in r.reactants], ", ") * " products: " * join([m.name for m in r.products], ", ") * ", trans: " * string(r.transition_energy) * ", energy: " * string(r.energy_change))
+Base.show(io::IO, m::MIME"text/plain", r::Reaction) = show(io, m, "reactants: " * join([m.name for m in r.reactants], ", ") * " products: " * join([m.name for m in r.products], ", ") * ", trans: " * string(r.transition_energy) * ", energy: " * string(r.energy_change))
 
 
 # Genes are strings bracketed by start '(' and stop ')' characters
