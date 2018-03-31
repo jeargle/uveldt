@@ -1,8 +1,8 @@
 # John Eargle (mailto: jeargle at gmail.com)
 # 2018
-# Uveldt
+# uveldt
 
-module Uveldt
+module uveldt
 
 export Element, ElementTable, Molecule, Bond, BondTable, Reaction, Gene, Genome, parse_reaction, transcribe_gene, genome_string, find_genes, is_pseudogene, add_elements, add_bond, get_bond, mass
 

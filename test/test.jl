@@ -2,7 +2,7 @@
 # 2018
 # test
 
-using Uveldt
+using uveldt
 
 
 function test_element()
