@@ -17,7 +17,9 @@ Base.show(io::IO, el::Element) = show(io, string(el.name))
 Base.show(io::IO, m::MIME"text/plain", el::Element) = show(io, m, string(el.name))
 
 
-# ElementTable acts like a periodic table.
+"""
+ElementTable acts like a periodic table.
+"""
 type ElementTable
     elements::Dict{Char, Element}
     ElementTable() = new(Dict())
@@ -27,7 +29,9 @@ Base.show(io::IO, et::ElementTable) = show(io, keys(et.elements))
 Base.show(io::IO, m::MIME"text/plain", et::ElementTable) = show(io, m, keys(et.elements))
 
 
-# 1D String of Elements.
+"""
+1D String of Elements.
+"""
 type Molecule
     name::AbstractString
     elements::AbstractString
@@ -41,7 +45,9 @@ Base.show(io::IO, mol::Molecule) = show(io, string(mol.name, ", ", mol.elements)
 Base.show(io::IO, m::MIME"text/plain", mol::Molecule) = show(io, m, string(mol.name, ", ", mol.elements))
 
 
-# Bond between two Elements
+"""
+Bond between two Elements
+"""
 type Bond
     element1::Element
     element2::Element
@@ -60,7 +66,9 @@ Base.show(io::IO, b::Bond) = show(io, string(b.element1.name, '-', b.element2.na
 Base.show(io::IO, m::MIME"text/plain", b::Bond) = show(io, m, string(b.element1.name, "-", b.element2.name, ", trans: ", b.transition_energy, ", energy: ", b.energy_change))
 
 
-# Set of all Bonds
+"""
+Set of all Bonds
+"""
 type BondTable
     bonds::Dict{Char, Dict{Char, Bond}}
     element_table::ElementTable
@@ -71,9 +79,10 @@ Base.show(io::IO, bt::BondTable) = show(io, string(bt.bonds))
 Base.show(io::IO, m::MIME"text/plain", bt::BondTable) = show(io, m, string(bt.bonds))
 
 
-# Molecular reaction with reactants and products where Bonds are
-# created and/or broken.  A Reaction is specified by a string derived
-# from a Gene.
+"""
+Molecular reaction with reactants and products where Bonds are created and/or broken.  A
+Reaction is specified by a string derived from a Gene.
+"""
 type Reaction
     reactants::Array{Molecule, 1}
     products::Array{Molecule, 1}
@@ -129,19 +138,19 @@ Base.show(io::IO, r::Reaction) = show(io, "reactants: " * join([m.name for m in 
 Base.show(io::IO, m::MIME"text/plain", r::Reaction) = show(io, m, "reactants: " * join([m.name for m in r.reactants], ", ") * " products: " * join([m.name for m in r.products], ", ") * ", trans: " * string(r.transition_energy) * ", energy: " * string(r.energy_change))
 
 
-# Genes are strings bracketed by start '(' and stop ')' characters
-# that code for specific chemical reactions.  The internals consist
-# of Molecule strings with join '*' and split '/' operators specifying
-# how the set of Molecules will be processed.  All operators act at
-# the same time.  Each join creates a new bond, and each split breaks
-# an existing bond.
-#
+"""
+Genes are strings bracketed by start '(' and stop ')' characters that code for specific
+chemical reactions.  The internals consist of Molecule strings with join '*' and split '/'
+operators specifying how the set of Molecules will be processed.  All operators act at the
+same time.  Each join creates a new bond, and each split breaks an existing bond.
+
 # Examples
-#   (A*B): A + B -> AB
-#   (A/B): AB -> A + B
-#   (A*B/C): A + BC -> AB + C
-#   (A*B*C): A + B + C -> ABC
-#   (A*A*A): A + A + A -> AAA
+  (A*B): A + B -> AB
+  (A/B): AB -> A + B
+  (A*B/C): A + BC -> AB + C
+  (A*B*C): A + B + C -> ABC
+  (A*A*A): A + A + A -> AAA
+"""
 type Gene
     location::Int64
     string::AbstractString
@@ -154,9 +163,10 @@ type Gene
 end
 
 
-# String specifying all genes in the cell.  Genes are regions of the
-# Genome that fit the Gene pattern.  A Genome can have a lot of
-# intergenic space that doesn't code for anything.
+"""
+String specifying all genes in the cell.  Genes are regions of the Genome that fit the Gene
+pattern.  A Genome can have a lot of intergenic space that doesn't code for anything.
+"""
 type Genome
     name::AbstractString
     string::AbstractString
@@ -169,9 +179,10 @@ type Genome
 end
 
 
-# Unique location in a Veldt.  Contains two Molecule count buffers and
-# possibly a single Cell.  VeldtPoint time evolution is controlled by
-# a Veldt.
+"""
+Unique location in a Veldt.  Contains two Molecule count buffers and possibly a single Cell.
+VeldtPoint time evolution is controlled by a Veldt.
+"""
 type VeldtPoint
     molecule_counts::Array{Dict{AbstractString, Int64}, 1}  # 2 Dicts: current, future
     # cell::Cell
@@ -194,8 +205,9 @@ type VeldtPoint
 end
 
 
-# Multidimensional array representing locations that can hold
-# Molecules and Cells.
+"""
+Multidimensional array representing locations that can hold Molecules and Cells.
+"""
 type Veldt
     dims::Array{Int64, 1}   # 2 or 3
     points  # Array with dims dimensions holding VeldtPoints
@@ -212,14 +224,23 @@ type Veldt
 end
 
 
+"""
+    parse_reaction(reaction_string, element_table)
+
+Parse the reactants and products from a reaction string.
+"""
 function parse_reaction(reaction_string::AbstractString, element_table::ElementTable)
     reactants = split(replace(reaction_string, "/", ""), "*")
     products = split(replace(reaction_string, "*", ""), "/")
     return (reactants, products)
 end
 
-# Convert a Gene string into a valid Reaction string by removing
-# redundant directive characters
+"""
+    transcribe_gene(gene_string, element_table)
+
+Convert a Gene string into a valid Reaction string by removing redundant directive
+characters.
+"""
 function transcribe_gene(gene_string::AbstractString, element_table::ElementTable)
     # modes for parsing
     #   0: in Molecule
@@ -263,6 +284,11 @@ function transcribe_gene(gene_string::AbstractString, element_table::ElementTabl
     return join(gene_chars)
 end
 
+"""
+    genome_string(size, element_table)
+
+Randomly generate a valid Genome string.
+"""
 function genome_string(size::Int64, element_table::ElementTable)
     genome = Array{AbstractString}(size)
     elements = [string(el) for el in keys(element_table.elements)]
@@ -270,8 +296,12 @@ function genome_string(size::Int64, element_table::ElementTable)
     return join(genome)
 end
 
-# Search through a Genome for patterns that match possible Gene
-# strings and build Genes from them.
+"""
+    find_genes(genome)
+
+Search through a Genome for patterns that match possible Gene strings and build Genes from
+them.
+"""
 function find_genes(genome::Genome)
     gene_match = eachmatch(r"\([^\(]*?\)", genome.string)
     genes = [Gene(gm.offset, gm.match, genome.element_table)
@@ -280,7 +310,11 @@ function find_genes(genome::Genome)
 end
 
 
-# Identify pseudogene.
+"""
+    is_pseudogene(gene)
+
+Identify pseudogene.
+"""
 function is_pseudogene(gene::Gene)
     elements = join(keys(gene.element_table.elements))
     if length(gene.transcript) < 3
@@ -298,23 +332,38 @@ function is_pseudogene(gene::Gene)
 end
 
 
-# Write a FASTA file with the full genome string.
+"""
+    write_fasta(genome)
+
+Write a FASTA file with the full genome string.
+"""
 function write_fasta(genome::Genome)
 end
 
 
-# Add an Element to an ElementTable.
-# element_table: ElementTable that receives the Element
-# element: Element to add
+"""
+    add_elements(element_table, elements)
+
+Add a Elements to an ElementTable.
+
+# Arguments
+- `element_table::ElementTable`: ElementTable that receives the Elements
+- `elements::Array{Element, 1}`: Elements to add
+"""
 function add_elements(element_table::ElementTable, elements::Array{Element, 1})
     for element in elements
         element_table.elements[element.name] = element
     end
 end
 
-# Add a Bond to the a BondTable.
-# bond_table: BondTable that receives the Bond
-# bond: Bond to add
+
+"""
+    add_bond(bond_table, bond)
+
+Add a Bond to the a BondTable.
+  bond_table: BondTable that receives the Bond
+  bond: Bond to add
+"""
 function add_bond(bond_table::BondTable, bond::Bond)
     if haskey(bond_table.bonds, bond.element1.name)
         bond_table.bonds[bond.element1.name][bond.element2.name] = bond
@@ -332,18 +381,32 @@ function add_bond(bond_table::BondTable, bond::Bond)
     end
 end
 
-# Add a Bond to the a BondTable.
-# bond_table: BondTable
-# element1: name of first Element
-# element2: name of second Element
+
+"""
+    get_bond(bond_table, element1, element2)
+
+Add a Bond to the a BondTable.
+"""
 function get_bond(bond_table::BondTable, element1::Char, element2::Char)
     return bond_table.bonds[element1][element2]
 end
 
+
+"""
+    mass(element)
+
+Get the mass of an Element.
+"""
 function mass(element::Element)
     return element.mass
 end
 
+
+"""
+    mass(molecule)
+
+Get the mass of a Molecule.
+"""
 function mass(molecule::Molecule)
     total_mass = 0
     for el in molecule.elements
