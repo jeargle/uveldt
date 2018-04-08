@@ -4,7 +4,7 @@
 
 module uveldt
 
-export Element, ElementTable, Molecule, Bond, BondTable, Reaction, Gene, Genome, parse_reaction, transcribe_gene, genome_string, find_genes, is_pseudogene, add_elements, add_bond, get_bond, mass
+export Element, ElementTable, Molecule, Bond, BondTable, Reaction, Gene, Genome, VeldtPoint, Veldt, parse_reaction, transcribe_gene, genome_string, find_genes, is_pseudogene, add_elements, add_bond, get_bond, mass
 
 
 type Element
@@ -165,6 +165,49 @@ type Genome
     Genome(name::AbstractString, string::AbstractString, element_table::ElementTable) = new(name, string, element_table)
     function Genome(name::AbstractString, size::Int64, element_table::ElementTable)
         Genome(name, genome_string(size, element_table), element_table)
+    end
+end
+
+
+# Unique location in a Veldt.  Contains two Molecule count buffers and
+# possibly a single Cell.  VeldtPoint time evolution is controlled by
+# a Veldt.
+type VeldtPoint
+    molecule_counts::Array{Dict{AbstractString, Int64}, 1}  # 2 Dicts: current, future
+    # cell::Cell
+    function VeldtPoint()
+        molecule_counts = Array{Dict{AbstractString, Int64}, 1}(2)
+        molecule_counts[1] = Dict{AbstractString, Int64}()
+        molecule_counts[2] = Dict{AbstractString, Int64}()
+        new(molecule_counts)
+    end
+    function VeldtPoint(molecules)
+        molecule_counts = Array{Dict{AbstractString, Int64}, 1}(2)
+        molecule_counts[1] = Dict{AbstractString, Int64}()
+        molecule_counts[2] = Dict{AbstractString, Int64}()
+        for mol in molecules
+            molecule_counts[1][mol] = 0
+            molecule_counts[2][mol] = 0
+        end
+        new(molecule_counts)
+    end
+end
+
+
+# Multidimensional array representing locations that can hold
+# Molecules and Cells.
+type Veldt
+    dims::Array{Int64, 1}   # 2 or 3
+    points  # Array with dims dimensions holding VeldtPoints
+    molecule_counts::Dict{AbstractString, Int64}
+    function Veldt(dims::Array{Int64, 1})
+        if length(dims) == 2
+            points = Array{VeldtPoint, 2}(dims[1], dims[2])
+        elseif length(dims) == 3
+            points = Array{VeldtPoint, 3}(dims[1], dims[2], dims[3])
+        else
+        end
+        Veldt(dims)
     end
 end
 

@@ -265,6 +265,41 @@ function test_genome()
     println()
 end
 
+function test_veldt_point()
+    println("***")
+    println("*** VeldtPoint")
+    println("***")
+
+    el1 = Element('A', 1)
+    el2 = Element('B', 2)
+    el_table1 = ElementTable()
+    add_elements(el_table1, [el1, el2])
+
+    mol1 = Molecule("mol1", "AAA", el_table1)
+    mol2 = Molecule("mol2", "BBB", el_table1)
+    mol3 = Molecule("mol3", "ABA", el_table1)
+    println("mol1: ", mol1)
+    println("mol2: ", mol2)
+    println("mol3: ", mol3)
+    println()
+
+    println("*** VeldtPoints")
+    veldt_pt1 = VeldtPoint()
+    veldt_pt2 = VeldtPoint(["AAA", "BBB", "ABA"])
+    println("veldt_pt1: ", veldt_pt1)
+    println("veldt_pt2: ", veldt_pt2)
+
+    println("*** add Molecule counts")
+    veldt_pt1.molecule_counts[1]["AAA"] = 300
+    veldt_pt1.molecule_counts[1]["BBB"] = 400
+    veldt_pt2.molecule_counts[1]["AAA"] = 330
+    veldt_pt2.molecule_counts[1]["BBB"] = 440
+    println("veldt_pt1: ", veldt_pt1)
+    println("veldt_pt2: ", veldt_pt2)
+
+    println()
+end
+
 
 function main()
     # test_element()
@@ -272,9 +307,10 @@ function main()
     # test_molecule()
     # test_bond()
     # test_bond_table()
-    test_reaction()
-    test_gene()
+    # test_reaction()
+    # test_gene()
     # test_genome()
+    test_veldt_point()
 end
 
 main()
