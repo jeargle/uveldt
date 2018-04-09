@@ -4,7 +4,7 @@
 
 module uveldt
 
-export Element, ElementTable, Molecule, Bond, BondTable, Reaction, Gene, Genome, VeldtPoint, Veldt, parse_reaction, transcribe_gene, genome_string, find_genes, is_pseudogene, add_elements, add_bond, get_bond, mass
+export Element, ElementTable, Molecule, Bond, BondTable, Reaction, Gene, Genome, VeldtPoint, Veldt, init_molecules, parse_reaction, transcribe_gene, genome_string, find_genes, is_pseudogene, add_elements, add_bond, get_bond, mass
 
 
 type Element
@@ -211,18 +211,51 @@ Multidimensional array representing locations that can hold Molecules and Cells.
 type Veldt
     dims::Array{Int64, 1}   # 2 or 3
     points  # Array with dims dimensions holding VeldtPoints
-    molecule_counts::Dict{AbstractString, Int64}
+    molecule_counts::Dict{AbstractString, Int64}  # Molecules in VeldtPoints
+    cell_molecule_counts::Dict{AbstractString, Int64}  # Molecules in Cells
+
     function Veldt(dims::Array{Int64, 1})
         if length(dims) == 2
-            points = Array{VeldtPoint, 2}(dims[1], dims[2])
+            points = [[VeldtPoint() for j in 1:dims[2]]
+                      for i in 1:dims[1]]
         elseif length(dims) == 3
-            points = Array{VeldtPoint, 3}(dims[1], dims[2], dims[3])
+            points = [[[VeldtPoint() for k in 1:dims[3]]
+                       for j in 1:dims[2]]
+                      for i in 1:dims[1]]
         else
         end
-        Veldt(dims)
+        new(dims, points, Dict{AbstractString, Int64}(), Dict{AbstractString, Int64}())
     end
 end
 
+
+"""
+    init_molecules()
+
+Initialize the Molecule count for a specific location in a Veldt.
+
+# Arguments
+- veldt::Veldt
+- coord::Array{Int64, 1}
+- molecule_counts::Dict{AbstractString, Int64}
+"""
+function init_molecules(veldt::Veldt, coord::Array{Int64, 1}, molecule_counts::Dict{String, Int64})
+    for (mol, count) in molecule_counts
+        if haskey(veldt.molecule_counts, mol)
+            veldt.molecule_counts[mol] += count
+        else
+            veldt.molecule_counts[mol] = count
+        end
+
+        if length(coord) == 2
+            vp = veldt.points[coord[1]][coord[2]]
+            vp.molecule_counts[1][mol] = count
+        elseif length(coord) == 3
+            vp = veldt.points[coord[1]][coord[2]][coord[3]]
+            vp.molecule_counts[1][mol] = count
+        end
+    end
+end
 
 """
     parse_reaction(reaction_string, element_table)
