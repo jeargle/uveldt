@@ -4,7 +4,7 @@
 
 module uveldt
 
-export Element, ElementTable, Molecule, Bond, BondTable, Reaction, Gene, Genome, VeldtPoint, Veldt, init_molecules, parse_reaction, transcribe_gene, genome_string, find_genes, is_pseudogene, add_elements, add_bond, get_bond, mass
+export Element, ElementTable, Molecule, Bond, BondTable, Reaction, Gene, Genome, Cell, VeldtPoint, Veldt, init_molecules, parse_reaction, transcribe_gene, genome_string, find_genes, is_pseudogene, add_elements, add_bond, get_bond, mass
 
 
 type Element
@@ -180,18 +180,38 @@ end
 
 
 """
+Membrane-bound compartment containing Molecules and a Genome.  Chemical Reactions happen
+within.
+"""
+type Cell
+    genome::Genome
+    molecule_counts::Array{Dict{AbstractString, Int64}, 1}  # 2 Dicts: current, future
+    energy::Int64
+
+    function Cell(genome::Genome)
+        molecule_counts = Array{Dict{AbstractString, Int64}, 1}(2)
+        molecule_counts[1] = Dict{AbstractString, Int64}()
+        molecule_counts[2] = Dict{AbstractString, Int64}()
+        new(genome, molecule_counts, 0)
+    end
+end
+
+
+"""
 Unique location in a Veldt.  Contains two Molecule count buffers and possibly a single Cell.
 VeldtPoint time evolution is controlled by a Veldt.
 """
 type VeldtPoint
     molecule_counts::Array{Dict{AbstractString, Int64}, 1}  # 2 Dicts: current, future
-    # cell::Cell
+    cell::Cell
+
     function VeldtPoint()
         molecule_counts = Array{Dict{AbstractString, Int64}, 1}(2)
         molecule_counts[1] = Dict{AbstractString, Int64}()
         molecule_counts[2] = Dict{AbstractString, Int64}()
         new(molecule_counts)
     end
+
     function VeldtPoint(molecules)
         molecule_counts = Array{Dict{AbstractString, Int64}, 1}(2)
         molecule_counts[1] = Dict{AbstractString, Int64}()
