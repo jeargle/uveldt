@@ -303,19 +303,30 @@ function test_veldt_point()
     el_table1 = ElementTable()
     add_elements(el_table1, [el1, el2])
 
+    genome_str = genome_string(200, el_table1)
+    genome1 = Genome("genome1", genome_str, el_table1)
+    cell1 = Cell(genome1)
+    cell1.molecule_counts[1]["AAA"] = 33
+    cell1.molecule_counts[1]["BBB"] = 44
+
     println("*** VeldtPoints")
     veldt_pt1 = VeldtPoint()
-    veldt_pt2 = VeldtPoint(["AAA", "BBB", "ABA"])
+    veldt_pt2 = VeldtPoint(molecules=["AAA", "BBB", "ABA"])
+    veldt_pt3 = VeldtPoint(cell=cell1)
     println("veldt_pt1: ", veldt_pt1)
     println("veldt_pt2: ", veldt_pt2)
+    println("veldt_pt3: ", veldt_pt3)
 
     println("*** add Molecule counts")
     veldt_pt1.molecule_counts[1]["AAA"] = 300
     veldt_pt1.molecule_counts[1]["BBB"] = 400
     veldt_pt2.molecule_counts[1]["AAA"] = 330
     veldt_pt2.molecule_counts[1]["BBB"] = 440
+    veldt_pt2.molecule_counts[1]["AAA"] = 333
+    veldt_pt2.molecule_counts[1]["BBB"] = 444
     println("veldt_pt1: ", veldt_pt1)
     println("veldt_pt2: ", veldt_pt2)
+    println("veldt_pt3: ", veldt_pt3)
 
     println()
 end
@@ -363,8 +374,8 @@ function main()
     # test_reaction()
     # test_gene()
     # test_genome()
-    test_cell()
-    # test_veldt_point()
+    # test_cell()
+    test_veldt_point()
     # test_veldt()
 end
 

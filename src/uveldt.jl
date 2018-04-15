@@ -205,14 +205,14 @@ type VeldtPoint
     molecule_counts::Array{Dict{AbstractString, Int64}, 1}  # 2 Dicts: current, future
     cell::Cell
 
-    function VeldtPoint()
-        molecule_counts = Array{Dict{AbstractString, Int64}, 1}(2)
-        molecule_counts[1] = Dict{AbstractString, Int64}()
-        molecule_counts[2] = Dict{AbstractString, Int64}()
-        new(molecule_counts)
-    end
+    # function VeldtPoint()
+    #     molecule_counts = Array{Dict{AbstractString, Int64}, 1}(2)
+    #     molecule_counts[1] = Dict{AbstractString, Int64}()
+    #     molecule_counts[2] = Dict{AbstractString, Int64}()
+    #     new(molecule_counts)
+    # end
 
-    function VeldtPoint(molecules)
+    function VeldtPoint(; molecules=[], cell=nothing)
         molecule_counts = Array{Dict{AbstractString, Int64}, 1}(2)
         molecule_counts[1] = Dict{AbstractString, Int64}()
         molecule_counts[2] = Dict{AbstractString, Int64}()
@@ -220,7 +220,11 @@ type VeldtPoint
             molecule_counts[1][mol] = 0
             molecule_counts[2][mol] = 0
         end
-        new(molecule_counts)
+        if cell == nothing
+            return new(molecule_counts)
+        else
+            return new(molecule_counts, cell)
+        end
     end
 end
 
