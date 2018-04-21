@@ -45,30 +45,6 @@ function test_element_table()
     println()
 end
 
-function test_molecule()
-    println("***")
-    println("*** Molecule")
-    println("***")
-
-    el1 = Element('A', 1)
-    el2 = Element('B', 2)
-    el_table1 = ElementTable()
-    add_elements(el_table1, [el1, el2])
-
-    mol1 = Molecule("mol1", "AAA", el_table1)
-    mol2 = Molecule("mol2", "BBB", el_table1)
-    mol3 = Molecule("mol3", "ABA", el_table1)
-    println("mol1: ", mol1)
-    println("mol2: ", mol2)
-    println("mol3: ", mol3)
-    println()
-
-    println("mass(mol1): ", mass(mol1))
-    println("mass(mol2): ", mass(mol2))
-    println("mass(mol3): ", mass(mol3))
-    println()
-end
-
 function test_bond()
     println("***")
     println("*** Bond")
@@ -162,6 +138,44 @@ function test_chemistry()
 
     println()
 
+end
+
+function test_molecule()
+    println("***")
+    println("*** Molecule")
+    println("***")
+
+    println("*** add Elements")
+    el1 = Element('A', 1)
+    el2 = Element('B', 2)
+    el_table1 = ElementTable()
+    add_elements(el_table1, [el1, el2])
+
+    println("*** add Bonds")
+    bond1 = Bond(el1, el1, el_table1, -5.5, 1.5)
+    bond2 = Bond(el1, el2, el_table1, -4.5, 0.5)
+    bond3 = Bond(el2, el2, el_table1, 3.5, 3.5)
+
+    b_table1 = BondTable(el_table1)
+    add_bond(b_table1, bond1)
+    add_bond(b_table1, bond2)
+    add_bond(b_table1, bond3)
+
+    println("*** create Chemistry")
+    chem1 = Chemistry(el_table1, b_table1)
+
+    mol1 = Molecule("mol1", "AAA", chem1)
+    mol2 = Molecule("mol2", "BBB", chem1)
+    mol3 = Molecule("mol3", "ABA", chem1)
+    println("mol1: ", mol1)
+    println("mol2: ", mol2)
+    println("mol3: ", mol3)
+    println()
+
+    println("mass(mol1): ", mass(mol1))
+    println("mass(mol2): ", mass(mol2))
+    println("mass(mol3): ", mass(mol3))
+    println()
 end
 
 function test_reaction()
@@ -413,10 +427,10 @@ end
 function main()
     # test_element()
     # test_element_table()
-    # test_molecule()
     # test_bond()
     # test_bond_table()
-    test_chemistry()
+    # test_chemistry()
+    test_molecule()
     # test_reaction()
     # test_gene()
     # test_genome()

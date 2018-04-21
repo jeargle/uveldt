@@ -4,7 +4,7 @@
 
 module uveldt
 
-export Element, ElementTable, Molecule, Bond, BondTable, Chemistry, Reaction, Gene, Genome, Cell, VeldtPoint, Veldt, init_molecules, parse_reaction, transcribe_gene, genome_string, find_genes, is_pseudogene, add_elements, add_bond, get_bond, mass
+export Element, ElementTable, Bond, BondTable, Chemistry, Molecule, Reaction, Gene, Genome, Cell, VeldtPoint, Veldt, init_molecules, parse_reaction, transcribe_gene, genome_string, find_genes, is_pseudogene, add_elements, add_bond, get_bond, mass
 
 
 type Element
@@ -27,23 +27,6 @@ end
 
 Base.show(io::IO, et::ElementTable) = show(io, keys(et.elements))
 Base.show(io::IO, m::MIME"text/plain", et::ElementTable) = show(io, m, keys(et.elements))
-
-
-"""
-1D String of Elements.
-"""
-type Molecule
-    name::AbstractString
-    elements::AbstractString
-    element_table::ElementTable
-
-    Molecule(name::AbstractString,
-             elements::AbstractString,
-             element_table::ElementTable) = new(name, elements, element_table)
-end
-
-Base.show(io::IO, mol::Molecule) = show(io, string(mol.name, ", ", mol.elements))
-Base.show(io::IO, m::MIME"text/plain", mol::Molecule) = show(io, m, string(mol.name, ", ", mol.elements))
 
 
 """
@@ -96,6 +79,23 @@ end
 
 
 """
+1D String of Elements.
+"""
+type Molecule
+    name::AbstractString
+    elements::AbstractString
+    chemistry::Chemistry
+
+    Molecule(name::AbstractString,
+             elements::AbstractString,
+             chemistry::Chemistry) = new(name, elements, chemistry)
+end
+
+Base.show(io::IO, mol::Molecule) = show(io, string(mol.name, ", ", mol.elements))
+Base.show(io::IO, m::MIME"text/plain", mol::Molecule) = show(io, m, string(mol.name, ", ", mol.elements))
+
+
+"""
 Molecular reaction with reactants and products where Bonds are created and/or broken.  A
 Reaction is specified by a string derived from a Gene.
 """
@@ -107,15 +107,13 @@ type Reaction
     energy_change::Float64
     transition_energy::Float64
 
-    function Reaction(reactants, products,
-                      element_table::ElementTable,
-                      bond_table::BondTable)
+    function Reaction(reactants, products, chemistry::Chemistry)
         energy_change = 0.0
         transition_energy = 0.0
 
         r_mols = []
         for r_str in reactants
-            mol = Molecule(r_str, r_str, element_table)
+            mol = Molecule(r_str, r_str, chemistry.element_table)
             push!(r_mols, mol)
         end
 
@@ -123,7 +121,7 @@ type Reaction
         for i in 1:length(reactants)-1
             el1 = reactants[i][end]
             el2 = reactants[i+1][1]
-            bond = get_bond(bond_table, el1, el2)
+            bond = get_bond(chemistry.bond_table, el1, el2)
             push!(new_bonds, bond)
             energy_change += bond.energy_change
             transition_energy += bond.transition_energy
@@ -131,7 +129,7 @@ type Reaction
 
         p_mols = []
         for p_str in products
-            mol = Molecule(p_str, p_str, element_table)
+            mol = Molecule(p_str, p_str, chemistry.element_table)
             push!(p_mols, mol)
         end
 
@@ -139,7 +137,7 @@ type Reaction
         for i in 1:length(products)-1
             el1 = products[i][end]
             el2 = products[i+1][1]
-            bond = get_bond(bond_table, el1, el2)
+            bond = get_bond(chemistry.bond_table, el1, el2)
             push!(old_bonds, bond)
             energy_change -= bond.energy_change
             transition_energy += bond.transition_energy - bond.energy_change
@@ -486,7 +484,7 @@ Get the mass of a Molecule.
 function mass(molecule::Molecule)
     total_mass = 0
     for el in molecule.elements
-        total_mass += molecule.element_table.elements[el].mass
+        total_mass += molecule.chemistry.element_table.elements[el].mass
     end
     return total_mass
 end
