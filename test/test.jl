@@ -119,6 +119,51 @@ function test_bond_table()
     println()
 end
 
+function test_chemistry()
+    println("***")
+    println("*** Chemistry")
+    println("***")
+
+    println("*** add Elements")
+    el1 = Element('A', 1)
+    el2 = Element('B', 2)
+    el3 = Element('C', 3)
+    el_table1 = ElementTable()
+    add_elements(el_table1, [el1, el2])
+    el_table2 = ElementTable()
+    add_elements(el_table2, [el1, el2, el3])
+
+    println("*** add Bonds")
+    bond1 = Bond(el1, el1, el_table1, -5.5, 1.5)
+    bond2 = Bond(el1, el2, el_table1, -4.5, 0.5)
+    bond3 = Bond(el1, el3, el_table1, -4.5, 0.5)
+    bond4 = Bond(el2, el2, el_table1, 3.5, 3.5)
+    bond5 = Bond(el2, el3, el_table1, 3.5, 3.5)
+    bond6 = Bond(el3, el3, el_table1, 3.5, 3.5)
+
+    b_table1 = BondTable(el_table1)
+    add_bond(b_table1, bond1)
+    add_bond(b_table1, bond2)
+    add_bond(b_table1, bond4)
+
+    b_table2 = BondTable(el_table2)
+    add_bond(b_table2, bond1)
+    add_bond(b_table2, bond2)
+    add_bond(b_table2, bond3)
+    add_bond(b_table2, bond4)
+    add_bond(b_table2, bond5)
+    add_bond(b_table2, bond6)
+
+    println("*** create Chemistries")
+    chem1 = Chemistry(el_table1, b_table1)
+    chem2 = Chemistry(el_table2, b_table2)
+    println("chem1: ", chem1)
+    println("chem2: ", chem2)
+
+    println()
+
+end
+
 function test_reaction()
     println("***")
     println("*** Reaction")
@@ -371,11 +416,12 @@ function main()
     # test_molecule()
     # test_bond()
     # test_bond_table()
+    test_chemistry()
     # test_reaction()
     # test_gene()
     # test_genome()
     # test_cell()
-    test_veldt_point()
+    # test_veldt_point()
     # test_veldt()
 end
 

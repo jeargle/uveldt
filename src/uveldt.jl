@@ -4,7 +4,7 @@
 
 module uveldt
 
-export Element, ElementTable, Molecule, Bond, BondTable, Reaction, Gene, Genome, Cell, VeldtPoint, Veldt, init_molecules, parse_reaction, transcribe_gene, genome_string, find_genes, is_pseudogene, add_elements, add_bond, get_bond, mass
+export Element, ElementTable, Molecule, Bond, BondTable, Chemistry, Reaction, Gene, Genome, Cell, VeldtPoint, Veldt, init_molecules, parse_reaction, transcribe_gene, genome_string, find_genes, is_pseudogene, add_elements, add_bond, get_bond, mass
 
 
 type Element
@@ -36,6 +36,7 @@ type Molecule
     name::AbstractString
     elements::AbstractString
     element_table::ElementTable
+
     Molecule(name::AbstractString,
              elements::AbstractString,
              element_table::ElementTable) = new(name, elements, element_table)
@@ -54,6 +55,7 @@ type Bond
     element_table::ElementTable
     energy_change::Float64
     transition_energy::Float64
+
     Bond(element1::Element,
          element2::Element,
          element_table::ElementTable,
@@ -80,6 +82,20 @@ Base.show(io::IO, m::MIME"text/plain", bt::BondTable) = show(io, m, string(bt.bo
 
 
 """
+Container for Elements and Bonds.
+"""
+type Chemistry
+    element_table::ElementTable
+    bond_table::BondTable
+
+    function Chemistry(element_table::ElementTable, bond_table::BondTable)
+        # check bond_table for full set of Bonds for all Element pairs
+        new(element_table, bond_table)
+    end
+end
+
+
+"""
 Molecular reaction with reactants and products where Bonds are created and/or broken.  A
 Reaction is specified by a string derived from a Gene.
 """
@@ -90,6 +106,7 @@ type Reaction
     new_bonds::Array{Bond, 1}
     energy_change::Float64
     transition_energy::Float64
+
     function Reaction(reactants, products,
                       element_table::ElementTable,
                       bond_table::BondTable)
@@ -172,7 +189,9 @@ type Genome
     string::AbstractString
     element_table::ElementTable
     genes::Array{Gene, 1}
+
     Genome(name::AbstractString, string::AbstractString, element_table::ElementTable) = new(name, string, element_table)
+
     function Genome(name::AbstractString, size::Int64, element_table::ElementTable)
         Genome(name, genome_string(size, element_table), element_table)
     end
