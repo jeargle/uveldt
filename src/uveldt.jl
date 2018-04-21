@@ -113,7 +113,7 @@ type Reaction
 
         r_mols = []
         for r_str in reactants
-            mol = Molecule(r_str, r_str, chemistry.element_table)
+            mol = Molecule(r_str, r_str, chemistry)
             push!(r_mols, mol)
         end
 
@@ -129,7 +129,7 @@ type Reaction
 
         p_mols = []
         for p_str in products
-            mol = Molecule(p_str, p_str, chemistry.element_table)
+            mol = Molecule(p_str, p_str, chemistry)
             push!(p_mols, mol)
         end
 
