@@ -54,14 +54,9 @@ function test_element_table()
     println("*** ElementTable")
     println("***")
 
-    el1, el2 = create_elements(2)
-    el_table1 = ElementTable()
+    elements = create_elements(2)
+    el_table1 = ElementTable(elements)
 
-    println("el_table1: ", el_table1)
-    println()
-
-    println("*** add Elements")
-    add_elements(el_table1, [el1, el2])
     println("el_table1: ", el_table1)
     println("el_table1.elements[\"A\"]: ", el_table1.elements['A'])
     println("el_table1.elements[\"B\"]: ", el_table1.elements['B'])
@@ -73,11 +68,10 @@ function test_bond()
     println("*** Bond")
     println("***")
 
-    el1 = Element('A', 1)
-    el2 = Element('B', 2)
-    el_table1 = ElementTable()
-    add_elements(el_table1, [el1, el2])
+    elements = create_elements(2)
+    el_table1 = ElementTable(elements)
 
+    el1, el2 = elements
     bond1 = Bond(el1, el1, el_table1, -5.5, 1.5)
     bond2 = Bond(el1, el2, el_table1, -4.5, 0.5)
     bond3 = Bond(el2, el2, el_table1, 3.5, 3.5)
@@ -92,10 +86,10 @@ function test_bond_table()
     println("*** BondTable")
     println("***")
 
-    el1, el2 = create_elements(2)
-    el_table1 = ElementTable()
-    add_elements(el_table1, [el1, el2])
+    elements = create_elements(2)
+    el_table1 = ElementTable(elements)
 
+    el1, el2 = elements
     bond1 = Bond(el1, el1, el_table1, -5.5, 1.5)
     bond2 = Bond(el1, el2, el_table1, -4.5, 0.5)
     bond3 = Bond(el2, el2, el_table1, 3.5, 3.5)
@@ -122,13 +116,14 @@ function test_chemistry()
     println("*** Chemistry")
     println("***")
 
-    el1, el2, el3 = create_elements(3)
-    el_table1 = ElementTable()
-    add_elements(el_table1, [el1, el2])
-    el_table2 = ElementTable()
-    add_elements(el_table2, [el1, el2, el3])
+    elements1 = create_elements(2)
+    el_table1 = ElementTable(elements1)
+
+    elements2 = create_elements(3)
+    el_table2 = ElementTable(elements2)
 
     println("*** add Bonds")
+    el1, el2, el3 = elements2
     bond1 = Bond(el1, el1, el_table1, -5.5, 1.5)
     bond2 = Bond(el1, el2, el_table1, -4.5, 0.5)
     bond3 = Bond(el1, el3, el_table1, -4.5, 0.5)
@@ -164,11 +159,11 @@ function test_molecule()
     println("*** Molecule")
     println("***")
 
-    el1, el2 = create_elements(2)
-    el_table1 = ElementTable()
-    add_elements(el_table1, [el1, el2])
+    elements = create_elements(2)
+    el_table1 = ElementTable(elements)
 
     println("*** add Bonds")
+    el1, el2 = elements
     bond1 = Bond(el1, el1, el_table1, -5.5, 1.5)
     bond2 = Bond(el1, el2, el_table1, -4.5, 0.5)
     bond3 = Bond(el2, el2, el_table1, 3.5, 3.5)
@@ -200,10 +195,10 @@ function test_reaction()
     println("*** Reaction")
     println("***")
 
-    el1, el2 = create_elements(2)
-    el_table1 = ElementTable()
-    add_elements(el_table1, [el1, el2])
+    elements = create_elements(2)
+    el_table1 = ElementTable(elements)
 
+    el1, el2 = elements
     bond1 = Bond(el1, el1, el_table1, -5.5, 1.5)
     bond2 = Bond(el1, el2, el_table1, -4.5, 0.5)
     bond3 = Bond(el2, el2, el_table1, 3.5, 3.5)
@@ -242,10 +237,10 @@ function test_gene()
     println("*** Gene")
     println("***")
 
-    el1, el2, el3 = create_elements(3)
-    el_table1 = ElementTable()
-    add_elements(el_table1, [el1, el2, el3])
+    elements = create_elements(3)
+    el_table1 = ElementTable(elements)
 
+    el1, el2, el3 = elements
     bond1 = Bond(el1, el1, el_table1, -5.5, 1.5)
     bond2 = Bond(el1, el2, el_table1, -4.5, 0.5)
     bond3 = Bond(el1, el3, el_table1, -4.5, 0.5)
@@ -305,9 +300,8 @@ function test_genome()
     println("*** Genome")
     println("***")
 
-    el1, el2 = create_elements(2)
-    el_table1 = ElementTable()
-    add_elements(el_table1, [el1, el2])
+    elements = create_elements(2)
+    el_table1 = ElementTable(elements)
 
     genome_str = genome_string(200, el_table1)
     println("genome_string: ", genome_str)
@@ -348,9 +342,8 @@ function test_cell()
     println("*** Cell")
     println("***")
 
-    el1, el2 = create_elements(2)
-    el_table1 = ElementTable()
-    add_elements(el_table1, [el1, el2])
+    elements = create_elements(2)
+    el_table1 = ElementTable(elements)
 
     genome_str = genome_string(200, el_table1)
     println("genome_string: ", genome_str)
@@ -375,9 +368,8 @@ function test_veldt_point()
     println("*** VeldtPoint")
     println("***")
 
-    el1, el2 = create_elements(2)
-    el_table1 = ElementTable()
-    add_elements(el_table1, [el1, el2])
+    elements = create_elements(2)
+    el_table1 = ElementTable(elements)
 
     genome_str = genome_string(200, el_table1)
     genome1 = Genome("genome1", genome_str, el_table1)
@@ -412,10 +404,10 @@ function test_veldt()
     println("*** Veldt")
     println("***")
 
-    el1, el2 = create_elements(2)
-    el_table1 = ElementTable()
-    add_elements(el_table1, [el1, el2])
+    elements = create_elements(2)
+    el_table1 = ElementTable(elements)
 
+    el1, el2 = elements
     bond1 = Bond(el1, el1, el_table1, -5.5, 1.5)
     bond2 = Bond(el1, el2, el_table1, -4.5, 0.5)
     bond3 = Bond(el2, el2, el_table1, 3.5, 3.5)

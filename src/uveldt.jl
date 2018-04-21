@@ -22,7 +22,14 @@ ElementTable acts like a periodic table.
 """
 type ElementTable
     elements::Dict{Char, Element}
-    ElementTable() = new(Dict())
+
+    function ElementTable(elements)
+        elementDict = Dict()
+        for element in elements
+            elementDict[element.name] = element
+        end
+        new(elementDict)
+    end
 end
 
 Base.show(io::IO, et::ElementTable) = show(io, keys(et.elements))
@@ -415,20 +422,20 @@ function write_fasta(genome::Genome)
 end
 
 
-"""
-    add_elements(element_table, elements)
+# """
+#     add_elements(element_table, elements)
 
-Add a Elements to an ElementTable.
+# Add a Elements to an ElementTable.
 
-# Arguments
-- `element_table::ElementTable`: ElementTable that receives the Elements
-- `elements::Array{Element, 1}`: Elements to add
-"""
-function add_elements(element_table::ElementTable, elements::Array{Element, 1})
-    for element in elements
-        element_table.elements[element.name] = element
-    end
-end
+# # Arguments
+# - `element_table::ElementTable`: ElementTable that receives the Elements
+# - `elements::Array{Element, 1}`: Elements to add
+# """
+# function add_elements(element_table::ElementTable, elements::Array{Element, 1})
+#     for element in elements
+#         element_table.elements[element.name] = element
+#     end
+# end
 
 
 """
