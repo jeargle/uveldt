@@ -24,11 +24,11 @@ type ElementTable
     elements::Dict{Char, Element}
 
     function ElementTable(elements)
-        elementDict = Dict()
+        element_dict = Dict()
         for element in elements
-            elementDict[element.name] = element
+            element_dict[element.name] = element
         end
-        new(elementDict)
+        new(element_dict)
     end
 end
 
@@ -65,8 +65,27 @@ type BondTable
     bonds::Dict{Char, Dict{Char, Bond}}
     element_table::ElementTable
 
-    function BondTable(element_table::ElementTable)
-        new(Dict(), element_table)
+    function BondTable(bonds, element_table::ElementTable)
+        bond_dict = Dict{Char, Dict{Char, Bond}}()
+
+        for bond in bonds
+            if haskey(bond_dict, bond.element1.name)
+                bond_dict[bond.element1.name][bond.element2.name] = bond
+            else
+                bond_dict[bond.element1.name] = Dict(bond.element2.name=>bond)
+            end
+
+            # Make sure entries are added for both lookup orders
+            if bond.element1 != bond.element2
+                if haskey(bond_dict, bond.element2.name)
+                    bond_dict[bond.element2.name][bond.element1.name] = bond
+                else
+                    bond_dict[bond.element2.name] = Dict(bond.element1.name=>bond)
+                end
+            end
+        end
+
+        new(bond_dict, element_table)
     end
 end
 
@@ -422,31 +441,6 @@ end
 Write a FASTA file with the full genome string.
 """
 function write_fasta(genome::Genome)
-end
-
-
-"""
-    add_bond(bond_table, bond)
-
-Add a Bond to the a BondTable.
-  bond_table: BondTable that receives the Bond
-  bond: Bond to add
-"""
-function add_bond(bond_table::BondTable, bond::Bond)
-    if haskey(bond_table.bonds, bond.element1.name)
-        bond_table.bonds[bond.element1.name][bond.element2.name] = bond
-    else
-        bond_table.bonds[bond.element1.name] = Dict(bond.element2.name=>bond)
-    end
-
-    # Make sure entries are added for both lookup orders
-    if bond.element1 != bond.element2
-        if haskey(bond_table.bonds, bond.element2.name)
-            bond_table.bonds[bond.element2.name][bond.element1.name] = bond
-        else
-            bond_table.bonds[bond.element2.name] = Dict(bond.element1.name=>bond)
-        end
-    end
 end
 
 

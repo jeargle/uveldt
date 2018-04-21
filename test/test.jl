@@ -96,15 +96,9 @@ function test_bond_table()
     el_table1 = ElementTable(elements)
 
     energies1 = [(-5.5, 1.5), (-4.5, 0.5), (3.5, 3.5)]
-    bond1, bond2, bond3 = create_bonds(el_table1, energies1)
+    bonds = create_bonds(el_table1, energies1)
 
-    b_table1 = BondTable(el_table1)
-    println("b_table1: ", b_table1)
-
-    println("*** add Bonds")
-    add_bond(b_table1, bond1)
-    add_bond(b_table1, bond2)
-    add_bond(b_table1, bond3)
+    b_table1 = BondTable(bonds, el_table1)
     println("b_table1: ", b_table1)
 
     println("*** get Bonds")
@@ -128,20 +122,11 @@ function test_chemistry()
 
     println("*** add Bonds")
     energies1 = [(-5.5, 1.5), (-4.5, 0.5), (-4.5, 0.5), (3.5, 3.5), (3.5, 3.5), (3.5, 3.5)]
-    bond1, bond2, bond3, bond4, bond5, bond6 = create_bonds(el_table2, energies1)
+    bonds = create_bonds(el_table2, energies1)
+    bond1, bond2, bond3, bond4, bond5, bond6 = bonds
 
-    b_table1 = BondTable(el_table1)
-    add_bond(b_table1, bond1)
-    add_bond(b_table1, bond2)
-    add_bond(b_table1, bond4)
-
-    b_table2 = BondTable(el_table2)
-    add_bond(b_table2, bond1)
-    add_bond(b_table2, bond2)
-    add_bond(b_table2, bond3)
-    add_bond(b_table2, bond4)
-    add_bond(b_table2, bond5)
-    add_bond(b_table2, bond6)
+    b_table1 = BondTable([bond1, bond2, bond4], el_table1)
+    b_table2 = BondTable(bonds, el_table2)
 
     println("*** create Chemistries")
     chem1 = Chemistry(el_table1, b_table1)
@@ -162,12 +147,9 @@ function test_molecule()
     el_table1 = ElementTable(elements)
 
     energies1 = [(-5.5, 1.5), (-4.5, 0.5), (3.5, 3.5)]
-    bond1, bond2, bond3 = create_bonds(el_table1, energies1)
+    bonds = create_bonds(el_table1, energies1)
 
-    b_table1 = BondTable(el_table1)
-    add_bond(b_table1, bond1)
-    add_bond(b_table1, bond2)
-    add_bond(b_table1, bond3)
+    b_table1 = BondTable(bonds, el_table1)
 
     println("*** create Chemistry")
     chem1 = Chemistry(el_table1, b_table1)
@@ -195,15 +177,9 @@ function test_reaction()
     el_table1 = ElementTable(elements)
 
     energies1 = [(-5.5, 1.5), (-4.5, 0.5), (3.5, 3.5)]
-    bond1, bond2, bond3 = create_bonds(el_table1, energies1)
+    bonds = create_bonds(el_table1, energies1)
 
-    b_table1 = BondTable(el_table1)
-
-    println("*** add Bonds")
-    add_bond(b_table1, bond1)
-    add_bond(b_table1, bond2)
-    add_bond(b_table1, bond3)
-    println("b_table1: ", b_table1)
+    b_table1 = BondTable(bonds, el_table1)
 
     println("*** create Chemistry")
     chem1 = Chemistry(el_table1, b_table1)
@@ -235,16 +211,9 @@ function test_gene()
     el_table1 = ElementTable(elements)
 
     energies1 = [(-5.5, 1.5), (-4.5, 0.5), (-4.5, 0.5), (3.5, 3.5), (3.5, 3.5), (3.5, 3.5)]
-    bond1, bond2, bond3, bond4, bond5, bond6 = create_bonds(el_table1, energies1)
+    bonds = create_bonds(el_table1, energies1)
 
-    b_table1 = BondTable(el_table1)
-
-    add_bond(b_table1, bond1)
-    add_bond(b_table1, bond2)
-    add_bond(b_table1, bond3)
-    add_bond(b_table1, bond4)
-    add_bond(b_table1, bond5)
-    add_bond(b_table1, bond6)
+    b_table1 = BondTable(bonds, el_table1)
 
     println("*** create Chemistry")
     chem1 = Chemistry(el_table1, b_table1)
@@ -397,13 +366,9 @@ function test_veldt()
     el_table1 = ElementTable(elements)
 
     energies1 = [(-5.5, 1.5), (-4.5, 0.5), (3.5, 3.5)]
-    bond1, bond2, bond3 = create_bonds(el_table1, energies1)
+    bonds = create_bonds(el_table1, energies1)
 
-    b_table1 = BondTable(el_table1)
-
-    add_bond(b_table1, bond1)
-    add_bond(b_table1, bond2)
-    add_bond(b_table1, bond3)
+    b_table1 = BondTable(bonds, el_table1)
 
     println("*** create Chemistry")
     chem1 = Chemistry(el_table1, b_table1)
@@ -433,18 +398,18 @@ end
 
 
 function main()
-    # test_element()
-    # test_element_table()
+    test_element()
+    test_element_table()
     test_bond()
     test_bond_table()
     test_chemistry()
     test_molecule()
-    # test_reaction()
-    # test_gene()
-    # test_genome()
-    # test_cell()
-    # test_veldt_point()
-    # test_veldt()
+    test_reaction()
+    test_gene()
+    test_genome()
+    test_cell()
+    test_veldt_point()
+    test_veldt()
 end
 
 main()
