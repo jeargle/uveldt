@@ -64,7 +64,10 @@ Set of all Bonds
 type BondTable
     bonds::Dict{Char, Dict{Char, Bond}}
     element_table::ElementTable
-    BondTable(element_table::ElementTable) = new(Dict(), element_table)
+
+    function BondTable(element_table::ElementTable)
+        new(Dict(), element_table)
+    end
 end
 
 Base.show(io::IO, bt::BondTable) = show(io, string(bt.bonds))
@@ -420,22 +423,6 @@ Write a FASTA file with the full genome string.
 """
 function write_fasta(genome::Genome)
 end
-
-
-# """
-#     add_elements(element_table, elements)
-
-# Add a Elements to an ElementTable.
-
-# # Arguments
-# - `element_table::ElementTable`: ElementTable that receives the Elements
-# - `elements::Array{Element, 1}`: Elements to add
-# """
-# function add_elements(element_table::ElementTable, elements::Array{Element, 1})
-#     for element in elements
-#         element_table.elements[element.name] = element
-#     end
-# end
 
 
 """
