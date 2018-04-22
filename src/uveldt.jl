@@ -4,7 +4,7 @@
 
 module uveldt
 
-export Element, ElementTable, Bond, BondTable, Chemistry, Molecule, Reaction, Gene, Genome, Cell, VeldtPoint, Veldt, init_molecules, parse_reaction, transcribe_gene, genome_string, find_genes, is_pseudogene, add_elements, add_bond, get_bond, mass
+export Element, ElementTable, Bond, BondTable, Chemistry, Molecule, Reaction, Gene, Genome, Cell, VeldtPoint, Veldt, init_molecules, parse_reaction, transcribe_gene, genome_string, find_genes, is_pseudogene, read_fasta, write_fasta, get_bond, mass
 
 
 type Element
@@ -436,11 +436,46 @@ end
 
 
 """
+    read_fasta(filename)
+
+Read a FASTA file and return the information as tuples of names and a genome strings.
+"""
+function read_fasta(filename)
+    open(filename, "r") do f
+        for line in eachline(f)
+            print(line)
+        end
+    end
+end
+
+
+"""
+    write_fasta(genomes)
+
+Write a multi-FASTA file with the full genome strings for an array of Genomes.
+"""
+function write_fasta(genomes, filename)
+    f = open(filename, "w")
+    line_length = 80
+    for genome in genomes
+        println(f, "> ", genome.name)
+        full_line_count = div(length(genome.string), line_length)  # integer division
+        for i in 1:full_line_count
+            println(f, genome.string[(i-1)*line_length+1:i*line_length])
+        end
+        println(f, genome.string[full_line_count*line_length+1:length(genome.string)])
+    end
+    close(f)
+end
+
+
+"""
     write_fasta(genome)
 
 Write a FASTA file with the full genome string.
 """
-function write_fasta(genome::Genome)
+function write_fasta(genome::Genome, filename)
+    write_fasta([genome], filename)
 end
 
 

@@ -261,11 +261,12 @@ function test_genome()
     elements = create_elements(2)
     el_table1 = ElementTable(elements)
 
-    genome_str = genome_string(200, el_table1)
+    genome_str = genome_string(1000, el_table1)
     println("genome_string: ", genome_str)
 
     genome1 = Genome("genome1", genome_str, el_table1)
     println("genome1: ", genome1)
+    write_fasta(genome1, "genome1.fasta")
 
     genes = find_genes(genome1)
 
@@ -398,18 +399,18 @@ end
 
 
 function main()
-    test_element()
-    test_element_table()
-    test_bond()
-    test_bond_table()
-    test_chemistry()
-    test_molecule()
-    test_reaction()
-    test_gene()
+    # test_element()
+    # test_element_table()
+    # test_bond()
+    # test_bond_table()
+    # test_chemistry()
+    # test_molecule()
+    # test_reaction()
+    # test_gene()
     test_genome()
-    test_cell()
-    test_veldt_point()
-    test_veldt()
+    # test_cell()
+    # test_veldt_point()
+    # test_veldt()
 end
 
 main()
