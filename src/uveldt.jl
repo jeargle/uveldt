@@ -473,7 +473,7 @@ function write_fasta(genomes, filename)
     f = open(filename, "w")
     line_length = 80
     for genome in genomes
-        println(f, "> ", genome.name)
+        println(f, ">", genome.name)
         full_line_count = div(length(genome.string), line_length)  # integer division
         for i in 1:full_line_count
             println(f, genome.string[(i-1)*line_length+1:i*line_length])
