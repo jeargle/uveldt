@@ -261,12 +261,18 @@ function test_genome()
     elements = create_elements(2)
     el_table1 = ElementTable(elements)
 
-    genome_str = genome_string(1000, el_table1)
-    println("genome_string: ", genome_str)
+    genome_str1 = genome_string(1000, el_table1)
+    println("genome_str1: ", genome_str1)
 
-    genome1 = Genome("genome1", genome_str, el_table1)
+    genome1 = Genome("genome1", genome_str1, el_table1)
     println("genome1: ", genome1)
     write_fasta(genome1, "genome1.fasta")
+
+    genome_info = read_fasta("genome1.fasta")
+    println("length(genome_info): ", length(genome_info))
+    genome_str2 = genome_info[1][2]
+    println("genome_str2: ", genome_str2)
+    println("genome_str1 == genome_str2: ", genome_str1 == genome_str2)
 
     genes = find_genes(genome1)
 

@@ -441,11 +441,26 @@ end
 Read a FASTA file and return the information as tuples of names and a genome strings.
 """
 function read_fasta(filename)
+    genome_info = []
+    name = ""
+    genome_str = ""
+    first_genome = true
     open(filename, "r") do f
         for line in eachline(f)
             print(line)
+            if line[1] == '>'
+                if !first_genome
+                    push!(genome_info, (name, genome_str))
+                end
+                name = line[2:end]
+                genome_str = ""
+            else
+                genome_str *= line
+            end
         end
     end
+    push!(genome_info, (name, genome_str))
+    return genome_info
 end
 
 
