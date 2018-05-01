@@ -25,15 +25,15 @@ For example, atoms of elements "A" and "B" can be connected to make the molecule
 Genome
 ------
 
-Genomes in &mu;Veldt are simply long strings which can contain genes that code for specific chemical reactions.  These reactions specify a set of reactants and a set of products.  Genes start with "(" and end with ")".  They contain element characters as well as the reaction operators "*" and "/".  "*" means that the elements to either side are separate in the reactants but bonded in the products.  "/" means that they are bonded in the reactants and separate in the products.
+Genomes in &mu;Veldt are simply long strings which can contain genes that code for specific chemical reactions.  These reactions specify a set of reactants and a set of products.  Genes start with "(" and end with ")".  They contain element characters as well as the reaction operators "\*" and "/".  "\*" means that the elements to either side are separate in the reactants but bonded in the products.  "/" means that they are bonded in the reactants and separate in the products.
 
 Examples:
 
-* (A*B): A + B -> AB
+* (A\*B): A + B -> AB
 * (A/B): AB -> A + B
-* (A*B/C): A + BC -> AB + C
-* (A*B*C): A + B + C -> ABC
-* (A*A*A): A + A + A -> AAA
+* (A\*B/C): A + BC -> AB + C
+* (A\*B\*C): A + B + C -> ABC
+* (A\*A\*A): A + A + A -> AAA
 
 
 Evolution
