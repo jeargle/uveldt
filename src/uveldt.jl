@@ -7,6 +7,9 @@ module uveldt
 export Element, ElementTable, Bond, BondTable, Chemistry, Molecule, Reaction, Gene, Genome, Cell, VeldtPoint, Veldt, init_molecules, parse_reaction, transcribe_gene, genome_string, find_genes, is_pseudogene, read_fasta, write_fasta, get_bond, mass
 
 
+"""
+Chemical element.
+"""
 type Element
     name::Char
     mass::Int64
@@ -18,7 +21,7 @@ Base.show(io::IO, m::MIME"text/plain", el::Element) = show(io, m, string(el.name
 
 
 """
-ElementTable acts like a periodic table.
+Periodic table for Elements.
 """
 type ElementTable
     elements::Dict{Char, Element}
@@ -37,7 +40,7 @@ Base.show(io::IO, m::MIME"text/plain", et::ElementTable) = show(io, m, keys(et.e
 
 
 """
-Bond between two Elements
+Bond between two Elements.
 """
 type Bond
     element1::Element
@@ -59,7 +62,7 @@ Base.show(io::IO, m::MIME"text/plain", b::Bond) = show(io, m, string(b.element1.
 
 
 """
-Set of all Bonds
+Set of all Bonds.
 """
 type BondTable
     bonds::Dict{Char, Dict{Char, Bond}}
@@ -327,6 +330,7 @@ function init_molecules(veldt::Veldt, coord::Array{Int64, 1}, molecule_counts::D
     end
 end
 
+
 """
     parse_reaction(reaction_string, element_table)
 
@@ -337,6 +341,7 @@ function parse_reaction(reaction_string::AbstractString, element_table::ElementT
     products = split(replace(reaction_string, "*", ""), "/")
     return (reactants, products)
 end
+
 
 """
     transcribe_gene(gene_string, element_table)
@@ -387,6 +392,7 @@ function transcribe_gene(gene_string::AbstractString, element_table::ElementTabl
     return join(gene_chars)
 end
 
+
 """
     genome_string(size, element_table)
 
@@ -398,6 +404,7 @@ function genome_string(size::Int64, element_table::ElementTable)
     rand!(genome, vcat(["(", ")", "*", "/"], elements))
     return join(genome)
 end
+
 
 """
     find_genes(genome)
