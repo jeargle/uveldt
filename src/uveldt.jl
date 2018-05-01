@@ -4,7 +4,7 @@
 
 module uveldt
 
-export Element, ElementTable, Bond, BondTable, Chemistry, Molecule, Reaction, Gene, Genome, Cell, VeldtPoint, Veldt, init_molecules, parse_reaction, transcribe_gene, genome_string, find_genes, is_pseudogene, read_fasta, write_fasta, get_bond, mass
+export Element, ElementTable, Bond, BondTable, Chemistry, Molecule, Reaction, Gene, Genome, Cell, VeldtPoint, Veldt, init_molecules, add_cell, parse_reaction, transcribe_gene, genome_string, find_genes, is_pseudogene, read_fasta, write_fasta, get_bond, mass
 
 
 """
@@ -282,8 +282,9 @@ end
 Multidimensional array representing locations that can hold Molecules and Cells.
 """
 type Veldt
-    dims::Array{Int64, 1}   # 2 or 3
-    points  # Array with dims dimensions holding VeldtPoints
+    dims::Array{Int64, 1}   # num points per dimension; 2 or 3 dimensions
+    points  # Array with length(dims) dimensions holding VeldtPoints
+    current # buffer with current (not future) data, 1 or 2
     molecule_counts::Dict{AbstractString, Int64}  # Molecules in VeldtPoints
     cell_molecule_counts::Dict{AbstractString, Int64}  # Molecules in Cells
 
@@ -297,13 +298,13 @@ type Veldt
                       for i in 1:dims[1]]
         else
         end
-        new(dims, points, Dict{AbstractString, Int64}(), Dict{AbstractString, Int64}())
+        new(dims, points, 1, Dict{AbstractString, Int64}(), Dict{AbstractString, Int64}())
     end
 end
 
 
 """
-    init_molecules()
+    init_molecules(veldt, coord, molecules_counts)
 
 Initialize the Molecule count for a specific location in a Veldt.
 
@@ -326,6 +327,35 @@ function init_molecules(veldt::Veldt, coord::Array{Int64, 1}, molecule_counts::D
         elseif length(coord) == 3
             vp = veldt.points[coord[1]][coord[2]][coord[3]]
             vp.molecule_counts[1][mol] = count
+        end
+    end
+end
+
+
+"""
+    add_cell(veldt, coord, cell)
+
+Add a cell to a specific location in a Veldt.
+
+# Arguments
+- veldt::Veldt
+- coord::Array{Int64, 1}
+- cell::Cell
+"""
+function add_cell(veldt::Veldt, coord::Array{Int64, 1}, cell::Cell)
+    for (mol, count) in cell.molecule_counts[1]
+        if haskey(veldt.cell_molecule_counts, mol)
+            veldt.cell_molecule_counts[mol] += count
+        else
+            veldt.cell_molecule_counts[mol] = count
+        end
+
+        if length(coord) == 2
+            vp = veldt.points[coord[1]][coord[2]]
+            vp.cell = cell
+        elseif length(coord) == 3
+            vp = veldt.points[coord[1]][coord[2]][coord[3]]
+            vp.cell = cell
         end
     end
 end

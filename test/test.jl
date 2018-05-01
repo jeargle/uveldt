@@ -381,13 +381,17 @@ function test_veldt()
     println("  * create Chemistry")
     chem1 = Chemistry(el_table1, b_table1)
 
-    mol1 = Molecule("mol1", "AAA", chem1)
-    mol2 = Molecule("mol2", "BBB", chem1)
-    mol3 = Molecule("mol3", "ABA", chem1)
-    println("mol1: ", mol1)
-    println("mol2: ", mol2)
-    println("mol3: ", mol3)
-    println()
+    genome_str1 = genome_string(200, el_table1)
+    genome1 = Genome("genome1", genome_str1, el_table1)
+    genome_str2 = genome_string(200, el_table1)
+    genome2 = Genome("genome2", genome_str2, el_table1)
+
+    cell1 = Cell(genome1)
+    cell1.molecule_counts[1]["AAA"] = 11
+    cell1.molecule_counts[1]["BBB"] = 22
+    cell2 = Cell(genome2)
+    cell2.molecule_counts[1]["AA"] = 33
+    cell2.molecule_counts[1]["AB"] = 44
 
     println("  * Veldt")
     veldt1 = Veldt([3, 4])
@@ -400,23 +404,28 @@ function test_veldt()
     init_molecules(veldt1, [3, 3], Dict("AAA" => 30, "BBB" => 30))
     println("veldt1: ", veldt1)
 
+    println("  * add Cells")
+    add_cell(veldt1, [1, 1], cell1)
+    add_cell(veldt1, [2, 2], cell2)
+    println("veldt1: ", veldt1)
+
     println()
 end
 
 
 
 function main()
-    test_element()
-    test_element_table()
-    test_bond()
-    test_bond_table()
-    test_chemistry()
-    test_molecule()
-    test_reaction()
-    test_gene()
-    test_genome()
-    test_cell()
-    test_veldt_point()
+    # test_element()
+    # test_element_table()
+    # test_bond()
+    # test_bond_table()
+    # test_chemistry()
+    # test_molecule()
+    # test_reaction()
+    # test_gene()
+    # test_genome()
+    # test_cell()
+    # test_veldt_point()
     test_veldt()
 end
 
