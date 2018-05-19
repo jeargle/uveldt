@@ -45,16 +45,14 @@ Bond between two Elements.
 type Bond
     element1::Element
     element2::Element
-    element_table::ElementTable
     energy_change::Float64
     transition_energy::Float64
 
     Bond(element1::Element,
          element2::Element,
-         element_table::ElementTable,
          energy_change::Float64,
-         transition_energy::Float64) = new(element1, element2, element_table,
-                                           energy_change, transition_energy)
+         transition_energy::Float64) = new(element1, element2, energy_change,
+                                           transition_energy)
 end
 
 Base.show(io::IO, b::Bond) = show(io, string(b.element1.name, '-', b.element2.name, ", trans: ", b.transition_energy, ", energy: ", b.energy_change))
@@ -66,9 +64,8 @@ Set of all Bonds.
 """
 type BondTable
     bonds::Dict{Char, Dict{Char, Bond}}
-    element_table::ElementTable
 
-    function BondTable(bonds, element_table::ElementTable)
+    function BondTable(bonds)
         bond_dict = Dict{Char, Dict{Char, Bond}}()
 
         for bond in bonds
@@ -88,7 +85,7 @@ type BondTable
             end
         end
 
-        new(bond_dict, element_table)
+        new(bond_dict)
     end
 end
 
@@ -202,10 +199,11 @@ type Gene
     location::Int64
     string::AbstractString
     transcript::AbstractString
-    element_table::ElementTable
-    function Gene(location::Int64, gene_string::AbstractString, element_table::ElementTable)
-        transcript = transcribe_gene(gene_string, element_table)
-        new(location, gene_string, transcript, element_table)
+    chemistry::Chemistry
+
+    function Gene(location::Int64, gene_string::AbstractString, chemistry::Chemistry)
+        transcript = transcribe_gene(gene_string, chemistry)
+        new(location, gene_string, transcript, chemistry)
     end
 end
 
@@ -217,13 +215,13 @@ pattern.  A Genome can have a lot of intergenic space that doesn't code for anyt
 type Genome
     name::AbstractString
     string::AbstractString
-    element_table::ElementTable
+    chemistry::Chemistry
     genes::Array{Gene, 1}
 
-    Genome(name::AbstractString, string::AbstractString, element_table::ElementTable) = new(name, string, element_table)
+    Genome(name::AbstractString, string::AbstractString, chemistry::Chemistry) = new(name, string, chemistry)
 
-    function Genome(name::AbstractString, size::Int64, element_table::ElementTable)
-        Genome(name, genome_string(size, element_table), element_table)
+    function Genome(name::AbstractString, size::Int64, chemistry::Chemistry)
+        Genome(name, genome_string(size, chemistry), chemistry)
     end
 end
 
@@ -362,11 +360,11 @@ end
 
 
 """
-    parse_reaction(reaction_string, element_table)
+    parse_reaction(reaction_string)
 
 Parse the reactants and products from a reaction string.
 """
-function parse_reaction(reaction_string::AbstractString, element_table::ElementTable)
+function parse_reaction(reaction_string::AbstractString)
     reactants = split(replace(reaction_string, "/", ""), "*")
     products = split(replace(reaction_string, "*", ""), "/")
     return (reactants, products)
@@ -374,18 +372,18 @@ end
 
 
 """
-    transcribe_gene(gene_string, element_table)
+    transcribe_gene(gene_string, chemistry)
 
 Convert a Gene string into a valid Reaction string by removing redundant directive
 characters.
 """
-function transcribe_gene(gene_string::AbstractString, element_table::ElementTable)
+function transcribe_gene(gene_string::AbstractString, chemistry::Chemistry)
     # modes for parsing
     #   0: in Molecule
     #   1: in directive
     mode = 0
     gene_chars = []
-    elements = join(keys(element_table.elements))
+    elements = join(keys(chemistry.element_table.elements))
 
     if !startswith(gene_string, "(")
         println("Error: Gene must start with \"(\"")
@@ -424,13 +422,13 @@ end
 
 
 """
-    genome_string(size, element_table)
+    genome_string(size, chemistry)
 
 Randomly generate a valid Genome string.
 """
-function genome_string(size::Int64, element_table::ElementTable)
+function genome_string(size::Int64, chemistry::Chemistry)
     genome = Array{AbstractString}(size)
-    elements = [string(el) for el in keys(element_table.elements)]
+    elements = [string(el) for el in keys(chemistry.element_table.elements)]
     rand!(genome, vcat(["(", ")", "*", "/"], elements))
     return join(genome)
 end
@@ -444,7 +442,7 @@ them.
 """
 function find_genes(genome::Genome)
     gene_match = eachmatch(r"\([^\(]*?\)", genome.string)
-    genes = [Gene(gm.offset, gm.match, genome.element_table)
+    genes = [Gene(gm.offset, gm.match, genome.chemistry)
              for gm in collect(gene_match)]
     return genes
 end
@@ -456,7 +454,7 @@ end
 Identify pseudogene.
 """
 function is_pseudogene(gene::Gene)
-    elements = join(keys(gene.element_table.elements))
+    elements = join(keys(gene.chemistry.element_table.elements))
     if length(gene.transcript) < 3
         return true
     end

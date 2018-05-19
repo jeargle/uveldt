@@ -31,7 +31,7 @@ function create_bonds(element_table, energies)
         for j in i:el_count
             el2 = element_table.elements[elements[j]]
             energy1, energy2 = energies[energy_idx]
-            push!(bonds, Bond(el1, el2, element_table, energy1, energy2))
+            push!(bonds, Bond(el1, el2, energy1, energy2))
             energy_idx += 1
         end
     end
@@ -98,7 +98,7 @@ function test_bond_table()
     energies1 = [(-5.5, 1.5), (-4.5, 0.5), (3.5, 3.5)]
     bonds = create_bonds(el_table1, energies1)
 
-    b_table1 = BondTable(bonds, el_table1)
+    b_table1 = BondTable(bonds)
     println("b_table1: ", b_table1)
 
     println("  * get Bonds")
@@ -125,8 +125,8 @@ function test_chemistry()
     bonds = create_bonds(el_table2, energies1)
     bond1, bond2, bond3, bond4, bond5, bond6 = bonds
 
-    b_table1 = BondTable([bond1, bond2, bond4], el_table1)
-    b_table2 = BondTable(bonds, el_table2)
+    b_table1 = BondTable([bond1, bond2, bond4])
+    b_table2 = BondTable(bonds)
 
     println("  * create Chemistries")
     chem1 = Chemistry(el_table1, b_table1)
@@ -149,7 +149,7 @@ function test_molecule()
     energies1 = [(-5.5, 1.5), (-4.5, 0.5), (3.5, 3.5)]
     bonds = create_bonds(el_table1, energies1)
 
-    b_table1 = BondTable(bonds, el_table1)
+    b_table1 = BondTable(bonds)
 
     println("  * create Chemistry")
     chem1 = Chemistry(el_table1, b_table1)
@@ -179,7 +179,7 @@ function test_reaction()
     energies1 = [(-5.5, 1.5), (-4.5, 0.5), (3.5, 3.5)]
     bonds = create_bonds(el_table1, energies1)
 
-    b_table1 = BondTable(bonds, el_table1)
+    b_table1 = BondTable(bonds)
 
     println("  * create Chemistry")
     chem1 = Chemistry(el_table1, b_table1)
@@ -213,19 +213,19 @@ function test_gene()
     energies1 = [(-5.5, 1.5), (-4.5, 0.5), (-4.5, 0.5), (3.5, 3.5), (3.5, 3.5), (3.5, 3.5)]
     bonds = create_bonds(el_table1, energies1)
 
-    b_table1 = BondTable(bonds, el_table1)
+    b_table1 = BondTable(bonds)
 
     println("  * create Chemistry")
     chem1 = Chemistry(el_table1, b_table1)
 
     genes = []
-    push!(genes, Gene(1, "(A*B)", el_table1))
-    push!(genes, Gene(21, "(A/B)", el_table1))
-    push!(genes, Gene(45, "(A*B/C)", el_table1))
-    push!(genes, Gene(132, "(A*B*C)", el_table1))
-    push!(genes, Gene(154, "(A*//*A)", el_table1))
-    push!(genes, Gene(154, "(A/*A*/A)", el_table1))
-    push!(genes, Gene(154, "(*/AAA/*/*/)", el_table1))
+    push!(genes, Gene(1, "(A*B)", chem1))
+    push!(genes, Gene(21, "(A/B)", chem1))
+    push!(genes, Gene(45, "(A*B/C)", chem1))
+    push!(genes, Gene(132, "(A*B*C)", chem1))
+    push!(genes, Gene(154, "(A*//*A)", chem1))
+    push!(genes, Gene(154, "(A/*A*/A)", chem1))
+    push!(genes, Gene(154, "(*/AAA/*/*/)", chem1))
 
     for i in 1:length(genes)
         @printf("gene%d: %s\n", i, genes[i])
@@ -235,7 +235,7 @@ function test_gene()
     reactions = []
     for i in 1:length(genes)
         @printf("gene%d.transcript: %s\n", i, genes[i].transcript)
-        reactants, products = parse_reaction(genes[i].transcript, el_table1)
+        reactants, products = parse_reaction(genes[i].transcript)
         println("reactants: ", reactants)
         println("products: ", products)
         if is_pseudogene(genes[i])
@@ -261,10 +261,18 @@ function test_genome()
     elements = create_elements(2)
     el_table1 = ElementTable(elements)
 
-    genome_str1 = genome_string(1000, el_table1)
+    energies1 = [(-5.5, 1.5), (-4.5, 0.5), (3.5, 3.5)]
+    bonds = create_bonds(el_table1, energies1)
+
+    b_table1 = BondTable(bonds)
+
+    println("  * create Chemistry")
+    chem1 = Chemistry(el_table1, b_table1)
+
+    genome_str1 = genome_string(1000, chem1)
     println("genome_str1: ", genome_str1)
 
-    genome1 = Genome("genome1", genome_str1, el_table1)
+    genome1 = Genome("genome1", genome_str1, chem1)
     println("genome1: ", genome1)
     write_fasta(genome1, "genome1.fasta")
 
@@ -290,7 +298,7 @@ function test_genome()
             pseudogene_count += 1
         else
             @printf("gene%d.transcript: %s\n", i, genes[i].transcript)
-            reactants, products = parse_reaction(genes[i].transcript, el_table1)
+            reactants, products = parse_reaction(genes[i].transcript)
             println("reactants: ", reactants)
             println("products: ", products)
         end
@@ -311,10 +319,18 @@ function test_cell()
     elements = create_elements(2)
     el_table1 = ElementTable(elements)
 
-    genome_str = genome_string(200, el_table1)
+    energies1 = [(-5.5, 1.5), (-4.5, 0.5), (3.5, 3.5)]
+    bonds = create_bonds(el_table1, energies1)
+
+    b_table1 = BondTable(bonds)
+
+    println("  * create Chemistry")
+    chem1 = Chemistry(el_table1, b_table1)
+
+    genome_str = genome_string(200, chem1)
     println("genome_string: ", genome_str)
 
-    genome1 = Genome("genome1", genome_str, el_table1)
+    genome1 = Genome("genome1", genome_str, chem1)
     println("genome1: ", genome1)
 
     println("  * Cells")
@@ -337,8 +353,16 @@ function test_veldt_point()
     elements = create_elements(2)
     el_table1 = ElementTable(elements)
 
-    genome_str = genome_string(200, el_table1)
-    genome1 = Genome("genome1", genome_str, el_table1)
+    energies1 = [(-5.5, 1.5), (-4.5, 0.5), (3.5, 3.5)]
+    bonds = create_bonds(el_table1, energies1)
+
+    b_table1 = BondTable(bonds)
+
+    println("  * create Chemistry")
+    chem1 = Chemistry(el_table1, b_table1)
+
+    genome_str = genome_string(200, chem1)
+    genome1 = Genome("genome1", genome_str, chem1)
     cell1 = Cell(genome1)
     cell1.molecule_counts[1]["AAA"] = 33
     cell1.molecule_counts[1]["BBB"] = 44
@@ -376,15 +400,15 @@ function test_veldt()
     energies1 = [(-5.5, 1.5), (-4.5, 0.5), (3.5, 3.5)]
     bonds = create_bonds(el_table1, energies1)
 
-    b_table1 = BondTable(bonds, el_table1)
+    b_table1 = BondTable(bonds)
 
     println("  * create Chemistry")
     chem1 = Chemistry(el_table1, b_table1)
 
-    genome_str1 = genome_string(200, el_table1)
-    genome1 = Genome("genome1", genome_str1, el_table1)
-    genome_str2 = genome_string(200, el_table1)
-    genome2 = Genome("genome2", genome_str2, el_table1)
+    genome_str1 = genome_string(200, chem1)
+    genome1 = Genome("genome1", genome_str1, chem1)
+    genome_str2 = genome_string(200, chem1)
+    genome2 = Genome("genome2", genome_str2, chem1)
 
     cell1 = Cell(genome1)
     cell1.molecule_counts[1]["AAA"] = 11
@@ -415,17 +439,17 @@ end
 
 
 function main()
-    # test_element()
-    # test_element_table()
-    # test_bond()
-    # test_bond_table()
-    # test_chemistry()
-    # test_molecule()
-    # test_reaction()
-    # test_gene()
-    # test_genome()
-    # test_cell()
-    # test_veldt_point()
+    test_element()
+    test_element_table()
+    test_bond()
+    test_bond_table()
+    test_chemistry()
+    test_molecule()
+    test_reaction()
+    test_gene()
+    test_genome()
+    test_cell()
+    test_veldt_point()
     test_veldt()
 end
 
