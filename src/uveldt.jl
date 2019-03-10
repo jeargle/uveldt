@@ -4,7 +4,10 @@
 
 module uveldt
 
-export Element, ElementTable, Bond, BondTable, Chemistry, Molecule, Reaction, Gene, Genome, Cell, VeldtPoint, Veldt, init_molecules, add_cell, parse_reaction, transcribe_gene, genome_string, find_genes, is_pseudogene, read_fasta, write_fasta, get_bond, mass
+export Element, ElementTable, Bond, BondTable, Chemistry, Molecule, Reaction
+export Gene, Genome, Cell, VeldtPoint, Veldt, init_molecules, add_cell
+export parse_reaction, transcribe_gene, genome_string, find_genes, is_pseudogene
+export read_fasta, write_fasta, get_bond, mass
 
 
 """
@@ -184,9 +187,11 @@ Base.show(io::IO, m::MIME"text/plain", r::Reaction) = show(io, m, "reactants: " 
 
 """
 Genes are strings bracketed by start '(' and stop ')' characters that code for specific
-chemical reactions.  The internals consist of Molecule strings with join '*' and split '/'
-operators specifying how the set of Molecules will be processed.  All operators act at the
-same time.  Each join creates a new bond, and each split breaks an existing bond.
+chemical reactions, pores, or transporters.
+
+For chemical reactions, the internals consist of Molecule strings with join '*' and split
+'/' operators specifying how the set of Molecules will be processed.  All operators act at
+the same time.  Each join creates a new bond, and each split breaks an existing bond.
 
 # Examples
   (A*B): A + B -> AB
@@ -194,6 +199,25 @@ same time.  Each join creates a new bond, and each split breaks an existing bond
   (A*B/C): A + BC -> AB + C
   (A*B*C): A + B + C -> ABC
   (A*A*A): A + A + A -> AAA
+
+Pores are specified by single Molecule strings with no join or split operators.  If a pore
+is active, Molecules of that type are allowed to diffuse freely into and out of the cell.
+
+# Examples
+  (A): A pore
+  (AB): AB pore
+  (AAA): AAA pore
+
+Transporters are similar to pores except that they use energy to move Molecules across the
+cell membrane.  A transporter string must start with a join or split operator followed by
+a single Molecule string.
+
+# Examples
+  (*A): A(out) -> A(in)
+  (/A): A(in) -> A(out)
+  (*AB): AB(out) -> AB(in)
+  (/AAA): AAA(in) -> AAA(out)
+
 """
 type Gene
     location::Int64
