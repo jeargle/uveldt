@@ -41,7 +41,7 @@ Examples:
 
 Pores are specified by single molecule strings with no join or split operators.  If a pore is active, molecules of that type are allowed to diffuse freely into and out of the cell.
 
-# Examples
+Examples:
 
 * (A): A pore
 * (AB): AB pore
@@ -49,7 +49,8 @@ Pores are specified by single molecule strings with no join or split operators. 
 
 Transporters are similar to pores except that they use energy to move molecules across the cell membrane.  A transporter string must start with a join or split operator followed by a single molecule string.
 
-# Examples
+Examples:
+
 * (\*A): A(out) -> A(in)
 * (/A): A(in) -> A(out)
 * (\*AB): AB(out) -> AB(in)
