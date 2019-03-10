@@ -25,15 +25,35 @@ For example, atoms of elements "A" and "B" can be connected to make the molecule
 Genome
 ------
 
-Genomes in &mu;Veldt are simply long strings which can contain genes that code for specific chemical reactions.  These reactions specify a set of reactants and a set of products.  Genes start with "(" and end with ")".  They contain element characters as well as the reaction operators "\*" and "/".  "\*" means that the elements to either side are separate in the reactants but bonded in the products.  "/" means that they are bonded in the reactants and separate in the products.
+Genomes in &mu;Veldt are simply long strings which can contain genes that code for specific chemical reactions, pores, or transporters.
+
+Reactions specify a set of reactants and a set of products.  Genes start with "(" and end with ")".  They contain element characters as well as the reaction operators "\*" and "/".  "\*" means that the elements to either side are separate in the reactants but bonded in the products.  "/" means that they are bonded in the reactants and separate in the products.  To create a reaction string for the inverse of a given reaction, just switch all joins to splits and vice versa.
 
 Examples:
 
 * (A\*B): A + B -> AB
 * (A/B): AB -> A + B
+* (AB\*C): AB + C -> ABC
+* (AB/C): ABC -> AB + C
 * (A\*B/C): A + BC -> AB + C
 * (A\*B\*C): A + B + C -> ABC
 * (A\*A\*A): A + A + A -> AAA
+
+Pores are specified by single molecule strings with no join or split operators.  If a pore is active, molecules of that type are allowed to diffuse freely into and out of the cell.
+
+# Examples
+
+* (A): A pore
+* (AB): AB pore
+* (AAA): AAA pore
+
+Transporters are similar to pores except that they use energy to move molecules across the cell membrane.  A transporter string must start with a join or split operator followed by a single molecule string.
+
+# Examples
+* (\*A): A(out) -> A(in)
+* (/A): A(in) -> A(out)
+* (\*AB): AB(out) -> AB(in)
+* (/AAA): AAA(in) -> AAA(out)
 
 
 Evolution

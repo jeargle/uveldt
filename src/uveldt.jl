@@ -191,11 +191,15 @@ chemical reactions, pores, or transporters.
 
 For chemical reactions, the internals consist of Molecule strings with join '*' and split
 '/' operators specifying how the set of Molecules will be processed.  All operators act at
-the same time.  Each join creates a new bond, and each split breaks an existing bond.
+the same time.  Each join creates a new bond, and each split breaks an existing bond.  To
+create a reaction string for the inverse of a given reaction, just switch all joins to
+splits and vice versa.
 
 # Examples
   (A*B): A + B -> AB
   (A/B): AB -> A + B
+  (AB*C): AB + C -> ABC
+  (AB/C): ABC -> AB + C
   (A*B/C): A + BC -> AB + C
   (A*B*C): A + B + C -> ABC
   (A*A*A): A + A + A -> AAA
