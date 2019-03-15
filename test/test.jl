@@ -1,5 +1,5 @@
 # John Eargle (mailto: jeargle at gmail.com)
-# 2018
+# 2018-2019
 # test
 
 using uveldt
@@ -185,18 +185,23 @@ function test_reaction()
     chem1 = Chemistry(el_table1, b_table1)
 
     println("  * Reactions")
-    reaction1 = Reaction(["A", "A"], ["AA"], chem1)
-    reaction2 = Reaction(["B", "B"], ["BB"], chem1)
-    reaction3 = Reaction(["AB", "BA"], ["ABBA"], chem1)
-    reaction4 = Reaction(["AA"], ["A", "A"], chem1)
-    reaction5 = Reaction(["BB"], ["B", "B"], chem1)
-    reaction6 = Reaction(["ABBA"], ["AB", "BA"], chem1)
-    println("reaction1: ", reaction1)
-    println("reaction2: ", reaction2)
-    println("reaction3: ", reaction3)
-    println("reaction4: ", reaction4)
-    println("reaction5: ", reaction5)
-    println("reaction6: ", reaction6)
+    reactions = [Reaction(["A", "A"], ["AA"], chem1),
+                 Reaction(["B", "B"], ["BB"], chem1),
+                 Reaction(["AB", "BA"], ["ABBA"], chem1),
+                 Reaction(["AA"], ["A", "A"], chem1),
+                 Reaction(["BB"], ["B", "B"], chem1),
+                 Reaction(["ABBA"], ["AB", "BA"], chem1)]
+    for (i, reaction) in enumerate(reactions)
+        @printf("reaction%d: %s\n", i, reaction)
+    end
+
+    println("  * Pores")
+    reactions = [Reaction("A", chem1),
+                 Reaction("BB", chem1),
+                 Reaction("ABBA", chem1)]
+    for (i, reaction) in enumerate(reactions)
+        @printf("pore%d: %s\n", i, reaction)
+    end
 
     println()
 
@@ -293,11 +298,11 @@ function test_genome()
     println("  * Gene transcripts")
     pseudogene_count = 0
     for i in 1:length(genes)
+        @printf("gene%d.transcript: %s\n", i, genes[i].transcript)
         if is_pseudogene(genes[i])
             println("  * pseudogene: " * genes[i].string)
             pseudogene_count += 1
         else
-            @printf("gene%d.transcript: %s\n", i, genes[i].transcript)
             reactants, products = parse_reaction(genes[i].transcript)
             println("reactants: ", reactants)
             println("products: ", products)
@@ -439,18 +444,18 @@ end
 
 
 function main()
-    test_element()
-    test_element_table()
-    test_bond()
-    test_bond_table()
-    test_chemistry()
-    test_molecule()
+    # test_element()
+    # test_element_table()
+    # test_bond()
+    # test_bond_table()
+    # test_chemistry()
+    # test_molecule()
     test_reaction()
-    test_gene()
-    test_genome()
-    test_cell()
-    test_veldt_point()
-    test_veldt()
+    # test_gene()
+    # test_genome()
+    # test_cell()
+    # test_veldt_point()
+    # test_veldt()
 end
 
 main()

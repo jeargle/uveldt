@@ -1,5 +1,5 @@
 # John Eargle (mailto: jeargle at gmail.com)
-# 2018
+# 2018-2019
 # uveldt
 
 module uveldt
@@ -127,11 +127,14 @@ Base.show(io::IO, mol::Molecule) = show(io, string(mol.name, ", ", mol.elements)
 Base.show(io::IO, m::MIME"text/plain", mol::Molecule) = show(io, m, string(mol.name, ", ", mol.elements))
 
 
+@enum ReactionType reaction=1 pore=2 transport_in=3 transport_out=4
+
 """
 Molecular reaction with reactants and products where Bonds are created and/or broken.  A
 Reaction is specified by a string derived from a Gene.
 """
 type Reaction
+    reaction_type::ReactionType
     reactants::Array{Molecule, 1}
     products::Array{Molecule, 1}
     old_bonds::Array{Bond, 1}
@@ -175,9 +178,37 @@ type Reaction
             transition_energy += bond.transition_energy - bond.energy_change
         end
 
-        new(r_mols, p_mols, old_bonds, new_bonds,
+        new(reaction, r_mols, p_mols, old_bonds, new_bonds,
             energy_change, transition_energy)
         # new(r_mols, p_mols, old_bonds, new_bonds, energy_change, transition_energy)
+    end
+
+    function Reaction(reactant, chemistry::Chemistry)
+        energy_change = 0.0
+        transition_energy = 0.0
+
+        r_mol = Molecule(reactant, reactant, chemistry)
+
+        new(pore, [r_mol], [], [], [],
+            energy_change, transition_energy)
+    end
+
+    function Reaction(reactants, transport_type::ReactionType,
+                      energy_change, chemistry::Chemistry)
+        transition_energy = 0.0
+
+        if !(active_transport_type in (transport_in, transport_out))
+            println("Error: bad transport_type")
+        end
+
+        r_mols = []
+        for r_str in reactants
+            mol = Molecule(r_str, r_str, chemistry)
+            push!(r_mols, mol)
+        end
+
+        new(transport_type, r_mols, [], [], [],
+            energy_change, transition_energy)
     end
 end
 
