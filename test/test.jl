@@ -352,6 +352,8 @@ function test_genome()
     @printf("%d pseudogenes\n", pseudogene_count)
     @printf("%d total\n", length(genes))
 
+    add_snps!(genome1, 0.01)
+
     println()
 end
 

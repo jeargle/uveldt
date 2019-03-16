@@ -7,8 +7,11 @@ module uveldt
 export Element, ElementTable, Bond, BondTable, Chemistry, Molecule
 export ReactionType, Reaction
 export Gene, Genome, Cell, VeldtPoint, Veldt, init_molecules, add_cell
-export parse_reaction, transcribe_gene, genome_string, find_genes, is_pseudogene
+export parse_reaction, transcribe_gene, genome_string, find_genes
+export add_snps!, is_pseudogene
 export read_fasta, write_fasta, get_bond, mass
+
+using Distributions
 
 
 macro exported_enum(name, args...)
@@ -526,6 +529,24 @@ function find_genes(genome::Genome)
     genes = [Gene(gm.offset, gm.match, genome.chemistry)
              for gm in collect(gene_match)]
     return genes
+end
+
+
+"""
+    add_snps(genome, snp_rate)
+
+Add SNPs to Genome.
+"""
+function add_snps!(genome::Genome, snp_rate)
+    geom_dist = Geometric(snp_rate)
+    location = 1 + rand(geom_dist)
+    elements = [string(el) for el in keys(genome.chemistry.element_table.elements)]
+    elements = vcat(["(", ")", "*", "/"], elements)
+    while location <= length(genome.string)
+        snp = rand(elements)
+        @printf("  %d SNP %s->%s\n", location, genome.string[location], snp)
+        location += rand(geom_dist)
+    end
 end
 
 
