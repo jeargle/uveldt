@@ -537,7 +537,6 @@ Identify pseudogene.
 function is_pseudogene(gene::Gene)
     elements = join(keys(gene.chemistry.element_table.elements))
 
-    # Only case of real pseudogene?
     if length(gene.transcript) == 0
         return true
     end

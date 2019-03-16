@@ -318,6 +318,10 @@ function test_genome()
 
     println("  * Gene transcripts")
     pseudogene_count = 0
+    reaction_count = 0
+    pore_count = 0
+    transport_in_count = 0
+    transport_out_count = 0
     for i in 1:length(genes)
         @printf("gene%d.transcript: %s\n", i, genes[i].transcript)
         if is_pseudogene(genes[i])
@@ -328,10 +332,23 @@ function test_genome()
             println("  reaction type: ", reaction_type)
             println("  reactants: ", reactants)
             println("  products: ", products)
+            if reaction_type == reaction
+                reaction_count += 1
+            elseif reaction_type == pore
+                pore_count += 1
+            elseif reaction_type == transport_in
+                transport_in_count += 1
+            elseif reaction_type == transport_out
+                transport_out_count += 1
+            end
         end
     end
 
     @printf("%d good genes\n", length(genes)-pseudogene_count)
+    @printf("  %d reactions\n", reaction_count)
+    @printf("  %d pores\n", pore_count)
+    @printf("  %d transport in\n", transport_in_count)
+    @printf("  %d transport out\n", transport_out_count)
     @printf("%d pseudogenes\n", pseudogene_count)
     @printf("%d total\n", length(genes))
 
