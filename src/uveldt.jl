@@ -4,10 +4,20 @@
 
 module uveldt
 
-export Element, ElementTable, Bond, BondTable, Chemistry, Molecule, Reaction
+export Element, ElementTable, Bond, BondTable, Chemistry, Molecule
+export ReactionType, Reaction
 export Gene, Genome, Cell, VeldtPoint, Veldt, init_molecules, add_cell
 export parse_reaction, transcribe_gene, genome_string, find_genes, is_pseudogene
 export read_fasta, write_fasta, get_bond, mass
+
+
+macro exported_enum(name, args...)
+    esc(quote
+        @enum($name, $(args...))
+        export $name
+        $([:(export $arg) for arg in args]...)
+        end)
+end
 
 
 """
@@ -127,7 +137,7 @@ Base.show(io::IO, mol::Molecule) = show(io, string(mol.name, ", ", mol.elements)
 Base.show(io::IO, m::MIME"text/plain", mol::Molecule) = show(io, m, string(mol.name, ", ", mol.elements))
 
 
-@enum ReactionType reaction=1 pore=2 transport_in=3 transport_out=4
+@exported_enum ReactionType reaction pore transport_in transport_out
 
 """
 Molecular reaction with reactants and products where Bonds are created and/or broken.  A
@@ -193,27 +203,23 @@ type Reaction
             energy_change, transition_energy)
     end
 
-    function Reaction(reactants, transport_type::ReactionType,
-                      energy_change, chemistry::Chemistry)
+    function Reaction(reactant, chemistry::Chemistry,
+                      transport_type::ReactionType, energy_change)
         transition_energy = 0.0
 
-        if !(active_transport_type in (transport_in, transport_out))
+        if !(transport_type in (transport_in, transport_out))
             println("Error: bad transport_type")
         end
 
-        r_mols = []
-        for r_str in reactants
-            mol = Molecule(r_str, r_str, chemistry)
-            push!(r_mols, mol)
-        end
+        r_mol = Molecule(reactant, reactant, chemistry)
 
-        new(transport_type, r_mols, [], [], [],
+        new(transport_type, [r_mol], [], [], [],
             energy_change, transition_energy)
     end
 end
 
-Base.show(io::IO, r::Reaction) = show(io, "reactants: " * join([m.name for m in r.reactants], ", ") * " products: " * join([m.name for m in r.products], ", ") * ", trans: " * string(r.transition_energy) * ", energy: " * string(r.energy_change))
-Base.show(io::IO, m::MIME"text/plain", r::Reaction) = show(io, m, "reactants: " * join([m.name for m in r.reactants], ", ") * " products: " * join([m.name for m in r.products], ", ") * ", trans: " * string(r.transition_energy) * ", energy: " * string(r.energy_change))
+Base.show(io::IO, r::Reaction) = show(io, string(r.reaction_type) * " reactants: " * join([m.name for m in r.reactants], ", ") * " products: " * join([m.name for m in r.products], ", ") * ", trans: " * string(r.transition_energy) * ", energy: " * string(r.energy_change))
+Base.show(io::IO, m::MIME"text/plain", r::Reaction) = show(io, m, string(r.reaction_type) * "reactants: " * join([m.name for m in r.reactants], ", ") * " products: " * join([m.name for m in r.products], ", ") * ", trans: " * string(r.transition_energy) * ", energy: " * string(r.energy_change))
 
 
 """

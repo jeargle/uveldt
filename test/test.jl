@@ -203,6 +203,17 @@ function test_reaction()
         @printf("pore%d: %s\n", i, reaction)
     end
 
+    println("  * Transporters")
+    reactions = [Reaction("A", chem1, transport_in, -3.0),
+                 Reaction("BB", chem1, transport_in, -4.0),
+                 Reaction("ABBA", chem1, transport_in, -5.0),
+                 Reaction("A", chem1, transport_out, -3.0),
+                 Reaction("BB", chem1, transport_out, -4.0),
+                 Reaction("ABBA", chem1, transport_out, -5.0)]
+    for (i, reaction) in enumerate(reactions)
+        @printf("pore%d: %s\n", i, reaction)
+    end
+
     println()
 
 end
