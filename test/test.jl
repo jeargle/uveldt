@@ -234,14 +234,19 @@ function test_gene()
     println("  * create Chemistry")
     chem1 = Chemistry(el_table1, b_table1)
 
-    genes = []
-    push!(genes, Gene(1, "(A*B)", chem1))
-    push!(genes, Gene(21, "(A/B)", chem1))
-    push!(genes, Gene(45, "(A*B/C)", chem1))
-    push!(genes, Gene(132, "(A*B*C)", chem1))
-    push!(genes, Gene(154, "(A*//*A)", chem1))
-    push!(genes, Gene(154, "(A/*A*/A)", chem1))
-    push!(genes, Gene(154, "(*/AAA/*/*/)", chem1))
+    genes = [Gene(1, "(A*B)", chem1),
+             Gene(21, "(A/B)", chem1),
+             Gene(45, "(A*B/C)", chem1),
+             Gene(132, "(A*B*C)", chem1),
+             Gene(154, "(A*//*A)", chem1),
+             Gene(174, "(A/*A*/A)", chem1),
+             Gene(194, "(A)", chem1),
+             Gene(214, "(AB)", chem1),
+             Gene(234, "(*AB)", chem1),
+             Gene(254, "(/BA)", chem1),
+             Gene(274, "(*/AAA/*/*/)", chem1),
+             Gene(294, "(/*B*B/B*/*/*)", chem1),
+             Gene(314, "()", chem1)]
 
     for i in 1:length(genes)
         @printf("gene%d: %s\n", i, genes[i])
@@ -251,13 +256,18 @@ function test_gene()
     reactions = []
     for i in 1:length(genes)
         @printf("gene%d.transcript: %s\n", i, genes[i].transcript)
-        reactants, products = parse_reaction(genes[i].transcript)
+        reaction_type, reactants, products = parse_reaction(genes[i].transcript)
+        println("reaction type: ", reaction_type)
         println("reactants: ", reactants)
         println("products: ", products)
         if is_pseudogene(genes[i])
-            println("  * pseudogene: " * genes[i].string)
-        else
+            println("  *** pseudogene: " * genes[i].string)
+        elseif reaction_type == reaction
             push!(reactions, Reaction(reactants, products, chem1))
+        elseif reaction_type == pore
+            push!(reactions, Reaction(reactants[1], chem1))
+        else
+            push!(reactions, Reaction(reactants[1], chem1, reaction_type, -3.0))
         end
     end
 
@@ -311,12 +321,13 @@ function test_genome()
     for i in 1:length(genes)
         @printf("gene%d.transcript: %s\n", i, genes[i].transcript)
         if is_pseudogene(genes[i])
-            println("  * pseudogene: " * genes[i].string)
+            println("  *** pseudogene: " * genes[i].string)
             pseudogene_count += 1
         else
-            reactants, products = parse_reaction(genes[i].transcript)
-            println("reactants: ", reactants)
-            println("products: ", products)
+            reaction_type, reactants, products = parse_reaction(genes[i].transcript)
+            println("  reaction type: ", reaction_type)
+            println("  reactants: ", reactants)
+            println("  products: ", products)
         end
     end
 
@@ -461,9 +472,9 @@ function main()
     # test_bond_table()
     # test_chemistry()
     # test_molecule()
-    test_reaction()
+    # test_reaction()
     # test_gene()
-    # test_genome()
+    test_genome()
     # test_cell()
     # test_veldt_point()
     # test_veldt()

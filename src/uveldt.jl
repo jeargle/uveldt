@@ -430,9 +430,25 @@ end
 Parse the reactants and products from a reaction string.
 """
 function parse_reaction(reaction_string::AbstractString)
-    reactants = split(replace(reaction_string, "/", ""), "*")
-    products = split(replace(reaction_string, "*", ""), "/")
-    return (reactants, products)
+    if !ismatch(r"[\*/]", reaction_string)
+        reaction_type = pore
+        reactants = [reaction_string]
+        products = []
+    elseif reaction_string[1] == '*'
+        reaction_type = transport_in
+        reactants = [replace(reaction_string, r"\*|/", "")]
+        products = []
+    elseif reaction_string[1] == '/'
+        reaction_type = transport_out
+        reactants = [replace(reaction_string, r"\*|/", "")]
+        products = []
+    else
+        reaction_type = reaction
+        reactants = split(replace(reaction_string, "/", ""), "*")
+        products = split(replace(reaction_string, "*", ""), "/")
+    end
+
+    return (reaction_type, reactants, products)
 end
 
 
@@ -520,18 +536,18 @@ Identify pseudogene.
 """
 function is_pseudogene(gene::Gene)
     elements = join(keys(gene.chemistry.element_table.elements))
-    if length(gene.transcript) < 3
+
+    # Only case of real pseudogene?
+    if length(gene.transcript) == 0
         return true
     end
 
-    m = match(Regex("([$(elements)].*[$(elements)])"), gene.transcript)
+    m = match(Regex("([\*/]*[$(elements)])"), gene.transcript)
     if m === nothing
         return true
     end
 
-    return !ismatch(r"[\*/]", m[1])
-
-    # return !ismatch(Regex("[$(elements)]+"), gene.transcript)
+    return false
 end
 
 
