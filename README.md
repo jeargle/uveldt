@@ -52,12 +52,12 @@ Transporters are similar to pores except that they use energy to move molecules 
 Examples:
 
 * (\*A): A(out) -> A(in)
-* (/A): A(in) -> A(out)
 * (\*AB): AB(out) -> AB(in)
+* (/A): A(in) -> A(out)
 * (/AAA): AAA(in) -> AAA(out)
 
 
 Evolution
 ---------
 
-Evolution is biased replication with variation.  Selection is made using some fitness function and mutations are introduces when the genomes reproduce.  Many types of variation are possible including SNPs, indels, large structural variants, and recombination across multiple genomes.
+Evolution is biased replication with variation.  In &mu;Veldt, selection is made explicitly using a defined fitness function, and mutations are introduced when the genomes reproduce.  Many types of variation are possible including SNPs, indels, large structural variants, and recombination across multiple genomes.
