@@ -8,7 +8,7 @@ export Element, ElementTable, Bond, BondTable, Chemistry, Molecule
 export ReactionType, Reaction
 export Gene, Genome, Cell, VeldtPoint, Veldt, init_molecules, add_cell
 export parse_reaction, transcribe_gene, genome_string, find_genes
-export add_snps!, is_pseudogene
+export add_snps!, add_insertions!, remove_deletions!, is_pseudogene
 export read_fasta, write_fasta, get_bond, mass
 
 using Distributions
@@ -512,8 +512,7 @@ Randomly generate a valid Genome string.
 """
 function genome_string(size::Int64, chemistry::Chemistry)
     genome = Array{AbstractString}(size)
-    elements = [string(el) for el in keys(chemistry.element_table.elements)]
-    rand!(genome, vcat(["(", ")", "*", "/"], elements))
+    rand!(genome, alphabet_string(chemistry))
     return join(genome)
 end
 
@@ -533,18 +532,52 @@ end
 
 
 """
-    add_snps(genome, snp_rate)
+    add_snps!(genome, rate)
 
 Add SNPs to Genome.
 """
-function add_snps!(genome::Genome, snp_rate)
-    geom_dist = Geometric(snp_rate)
+function add_snps!(genome::Genome, rate)
+    geom_dist = Geometric(rate)
     location = 1 + rand(geom_dist)
-    elements = [string(el) for el in keys(genome.chemistry.element_table.elements)]
-    elements = vcat(["(", ")", "*", "/"], elements)
+    alphabet = alphabet_string(genome.chemistry)
+
     while location <= length(genome.string)
-        snp = rand(elements)
+        snp = rand(alphabet)
         @printf("  %d SNP %s->%s\n", location, genome.string[location], snp)
+        location += rand(geom_dist)
+    end
+end
+
+
+"""
+    add_insertions!(genome, rate)
+
+Add small insertions to Genome.
+"""
+function add_insertions!(genome::Genome, rate)
+    geom_dist = Geometric(rate)
+    location = 1 + rand(geom_dist)
+    alphabet = alphabet_string(genome.chemistry)
+
+    while location <= length(genome.string)
+        insert = rand(alphabet)
+        @printf("  %d insert %s\n", location, insert)
+        location += rand(geom_dist)
+    end
+end
+
+
+"""
+    remove_deletions!(genome, rate)
+
+Remove small deletions from Genome.
+"""
+function remove_deletions!(genome::Genome, rate)
+    geom_dist = Geometric(rate)
+    location = 1 + rand(geom_dist)
+
+    while location <= length(genome.string)
+        @printf("  %d delete %s\n", location, genome.string[location])
         location += rand(geom_dist)
     end
 end
@@ -627,6 +660,18 @@ Write a FASTA file with the full genome string.
 """
 function write_fasta(genome::Genome, filename)
     write_fasta([genome], filename)
+end
+
+
+"""
+    alphabet_string(chemistry::Chemistry)
+
+Generate a string with all possible characters that can appear with
+this Chemistry.
+"""
+function alphabet_string(chemistry::Chemistry)
+    elements = [string(el) for el in keys(chemistry.element_table.elements)]
+    return vcat(["(", ")", "*", "/"], elements)
 end
 
 

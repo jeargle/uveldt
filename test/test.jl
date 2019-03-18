@@ -353,6 +353,8 @@ function test_genome()
     @printf("%d total\n", length(genes))
 
     add_snps!(genome1, 0.01)
+    add_insertions!(genome1, 0.002)
+    remove_deletions!(genome1, 0.002)
 
     println()
 end
