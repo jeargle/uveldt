@@ -8,7 +8,8 @@ export Element, ElementTable, Bond, BondTable, Chemistry, Molecule
 export ReactionType, Reaction
 export Gene, Genome, Cell, VeldtPoint, Veldt, init_molecules, add_cell
 export parse_reaction, transcribe_gene, genome_string, find_genes
-export add_snps!, add_insertions!, remove_deletions!, is_pseudogene
+export add_snps, add_insertions, remove_deletions, cross_over
+export is_pseudogene
 export read_fasta, write_fasta, get_bond, mass
 
 using Distributions
@@ -532,11 +533,11 @@ end
 
 
 """
-    add_snps!(genome, rate)
+    add_snps(genome, rate)
 
 Add SNPs to Genome.
 """
-function add_snps!(genome::Genome, rate)
+function add_snps(genome::Genome, rate)
     geom_dist = Geometric(rate)
     location = 1 + rand(geom_dist)
     alphabet = alphabet_string(genome.chemistry)
@@ -550,11 +551,11 @@ end
 
 
 """
-    add_insertions!(genome, rate)
+    add_insertions(genome, rate)
 
 Add small insertions to Genome.
 """
-function add_insertions!(genome::Genome, rate)
+function add_insertions(genome::Genome, rate)
     geom_dist = Geometric(rate)
     location = 1 + rand(geom_dist)
     alphabet = alphabet_string(genome.chemistry)
@@ -568,11 +569,11 @@ end
 
 
 """
-    remove_deletions!(genome, rate)
+    remove_deletions(genome, rate)
 
 Remove small deletions from Genome.
 """
-function remove_deletions!(genome::Genome, rate)
+function remove_deletions(genome::Genome, rate)
     geom_dist = Geometric(rate)
     location = 1 + rand(geom_dist)
 
@@ -580,6 +581,39 @@ function remove_deletions!(genome::Genome, rate)
         @printf("  %d delete %s\n", location, genome.string[location])
         location += rand(geom_dist)
     end
+end
+
+
+"""
+    cross_over(genome1, genome2)
+
+Cross over two Genomes to produce two child Genomes.
+"""
+function cross_over(genome1::Genome, genome2::Genome)
+    if genome1.chemistry != genome2.chemistry
+        @printf("Error: chemistries must match between genome1 and genome2")
+    end
+
+    location1 = rand(0:length(genome1.string))
+    location2 = rand(0:length(genome2.string))
+    @printf("  location1: %d\n", location1)
+    @printf("  location2: %d\n", location2)
+
+    head_str = genome1.string[1:location1]
+    tail_str = genome2.string[location2+1:end]
+    @printf("  head: %s\n", head_str)
+    @printf("  tail: %s\n", tail_str)
+    child_str = head_str * tail_str
+    child_genome1 = Genome("child_genome1", child_str, genome1.chemistry)
+
+    head_str = genome2.string[1:location2]
+    tail_str = genome1.string[location1+1:end]
+    @printf("  head: %s\n", head_str)
+    @printf("  tail: %s\n", tail_str)
+    child_str = head_str * tail_str
+    child_genome2 = Genome("child_genome2", child_str, genome1.chemistry)
+
+    return (child_genome1, child_genome2)
 end
 
 

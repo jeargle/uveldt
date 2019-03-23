@@ -352,9 +352,15 @@ function test_genome()
     @printf("%d pseudogenes\n", pseudogene_count)
     @printf("%d total\n", length(genes))
 
-    add_snps!(genome1, 0.01)
-    add_insertions!(genome1, 0.002)
-    remove_deletions!(genome1, 0.002)
+    genome_str2 = genome_string(500, chem1)
+    println("genome_str2: ", genome_str2)
+    genome2 = Genome("genome2", genome_str2, chem1)
+    println("genome2: ", genome2)
+
+    add_snps(genome1, 0.01)
+    add_insertions(genome1, 0.002)
+    remove_deletions(genome1, 0.002)
+    genome3, genome4 = cross_over(genome1, genome2)
 
     println()
 end
