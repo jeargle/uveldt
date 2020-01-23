@@ -2,6 +2,7 @@
 # 2018-2019
 # test
 
+using Printf
 using uveldt
 
 
@@ -192,7 +193,7 @@ function test_reaction()
                  Reaction(["BB"], ["B", "B"], chem1),
                  Reaction(["ABBA"], ["AB", "BA"], chem1)]
     for (i, reaction) in enumerate(reactions)
-        @printf("reaction%d: %s\n", i, reaction)
+        @printf "reaction%d: %s\n" i reaction
     end
 
     println("  * Pores")
@@ -200,7 +201,7 @@ function test_reaction()
                  Reaction("BB", chem1),
                  Reaction("ABBA", chem1)]
     for (i, reaction) in enumerate(reactions)
-        @printf("pore%d: %s\n", i, reaction)
+        @printf "pore%d: %s\n" i reaction
     end
 
     println("  * Transporters")
@@ -211,7 +212,7 @@ function test_reaction()
                  Reaction("BB", chem1, transport_out, -4.0),
                  Reaction("ABBA", chem1, transport_out, -5.0)]
     for (i, reaction) in enumerate(reactions)
-        @printf("pore%d: %s\n", i, reaction)
+        @printf "pore%d: %s\n" i reaction
     end
 
     println()
@@ -249,13 +250,13 @@ function test_gene()
              Gene(314, "()", chem1)]
 
     for i in 1:length(genes)
-        @printf("gene%d: %s\n", i, genes[i])
+        @printf "gene%d: %s\n" i genes[i]
     end
 
     println("  * Gene transcripts")
     reactions = []
     for i in 1:length(genes)
-        @printf("gene%d.transcript: %s\n", i, genes[i].transcript)
+        @printf "gene%d.transcript: %s\n" i genes[i].transcript
         reaction_type, reactants, products = parse_reaction(genes[i].transcript)
         println("reaction type: ", reaction_type)
         println("reactants: ", reactants)
@@ -273,7 +274,7 @@ function test_gene()
 
     println("  * Reactions")
     for i in 1:length(reactions)
-        @printf("reaction%d: %s\n", i, reactions[i])
+        @printf "reaction%d: %s\n" i reactions[i]
     end
 
     println()
@@ -313,7 +314,7 @@ function test_genome()
 
     println("  * find Genes")
     for gene in genes
-        @printf("%d %s\n", gene.location, gene.string)
+        @printf "%d %s\n" gene.location gene.string
     end
 
     println("  * Gene transcripts")
@@ -323,7 +324,7 @@ function test_genome()
     transport_in_count = 0
     transport_out_count = 0
     for i in 1:length(genes)
-        @printf("gene%d.transcript: %s\n", i, genes[i].transcript)
+        @printf "gene%d.transcript: %s\n" i genes[i].transcript
         if is_pseudogene(genes[i])
             println("  *** pseudogene: " * genes[i].string)
             pseudogene_count += 1
@@ -344,13 +345,13 @@ function test_genome()
         end
     end
 
-    @printf("%d good genes\n", length(genes)-pseudogene_count)
-    @printf("  %d reactions\n", reaction_count)
-    @printf("  %d pores\n", pore_count)
-    @printf("  %d transport in\n", transport_in_count)
-    @printf("  %d transport out\n", transport_out_count)
-    @printf("%d pseudogenes\n", pseudogene_count)
-    @printf("%d total\n", length(genes))
+    @printf "%d good genes\n" length(genes)-pseudogene_count
+    @printf "  %d reactions\n" reaction_count
+    @printf "  %d pores\n" pore_count
+    @printf "  %d transport in\n" transport_in_count
+    @printf "  %d transport out\n" transport_out_count
+    @printf "%d pseudogenes\n" pseudogene_count
+    @printf "%d total\n" length(genes)
 
     genome_str2 = genome_string(500, chem1)
     println("genome_str2: ", genome_str2)

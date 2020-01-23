@@ -13,6 +13,8 @@ export is_pseudogene
 export read_fasta, write_fasta, get_bond, mass
 
 using Distributions
+using Printf
+using Random
 
 
 macro exported_enum(name, args...)
@@ -492,7 +494,7 @@ function transcribe_gene(gene_string::AbstractString, chemistry::Chemistry)
                 push!(gene_chars, el)
                 mode = 0
             elseif el != '*' && el != '/'
-                @printf("Error: bad character in Gene string - %s", el)
+                @printf "Error: bad character in Gene string - %s" el
             end
         end
     end
@@ -512,8 +514,7 @@ end
 Randomly generate a valid Genome string.
 """
 function genome_string(size::Int64, chemistry::Chemistry)
-    genome = Array{AbstractString}(size)
-    rand!(genome, alphabet_string(chemistry))
+    genome = randstring(alphabet_string(chemistry), size)
     return join(genome)
 end
 
@@ -544,7 +545,7 @@ function add_snps(genome::Genome, rate)
 
     while location <= length(genome.string)
         snp = rand(alphabet)
-        @printf("  %d SNP %s->%s\n", location, genome.string[location], snp)
+        @printf "  %d SNP %s->%s\n" location genome.string[location] snp
         location += rand(geom_dist)
     end
 end
@@ -562,7 +563,7 @@ function add_insertions(genome::Genome, rate)
 
     while location <= length(genome.string)
         insert = rand(alphabet)
-        @printf("  %d insert %s\n", location, insert)
+        @printf "  %d insert %s\n" location insert
         location += rand(geom_dist)
     end
 end
@@ -578,7 +579,7 @@ function remove_deletions(genome::Genome, rate)
     location = 1 + rand(geom_dist)
 
     while location <= length(genome.string)
-        @printf("  %d delete %s\n", location, genome.string[location])
+        @printf "  %d delete %s\n" location genome.string[location]
         location += rand(geom_dist)
     end
 end
@@ -591,25 +592,25 @@ Cross over two Genomes to produce two child Genomes.
 """
 function cross_over(genome1::Genome, genome2::Genome)
     if genome1.chemistry != genome2.chemistry
-        @printf("Error: chemistries must match between genome1 and genome2")
+        @printf "Error: chemistries must match between genome1 and genome2"
     end
 
     location1 = rand(0:length(genome1.string))
     location2 = rand(0:length(genome2.string))
-    @printf("  location1: %d\n", location1)
-    @printf("  location2: %d\n", location2)
+    @printf "  location1: %d\n" location1
+    @printf "  location2: %d\n" location2
 
     head_str = genome1.string[1:location1]
     tail_str = genome2.string[location2+1:end]
-    @printf("  head: %s\n", head_str)
-    @printf("  tail: %s\n", tail_str)
+    @printf "  head: %s\n" head_str
+    @printf "  tail: %s\n" tail_str
     child_str = head_str * tail_str
     child_genome1 = Genome("child_genome1", child_str, genome1.chemistry)
 
     head_str = genome2.string[1:location2]
     tail_str = genome1.string[location1+1:end]
-    @printf("  head: %s\n", head_str)
-    @printf("  tail: %s\n", tail_str)
+    @printf "  head: %s\n" head_str
+    @printf "  tail: %s\n" tail_str
     child_str = head_str * tail_str
     child_genome2 = Genome("child_genome2", child_str, genome1.chemistry)
 
@@ -704,8 +705,8 @@ Generate a string with all possible characters that can appear with
 this Chemistry.
 """
 function alphabet_string(chemistry::Chemistry)
-    elements = [string(el) for el in keys(chemistry.element_table.elements)]
-    return vcat(["(", ")", "*", "/"], elements)
+    elements = [el for el in keys(chemistry.element_table.elements)]
+    return String(elements) * "()*/"
 end
 
 
