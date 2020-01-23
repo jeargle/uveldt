@@ -1,5 +1,5 @@
 # John Eargle (mailto: jeargle at gmail.com)
-# 2018-2019
+# 2018-2020
 # uveldt
 
 module uveldt
@@ -27,7 +27,7 @@ end
 """
 Chemical element.
 """
-type Element
+struct Element
     name::Char
     mass::Int64
     Element(name::Char, mass::Int64) = new(name, mass)
@@ -40,7 +40,7 @@ Base.show(io::IO, m::MIME"text/plain", el::Element) = show(io, m, string(el.name
 """
 Periodic table for Elements.
 """
-type ElementTable
+struct ElementTable
     elements::Dict{Char, Element}
 
     function ElementTable(elements)
@@ -59,7 +59,7 @@ Base.show(io::IO, m::MIME"text/plain", et::ElementTable) = show(io, m, keys(et.e
 """
 Bond between two Elements.
 """
-type Bond
+struct Bond
     element1::Element
     element2::Element
     energy_change::Float64
@@ -79,7 +79,7 @@ Base.show(io::IO, m::MIME"text/plain", b::Bond) = show(io, m, string(b.element1.
 """
 Set of all Bonds.
 """
-type BondTable
+struct BondTable
     bonds::Dict{Char, Dict{Char, Bond}}
 
     function BondTable(bonds)
@@ -113,7 +113,7 @@ Base.show(io::IO, m::MIME"text/plain", bt::BondTable) = show(io, m, string(bt.bo
 """
 Container for Elements and Bonds.
 """
-type Chemistry
+struct Chemistry
     element_table::ElementTable
     bond_table::BondTable
 
@@ -127,7 +127,7 @@ end
 """
 1D String of Elements.
 """
-type Molecule
+struct Molecule
     name::AbstractString
     elements::AbstractString
     chemistry::Chemistry
@@ -147,7 +147,7 @@ Base.show(io::IO, m::MIME"text/plain", mol::Molecule) = show(io, m, string(mol.n
 Molecular reaction with reactants and products where Bonds are created and/or broken.  A
 Reaction is specified by a string derived from a Gene.
 """
-type Reaction
+struct Reaction
     reaction_type::ReactionType
     reactants::Array{Molecule, 1}
     products::Array{Molecule, 1}
@@ -264,7 +264,7 @@ a single Molecule string.
   (/AAA): AAA(in) -> AAA(out)
 
 """
-type Gene
+struct Gene
     location::Int64
     string::AbstractString
     transcript::AbstractString
@@ -281,7 +281,7 @@ end
 String specifying all genes in the cell.  Genes are regions of the Genome that fit the Gene
 pattern.  A Genome can have a lot of intergenic space that doesn't code for anything.
 """
-type Genome
+struct Genome
     name::AbstractString
     string::AbstractString
     chemistry::Chemistry
@@ -299,7 +299,7 @@ end
 Membrane-bound compartment containing Molecules and a Genome.  Chemical Reactions happen
 within.
 """
-type Cell
+struct Cell
     genome::Genome
     molecule_counts::Array{Dict{AbstractString, Int64}, 1}  # 2 Dicts: current, future
     energy::Int64
@@ -317,7 +317,7 @@ end
 Unique location in a Veldt.  Contains two Molecule count buffers and possibly a single Cell.
 VeldtPoint time evolution is controlled by a Veldt.
 """
-type VeldtPoint
+struct VeldtPoint
     molecule_counts::Array{Dict{AbstractString, Int64}, 1}  # 2 Dicts: current, future
     cell::Cell
 
@@ -348,7 +348,7 @@ end
 """
 Multidimensional array representing locations that can hold Molecules and Cells.
 """
-type Veldt
+struct Veldt
     dims::Array{Int64, 1}   # num points per dimension; 2 or 3 dimensions
     points  # Array with length(dims) dimensions holding VeldtPoints
     current # buffer with current (not future) data, 1 or 2
@@ -629,7 +629,7 @@ function is_pseudogene(gene::Gene)
         return true
     end
 
-    m = match(Regex("([\*/]*[$(elements)])"), gene.transcript)
+    m = match(r"([\*/]*[$(elements)])", gene.transcript)
     if m === nothing
         return true
     end
