@@ -485,12 +485,12 @@ function transcribe_gene(gene_string::AbstractString, chemistry::Chemistry)
             if el == '*' || el == '/'
                 push!(gene_chars, el)
                 mode = 1
-            elseif search(elements, el) > 0
+            elseif !isnothing(findfirst(el, elements))
                 push!(gene_chars, el)
                 mode = 0
             end
         elseif mode == 1
-            if search(elements, el) > 0
+            if !isnothing(findfirst(el, elements))
                 push!(gene_chars, el)
                 mode = 0
             elseif el != '*' && el != '/'
@@ -526,9 +526,10 @@ Search through a Genome for patterns that match possible Gene strings and build 
 them.
 """
 function find_genes(genome::Genome)
-    gene_match = eachmatch(r"\([^\(]*?\)", genome.string)
+    rx = r"\([^\(]*?\)"
+    gene_match = eachmatch(rx, genome.string)
     genes = [Gene(gm.offset, gm.match, genome.chemistry)
-             for gm in collect(gene_match)]
+             for gm in gene_match]
     return genes
 end
 
