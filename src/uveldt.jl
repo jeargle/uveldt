@@ -436,22 +436,22 @@ end
 Parse the reactants and products from a reaction string.
 """
 function parse_reaction(reaction_string::AbstractString)
-    if !ismatch(r"[\*/]", reaction_string)
+    if isnothing(match(r"[\*/]", reaction_string))
         reaction_type = pore
         reactants = [reaction_string]
         products = []
     elseif reaction_string[1] == '*'
         reaction_type = transport_in
-        reactants = [replace(reaction_string, r"\*|/", "")]
+        reactants = [replace(reaction_string, r"\*|/" => "")]
         products = []
     elseif reaction_string[1] == '/'
         reaction_type = transport_out
-        reactants = [replace(reaction_string, r"\*|/", "")]
+        reactants = [replace(reaction_string, r"\*|/" => "")]
         products = []
     else
         reaction_type = reaction
-        reactants = split(replace(reaction_string, "/", ""), "*")
-        products = split(replace(reaction_string, "*", ""), "/")
+        reactants = split(replace(reaction_string, "/" => ""), "*")
+        products = split(replace(reaction_string, "*" => ""), "/")
     end
 
     return (reaction_type, reactants, products)
@@ -485,12 +485,12 @@ function transcribe_gene(gene_string::AbstractString, chemistry::Chemistry)
             if el == '*' || el == '/'
                 push!(gene_chars, el)
                 mode = 1
-            elseif !isnothing(findfirst(el, elements))
+            elseif !in(el, elements)
                 push!(gene_chars, el)
                 mode = 0
             end
         elseif mode == 1
-            if !isnothing(findfirst(el, elements))
+            if !in(el, elements)
                 push!(gene_chars, el)
                 mode = 0
             elseif el != '*' && el != '/'
