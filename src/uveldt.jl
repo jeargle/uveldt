@@ -307,7 +307,7 @@ struct Cell
     energy::Int64
 
     function Cell(genome::Genome)
-        molecule_counts = Array{Dict{AbstractString, Int64}, 1}(2)
+        molecule_counts = Array{Dict{AbstractString, Int64}, 1}(undef, 2)
         molecule_counts[1] = Dict{AbstractString, Int64}()
         molecule_counts[2] = Dict{AbstractString, Int64}()
         new(genome, molecule_counts, 0)
@@ -319,7 +319,7 @@ end
 Unique location in a Veldt.  Contains two Molecule count buffers and possibly a single Cell.
 VeldtPoint time evolution is controlled by a Veldt.
 """
-struct VeldtPoint
+mutable struct VeldtPoint
     molecule_counts::Array{Dict{AbstractString, Int64}, 1}  # 2 Dicts: current, future
     cell::Cell
 
@@ -331,7 +331,7 @@ struct VeldtPoint
     # end
 
     function VeldtPoint(; molecules=[], cell=nothing)
-        molecule_counts = Array{Dict{AbstractString, Int64}, 1}(2)
+        molecule_counts = Array{Dict{AbstractString, Int64}, 1}(undef, 2)
         molecule_counts[1] = Dict{AbstractString, Int64}()
         molecule_counts[2] = Dict{AbstractString, Int64}()
         for mol in molecules
