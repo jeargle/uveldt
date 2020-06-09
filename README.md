@@ -61,3 +61,11 @@ Evolution
 ---------
 
 Evolution is biased replication with variation.  In &mu;Veldt, selection is made explicitly using a defined fitness function, and mutations are introduced when the genomes reproduce.  Many types of variation are possible including SNPs, indels, large structural variants, and recombination across multiple genomes.
+
+
+Dependencies
+------------
+
+* Distributions
+* Printf
+* Random
