@@ -1,10 +1,17 @@
 # John Eargle (mailto: jeargle at gmail.com)
-# 2018-2019
+# 2018-2020
 # test
 
 using Printf
 using uveldt
 
+
+function print_test_header(test_name)
+    border = repeat("*", length(test_name) + 4)
+    println(border)
+    println("* ", test_name, " *")
+    println(border)
+end
 
 function create_elements(el_count)
     println("  * Create Elements")
@@ -41,9 +48,7 @@ function create_bonds(element_table, energies)
 end
 
 function test_element()
-    println("***")
-    println("*** Element")
-    println("***")
+    print_test_header("Element")
 
     el1, el2, el3 = create_elements(3)
 
@@ -59,9 +64,7 @@ function test_element()
 end
 
 function test_element_table()
-    println("***")
-    println("*** ElementTable")
-    println("***")
+    print_test_header("ElementTable")
 
     elements = create_elements(2)
     el_table1 = ElementTable(elements)
@@ -73,9 +76,7 @@ function test_element_table()
 end
 
 function test_bond()
-    println("***")
-    println("*** Bond")
-    println("***")
+    print_test_header("Bond")
 
     elements = create_elements(2)
     el_table1 = ElementTable(elements)
@@ -89,9 +90,7 @@ function test_bond()
 end
 
 function test_bond_table()
-    println("***")
-    println("*** BondTable")
-    println("***")
+    print_test_header("BondTable")
 
     elements = create_elements(2)
     el_table1 = ElementTable(elements)
@@ -111,9 +110,7 @@ function test_bond_table()
 end
 
 function test_chemistry()
-    println("***")
-    println("*** Chemistry")
-    println("***")
+    print_test_header("Chemistry")
 
     elements1 = create_elements(2)
     el_table1 = ElementTable(elements1)
@@ -140,9 +137,7 @@ function test_chemistry()
 end
 
 function test_molecule()
-    println("***")
-    println("*** Molecule")
-    println("***")
+    print_test_header("Molecule")
 
     elements = create_elements(2)
     el_table1 = ElementTable(elements)
@@ -170,9 +165,7 @@ function test_molecule()
 end
 
 function test_reaction()
-    println("***")
-    println("*** Reaction")
-    println("***")
+    print_test_header("Reaction")
 
     elements = create_elements(2)
     el_table1 = ElementTable(elements)
@@ -220,9 +213,7 @@ function test_reaction()
 end
 
 function test_gene()
-    println("***")
-    println("*** Gene")
-    println("***")
+    print_test_header("Gene")
 
     elements = create_elements(3)
     el_table1 = ElementTable(elements)
@@ -281,9 +272,7 @@ function test_gene()
 end
 
 function test_genome()
-    println("***")
-    println("*** Genome")
-    println("***")
+    print_test_header("Genome")
 
     elements = create_elements(2)
     el_table1 = ElementTable(elements)
@@ -367,9 +356,7 @@ function test_genome()
 end
 
 function test_cell()
-    println("***")
-    println("*** Cell")
-    println("***")
+    print_test_header("Cell")
 
     elements = create_elements(2)
     el_table1 = ElementTable(elements)
@@ -401,9 +388,7 @@ function test_cell()
 end
 
 function test_veldt_point()
-    println("***")
-    println("*** VeldtPoint")
-    println("***")
+    print_test_header("VeldtPoint")
 
     elements = create_elements(2)
     el_table1 = ElementTable(elements)
@@ -445,9 +430,7 @@ function test_veldt_point()
 end
 
 function test_veldt()
-    println("***")
-    println("*** Veldt")
-    println("***")
+    print_test_header("Veldt")
 
     elements = create_elements(2)
     el_table1 = ElementTable(elements)
@@ -497,15 +480,15 @@ function main()
     test_element()
     test_element_table()
     test_bond()
-    test_bond_table()
-    test_chemistry()
-    test_molecule()
-    test_reaction()
-    test_gene()
-    test_genome()
-    test_cell()
-    test_veldt_point()
-    test_veldt()
+    # test_bond_table()
+    # test_chemistry()
+    # test_molecule()
+    # test_reaction()
+    # test_gene()
+    # test_genome()
+    # test_cell()
+    # test_veldt_point()
+    # test_veldt()
 end
 
 main()
