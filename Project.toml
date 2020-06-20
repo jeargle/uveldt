@@ -1,3 +1,10 @@
+name = "uveldt"
+uuid = "bf1fc462-6d4b-43a2-8842-d2d1a662c470"
+keywords = ["evolution", "biochemistry", "microbiology", "phylogenetics", "simulator"]
+license = "MIT"
+desc = "Evolution and biochemistry of digital microbes"
+version = "0.0.1"
+
 [deps]
 Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
 Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
