@@ -15,6 +15,7 @@ export read_fasta, write_fasta, get_bond, mass
 using Distributions
 using Printf
 using Random
+using YAML
 
 
 macro exported_enum(name, args...)
@@ -670,7 +671,7 @@ end
 
 
 """
-    write_fasta(genomes)
+    write_fasta(genomes, filename)
 
 Write a multi-FASTA file with the full genome strings for an array of Genomes.
 """
@@ -690,7 +691,7 @@ end
 
 
 """
-    write_fasta(genome)
+    write_fasta(genome, filename)
 
 Write a FASTA file with the full genome string.
 """
