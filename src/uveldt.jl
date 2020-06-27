@@ -436,6 +436,12 @@ end
     parse_reaction(reaction_string)
 
 Parse the reactants and products from a reaction string.
+
+# Arguments
+- reaction_string::AbstractString
+
+# Returns
+- (reaction_type::ReactionType, reactants::Array, products::Array)
 """
 function parse_reaction(reaction_string::AbstractString)
     if isnothing(match(r"[\*/]", reaction_string))
@@ -465,6 +471,13 @@ end
 
 Convert a Gene string into a valid Reaction string by removing redundant directive
 characters.
+
+# Arguments
+- gene_string::AbstractString
+- chemistry::Chemistry
+
+# Returns
+- Reaction string
 """
 function transcribe_gene(gene_string::AbstractString, chemistry::Chemistry)
     # modes for parsing
@@ -514,6 +527,13 @@ end
     genome_string(size, chemistry)
 
 Randomly generate a valid Genome string.
+
+# Arguments
+- size::Int64
+- chemistry::Chemistry
+
+# Returns
+- Genome string
 """
 function genome_string(size::Int64, chemistry::Chemistry)
     genome = randstring(alphabet_string(chemistry), size)
@@ -526,6 +546,12 @@ end
 
 Search through a Genome for patterns that match possible Gene strings and build Genes from
 them.
+
+# Arguments
+- genome::Genome
+
+# Returns
+- Array of Genes
 """
 function find_genes(genome::Genome)
     rx = r"\([^\(]*?\)"
@@ -540,6 +566,10 @@ end
     add_snps(genome, rate)
 
 Add SNPs to Genome.
+
+# Arguments
+- genome::Genome
+- rate
 """
 function add_snps(genome::Genome, rate)
     geom_dist = Geometric(rate)
@@ -558,6 +588,10 @@ end
     add_insertions(genome, rate)
 
 Add small insertions to Genome.
+
+# Arguments
+- genome::Genome
+- rate
 """
 function add_insertions(genome::Genome, rate)
     geom_dist = Geometric(rate)
@@ -576,6 +610,10 @@ end
     remove_deletions(genome, rate)
 
 Remove small deletions from Genome.
+
+# Arguments
+- genome::Genome
+- rate
 """
 function remove_deletions(genome::Genome, rate)
     geom_dist = Geometric(rate)
@@ -592,6 +630,13 @@ end
     cross_over(genome1, genome2)
 
 Cross over two Genomes to produce two child Genomes.
+
+# Arguments
+- genome1::Genome
+- genome2::Genome
+
+# Returns
+- Tuple of (child_genome1::Genome, child_genome2::Genome)
 """
 function cross_over(genome1::Genome, genome2::Genome)
     if genome1.chemistry != genome2.chemistry
@@ -625,6 +670,12 @@ end
     is_pseudogene(gene)
 
 Identify pseudogene.
+
+# Arguments
+- gene::Gene
+
+# Returns
+- Bool
 """
 function is_pseudogene(gene::Gene)
     elements = join(keys(gene.chemistry.element_table.elements))
@@ -646,6 +697,12 @@ end
     read_fasta(filename)
 
 Read a FASTA file and return the information as tuples of names and a genome strings.
+
+# Arguments
+- filename
+
+# Returns
+- Array of tuples (name string, genome string)
 """
 function read_fasta(filename)
     genome_info = []
@@ -675,6 +732,10 @@ end
     write_fasta(genomes, filename)
 
 Write a multi-FASTA file with the full genome strings for an array of Genomes.
+
+# Arguments
+- genomes
+- filename
 """
 function write_fasta(genomes, filename)
     f = open(filename, "w")
@@ -695,6 +756,10 @@ end
     write_fasta(genome, filename)
 
 Write a FASTA file with the full genome string.
+
+# Arguments
+- genome::Genomes
+- filename
 """
 function write_fasta(genome::Genome, filename)
     write_fasta([genome], filename)
@@ -706,6 +771,12 @@ end
 
 Generate a string with all possible characters that can appear with
 this Chemistry.
+
+# Arguments
+- chemistry::Chemistry
+
+# Returns
+- String
 """
 function alphabet_string(chemistry::Chemistry)
     elements = [el for el in keys(chemistry.element_table.elements)]
@@ -716,7 +787,15 @@ end
 """
     get_bond(bond_table, element1, element2)
 
-Add a Bond to the a BondTable.
+Get a Bond from a BondTable.
+
+# Arguments
+- bond_table::BondTable
+- element1::Char
+- element2::Char
+
+# Returns
+- Bond
 """
 function get_bond(bond_table::BondTable, element1::Char, element2::Char)
     return bond_table.bonds[element1][element2]
@@ -727,6 +806,12 @@ end
     mass(element)
 
 Get the mass of an Element.
+
+# Arguments
+- element::Element
+
+# Returns
+- Mass of the Elment
 """
 function mass(element::Element)
     return element.mass
@@ -734,9 +819,15 @@ end
 
 
 """
-    mass(molecule)
+    mass(molecule::Molecule)
 
 Get the mass of a Molecule.
+
+# Arguments
+- molecule::Molecule
+
+# Returns
+- Mass of the Molecule
 """
 function mass(molecule::Molecule)
     total_mass = 0
@@ -754,6 +845,9 @@ Create a Chemistry from a YAML setup file.
 
 # Arguments
 - filename: name of YAML setup file
+
+# Returns
+- Chemistry
 """
 function setup_chemistry(filename)
     setup = YAML.load(open(filename))
