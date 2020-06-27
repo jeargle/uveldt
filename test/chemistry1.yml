@@ -2,6 +2,23 @@ elements:
   - name: A
     mass: 1
   - name: B
-    mass: 1
+    mass: 2
   - name: C
-    mass: 1
+    mass: 3
+
+bonds:
+  - elements:
+    - A
+    - B
+    energy_change: -5.5
+    transition_energy: 1.5
+  - elements:
+    - A
+    - C
+    energy_change: -6.5
+    transition_energy: 2.5
+  - elements:
+    - B
+    - C
+    energy_change: -7.5
+    transition_energy: 3.5

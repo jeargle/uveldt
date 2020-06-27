@@ -773,9 +773,22 @@ function setup_chemistry(filename)
     element_table = ElementTable(elements)
 
     # build Bonds
+    bonds = Array{Bond, 1}()
 
-    # return (Chemistry(element_table, bond_table))
-    return
+    if haskey(setup, "bonds")
+        for bond_info in setup["bonds"]
+            el1 = element_table.elements[bond_info["elements"][1][1]]
+            el2 = element_table.elements[bond_info["elements"][2][1]]
+            energy_change = bond_info["energy_change"]
+            transition_energy = bond_info["transition_energy"]
+            bond = Bond(el1, el2, energy_change, transition_energy)
+            push!(bonds, bond)
+        end
+    end
+
+    bond_table = BondTable(bonds)
+
+    return (Chemistry(element_table, bond_table))
 end
 
 

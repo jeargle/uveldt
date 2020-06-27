@@ -109,8 +109,8 @@ function test_bond_table()
     println()
 end
 
-function test_chemistry1()
-    print_test_header("Chemistry 1")
+function test_chemistry()
+    print_test_header("Chemistry")
 
     elements1 = create_elements(2)
     el_table1 = ElementTable(elements1)
@@ -136,10 +136,14 @@ function test_chemistry1()
 
 end
 
-function test_chemistry2()
-    print_test_header("Chemistry 2")
+function test_chemistry_setup()
+    print_test_header("Chemistry Setup")
 
-    setup_chemistry("chemistry1.yml")
+    chem1 = setup_chemistry("chemistry1.yml")
+    chem2 = setup_chemistry("chemistry2.yml")
+
+    println("chem1: ", chem1)
+    println("chem2: ", chem2)
 end
 
 function test_molecule()
@@ -483,19 +487,19 @@ end
 
 
 function main()
-    # test_element()
-    # test_element_table()
-    # test_bond()
-    # test_bond_table()
-    # test_chemistry1()
-    test_chemistry2()
-    # test_molecule()
-    # test_reaction()
-    # test_gene()
-    # test_genome()
-    # test_cell()
-    # test_veldt_point()
-    # test_veldt()
+    test_element()
+    test_element_table()
+    test_bond()
+    test_bond_table()
+    test_chemistry()
+    test_chemistry_setup()
+    test_molecule()
+    test_reaction()
+    test_gene()
+    test_genome()
+    test_cell()
+    test_veldt_point()
+    test_veldt()
 end
 
 main()

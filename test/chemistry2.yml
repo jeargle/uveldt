@@ -1,0 +1,24 @@
+elements:
+  - name: H
+    mass: 1
+  - name: C
+    mass: 12
+  - name: O
+    mass: 16
+
+bonds:
+  - elements:
+    - H
+    - C
+    energy_change: -4.5
+    transition_energy: 1.1
+  - elements:
+    - H
+    - O
+    energy_change: -6.5
+    transition_energy: 1.3
+  - elements:
+    - C
+    - O
+    energy_change: -8.5
+    transition_energy: 1.5
