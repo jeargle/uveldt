@@ -11,6 +11,7 @@ export parse_reaction, transcribe_gene, genome_string, find_genes
 export add_snps, add_insertions, remove_deletions, cross_over
 export is_pseudogene
 export read_fasta, write_fasta, get_bond, mass
+export setup_chemistry
 
 using Distributions
 using Printf
@@ -743,6 +744,38 @@ function mass(molecule::Molecule)
         total_mass += molecule.chemistry.element_table.elements[el].mass
     end
     return total_mass
+end
+
+
+"""
+    setup_chemistry(filename)
+
+Create a Chemistry from a YAML setup file.
+
+# Arguments
+- filename: name of YAML setup file
+"""
+function setup_chemistry(filename)
+    setup = YAML.load(open(filename))
+
+    # build Elements
+    elements = Array{Element, 1}()
+
+    if haskey(setup, "elements")
+        for el_info in setup["elements"]
+            name = el_info["name"][1]
+            mass = el_info["mass"]
+            element = Element(name, mass)
+            push!(elements, element)
+        end
+    end
+
+    element_table = ElementTable(elements)
+
+    # build Bonds
+
+    # return (Chemistry(element_table, bond_table))
+    return
 end
 
 
