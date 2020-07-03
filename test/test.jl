@@ -510,7 +510,7 @@ function main()
     test_cell()
     test_veldt_point()
     test_veldt()
-    # test_veldt_setup()
+    test_veldt_setup()
 end
 
 main()

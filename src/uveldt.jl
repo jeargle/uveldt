@@ -711,10 +711,12 @@ function read_fasta(filename)
     first_genome = true
     open(filename, "r") do f
         for line in eachline(f)
-            print(line)
+            println(line)
             if line[1] == '>'
                 if !first_genome
                     push!(genome_info, (name, genome_str))
+                else
+                    first_genome = false
                 end
                 name = line[2:end]
                 genome_str = ""
@@ -920,11 +922,14 @@ function setup_veldt(filename)
         genome_files = setup["genomes"]
         for genome_file in genome_files
             genome_info = read_fasta(genome_file)
-            for (name, genome_str) in genomes_info
+            for (name, genome_str) in genome_info
+                @printf "  genome: %s\n" name
                 genomes[name] = Genome(name, genome_str, chemistry)
             end
         end
     end
+
+    @printf "  genomes: %s\n" genomes
 
     # build Cells
     cells = Array{Cell, 1}()
@@ -934,17 +939,17 @@ function setup_veldt(filename)
             if haskey(cell_info, "genome")
                 genome_name = cell_info["genome"]
             end
-            cell = Cell(genome_name)
+            cell = Cell(genomes[genome_name])
 
             if haskey(cell_info, "molecules")
                 genome_name = cell_info["molecules"]
+                # cell.molecule_counts[1]["AAA"] = 33
             end
 
             if haskey(cell_info, "location")
-                genome_name = cell_info["location"]
+                location = cell_info["location"]
             end
 
-            cell.molecule_counts[1]["AAA"] = 33
             push!(cells, cell)
         end
     end
