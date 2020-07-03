@@ -11,7 +11,7 @@ export parse_reaction, transcribe_gene, genome_string, find_genes
 export add_snps, add_insertions, remove_deletions, cross_over
 export is_pseudogene
 export read_fasta, write_fasta, get_bond, mass
-export setup_chemistry
+export setup_chemistry, setup_veldt
 
 using Distributions
 using Printf
@@ -883,6 +883,73 @@ function setup_chemistry(filename)
     bond_table = BondTable(bonds)
 
     return (Chemistry(element_table, bond_table))
+end
+
+
+"""
+    setup_veldt(filename)
+
+Create a Veldt from a YAML setup file.
+
+# Arguments
+- filename: name of YAML setup file
+
+# Returns
+- Veldt
+"""
+function setup_veldt(filename)
+    setup = YAML.load(open(filename))
+
+    # build Veldt
+    if haskey(setup, "dimensions")
+        dimensions = setup["dimensions"]
+    end
+
+    veldt = Veldt(dimensions)
+
+    # build Chemistry
+    if haskey(setup, "chemistry")
+        chemistry_file = setup["chemistry"]
+    end
+    chemistry = setup_chemistry(chemistry_file)
+
+
+    # build Genomes
+    genomes = Dict{String, Genome}()
+    if haskey(setup, "genomes")
+        genome_files = setup["genomes"]
+        for genome_file in genome_files
+            genome_info = read_fasta(genome_file)
+            for (name, genome_str) in genomes_info
+                genomes[name] = Genome(name, genome_str, chemistry)
+            end
+        end
+    end
+
+    # build Cells
+    cells = Array{Cell, 1}()
+
+    if haskey(setup, "cells")
+        for cell_info in setup["cells"]
+            if haskey(cell_info, "genome")
+                genome_name = cell_info["genome"]
+            end
+            cell = Cell(genome_name)
+
+            if haskey(cell_info, "molecules")
+                genome_name = cell_info["molecules"]
+            end
+
+            if haskey(cell_info, "location")
+                genome_name = cell_info["location"]
+            end
+
+            cell.molecule_counts[1]["AAA"] = 33
+            push!(cells, cell)
+        end
+    end
+
+    return Veldt
 end
 
 

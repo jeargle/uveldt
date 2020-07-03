@@ -1,0 +1,33 @@
+dimensions: [3, 4]
+
+chemistry: chemistry1.yml
+
+molecules:
+  - name: AAA
+    distribution:
+    - type: even
+    - count: 10
+  - name: BBB
+    distribution:
+    - type: even
+    - count: 30
+
+genomes:
+  - genome_file1
+  - genome_file2
+
+cells:
+  - genome: genome1
+    location: [1, 1]
+    molecules:
+    - name: AAA
+      count: 11
+    - name: BBB
+      count: 22
+  - genome: genome2
+    location: [2, 2]
+    molecules:
+    - name: AA
+      count: 33
+    - name: AB
+      count: 44
