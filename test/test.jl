@@ -139,8 +139,8 @@ end
 function test_chemistry_setup()
     print_test_header("Chemistry Setup")
 
-    chem1 = setup_chemistry("chemistry1.yml")
-    chem2 = setup_chemistry("chemistry2.yml")
+    chem1 = setup_chemistry("./chemistries/chemistry1.yml")
+    chem2 = setup_chemistry("./chemistries/chemistry2.yml")
 
     println("chem1: ", chem1)
     println("chem2: ", chem2)
@@ -485,6 +485,16 @@ function test_veldt()
 end
 
 
+function test_veldt_setup()
+    print_test_header("Veldt Setup")
+
+    veldt1 = setup_veldt("./veldts/veldt1.yml")
+    # veldt2 = setup_veldt("./veldts/veldt2.yml")
+
+    println("veldt1: ", veldt1)
+    # println("veldt2: ", veldt2)
+end
+
 
 function main()
     test_element()
@@ -500,6 +510,7 @@ function main()
     test_cell()
     test_veldt_point()
     test_veldt()
+    # test_veldt_setup()
 end
 
 main()
