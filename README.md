@@ -60,7 +60,13 @@ Examples:
 Evolution
 ---------
 
-Evolution is biased replication with variation.  In &mu;Veldt, selection is made explicitly using a defined fitness function, and mutations are introduced when the genomes reproduce.  Many types of variation are possible including SNPs, indels, large structural variants, and recombination across multiple genomes.
+Evolution is biased replication with variation.  In &mu;Veldt, selection is made explicitly using a defined fitness function, and mutations are introduced when the genomes reproduce.  Many types of variation are possible including SNPs, indels, large structural variants, and recombination across multiple genomes.  Support for insertions and deletions means that the genome size is not constant so genetic information can be created or destroyed.  This is uncommon in most genetic algorithms, but it is an important feature of biological evolution.
+
+
+Lattice
+-------
+
+The microbes in &mu;Veldt are embedded in a reaction-diffusion simulation where molecules move randomly throughout the system.  The "world" where these digital microbes live is a 2D or 3D lattice (Veldt), and cells live at specific lattice points (VeldtPoints).  Across discrete time steps, molecules perform random walks from point to point through the lattice.  If a molecule is locate at a point shared by a cell, and the cell is permeable to that molecule, there is some probability that the molecule will enter the cell in the next time step.  Biochemistry encoded by a cell's genome can happen to available reactant molecules within the cell.  Chemistry only occurs within cells.  For now, cells are fixed at their initial lattice locations so they only interact with the environment though molecular diffusion.
 
 
 Dependencies
@@ -69,3 +75,4 @@ Dependencies
 * Distributions
 * Printf
 * Random
+* YAML
