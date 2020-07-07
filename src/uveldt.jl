@@ -537,7 +537,8 @@ Randomly generate a valid Genome string.
 """
 function genome_string(size::Int64, chemistry::Chemistry)
     genome = randstring(alphabet_string(chemistry), size)
-    return join(genome)
+    # return join(genome)
+    return genome
 end
 
 
@@ -575,12 +576,21 @@ function add_snps(genome::Genome, rate)
     geom_dist = Geometric(rate)
     location = 1 + rand(geom_dist)
     alphabet = alphabet_string(genome.chemistry)
+    fragments = []
+    start = 1
 
     while location <= length(genome.string)
-        snp = rand(alphabet)
+        push!(fragments, genome.string[start:location-1])
+        snp = string(rand(alphabet))
         @printf "  %d SNP %s->%s\n" location genome.string[location] snp
+        push!(fragments, snp)
+        start = location + 1
         location += rand(geom_dist)
     end
+
+    push!(fragments, genome.string[start:end])
+
+    return join(fragments)
 end
 
 
@@ -592,16 +602,21 @@ Add small insertions to Genome.
 # Arguments
 - genome::Genome
 - rate
+- size_param
 """
-function add_insertions(genome::Genome, rate)
-    geom_dist = Geometric(rate)
-    location = 1 + rand(geom_dist)
+function add_insertions(genome::Genome, rate; size_param=0.5)
+    location_dist = Geometric(rate)
+    location = 1 + rand(location_dist)
     alphabet = alphabet_string(genome.chemistry)
 
+    size_dist = Geometric(size_param)
+
     while location <= length(genome.string)
-        insert = rand(alphabet)
+        size = 1 + rand(size_dist)
+        # insert = rand(alphabet)
+        insert = randstring(alphabet, size)
         @printf "  %d insert %s\n" location insert
-        location += rand(geom_dist)
+        location += rand(location_dist)
     end
 end
 
