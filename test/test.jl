@@ -490,14 +490,21 @@ function test_veldt()
 end
 
 
-function test_veldt_setup()
+function test_veldt_setup_2d()
     print_test_header("Veldt Setup")
 
     veldt1 = setup_veldt("./veldts/veldt1.yml")
-    # veldt2 = setup_veldt("./veldts/veldt2.yml")
 
     println("veldt1: ", veldt1)
-    # println("veldt2: ", veldt2)
+end
+
+
+function test_veldt_setup_3d()
+    print_test_header("Veldt Setup")
+
+    veldt2 = setup_veldt("./veldts/veldt2.yml")
+
+    println("veldt2: ", veldt2)
 end
 
 
@@ -511,11 +518,12 @@ function main()
     # test_molecule()
     # test_reaction()
     # test_gene()
-    test_genome()
+    # test_genome()
     # test_cell()
     # test_veldt_point()
     # test_veldt()
-    # test_veldt_setup()
+    test_veldt_setup_2d()
+    # test_veldt_setup_3d()
 end
 
 main()

@@ -571,6 +571,9 @@ Add SNPs to Genome.
 # Arguments
 - genome::Genome
 - rate
+
+# Returns
+- Mutated Genome String
 """
 function add_snps(genome::Genome, rate)
     geom_dist = Geometric(rate)
@@ -595,7 +598,7 @@ end
 
 
 """
-    add_insertions(genome, rate)
+    add_insertions(genome, rate; size_param)
 
 Add small insertions to Genome.
 
@@ -603,6 +606,9 @@ Add small insertions to Genome.
 - genome::Genome
 - rate
 - size_param
+
+# Returns
+- Mutated Genome String
 """
 function add_insertions(genome::Genome, rate; size_param=0.5)
     location_dist = Geometric(rate)
@@ -613,7 +619,6 @@ function add_insertions(genome::Genome, rate; size_param=0.5)
 
     while location <= length(genome.string)
         size = 1 + rand(size_dist)
-        # insert = rand(alphabet)
         insert = randstring(alphabet, size)
         @printf "  %d insert %s\n" location insert
         location += rand(location_dist)
@@ -629,6 +634,9 @@ Remove small deletions from Genome.
 # Arguments
 - genome::Genome
 - rate
+
+# Returns
+- Mutated Genome String
 """
 function remove_deletions(genome::Genome, rate)
     geom_dist = Geometric(rate)
@@ -651,7 +659,7 @@ Cross over two Genomes to produce two child Genomes.
 - genome2::Genome
 
 # Returns
-- Tuple of (child_genome1::Genome, child_genome2::Genome)
+- Tuple of mutated Genome Strings, (String, String)
 """
 function cross_over(genome1::Genome, genome2::Genome)
     if genome1.chemistry != genome2.chemistry
@@ -667,17 +675,18 @@ function cross_over(genome1::Genome, genome2::Genome)
     tail_str = genome2.string[location2+1:end]
     @printf "  head: %s\n" head_str
     @printf "  tail: %s\n" tail_str
-    child_str = head_str * tail_str
-    child_genome1 = Genome("child_genome1", child_str, genome1.chemistry)
+    child_str1 = head_str * tail_str
+    # child_genome1 = Genome("child_genome1", child_str, genome1.chemistry)
 
     head_str = genome2.string[1:location2]
     tail_str = genome1.string[location1+1:end]
     @printf "  head: %s\n" head_str
     @printf "  tail: %s\n" tail_str
-    child_str = head_str * tail_str
-    child_genome2 = Genome("child_genome2", child_str, genome1.chemistry)
+    child_str2 = head_str * tail_str
+    # child_genome2 = Genome("child_genome2", child_str, genome1.chemistry)
 
-    return (child_genome1, child_genome2)
+    # return (child_genome1, child_genome2)
+    return (child_str1, child_str2)
 end
 
 
@@ -947,8 +956,6 @@ function setup_veldt(filename)
     @printf "  genomes: %s\n" genomes
 
     # build Cells
-    cells = Array{Cell, 1}()
-
     if haskey(setup, "cells")
         for cell_info in setup["cells"]
             if haskey(cell_info, "genome")
@@ -957,15 +964,17 @@ function setup_veldt(filename)
             cell = Cell(genomes[genome_name])
 
             if haskey(cell_info, "molecules")
-                genome_name = cell_info["molecules"]
-                # cell.molecule_counts[1]["AAA"] = 33
+                for mol_info in cell_info["molecules"]
+                    mol_name = mol_info["name"]
+                    mol_count = mol_info["count"]
+                    cell.molecule_counts[1][mol_name] = mol_count
+                end
             end
 
             if haskey(cell_info, "location")
                 location = cell_info["location"]
+                add_cell(veldt, location, cell)
             end
-
-            push!(cells, cell)
         end
     end
 
