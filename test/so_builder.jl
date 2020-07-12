@@ -1,3 +1,5 @@
+# Run create_sysimage() from this directory.
+
 using Distributions
 using Printf
 using Random
@@ -18,7 +20,7 @@ println()
 @printf "  location1: %d\n" location1
 @printf "  location2: %d\n" location2
 
-setup = YAML.load(open("test/chemistry1.yml"))
+setup = YAML.load(open("chemistries/chemistry1.yml"))
 if haskey(setup, "elements")
     for el_info in setup["elements"]
         name = el_info["name"][1]
