@@ -697,16 +697,13 @@ function cross_over(genome1::Genome, genome2::Genome)
     @printf "  head: %s\n" head_str
     @printf "  tail: %s\n" tail_str
     child_str1 = head_str * tail_str
-    # child_genome1 = Genome("child_genome1", child_str, genome1.chemistry)
 
     head_str = genome2.string[1:location2]
     tail_str = genome1.string[location1+1:end]
     @printf "  head: %s\n" head_str
     @printf "  tail: %s\n" tail_str
     child_str2 = head_str * tail_str
-    # child_genome2 = Genome("child_genome2", child_str, genome1.chemistry)
 
-    # return (child_genome1, child_genome2)
     return (child_str1, child_str2)
 end
 

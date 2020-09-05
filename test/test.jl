@@ -371,7 +371,9 @@ function test_genome()
     println(genome_str5)
     println()
     println("  * Cross over")
-    genome3, genome4 = cross_over(genome1, genome2)
+    genome_str6, genome_str7 = cross_over(genome1, genome2)
+    println(genome_str6)
+    println(genome_str7)
 
     println()
 end
