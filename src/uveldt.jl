@@ -643,18 +643,30 @@ Remove small deletions from Genome.
 # Arguments
 - genome::Genome
 - rate
+- size_param
 
 # Returns
 - Mutated Genome String
 """
-function remove_deletions(genome::Genome, rate)
+function remove_deletions(genome::Genome, rate; size_param=0.5)
     geom_dist = Geometric(rate)
     location = 1 + rand(geom_dist)
+    fragments = []
+    start = 1
+
+    size_dist = Geometric(size_param)
 
     while location <= length(genome.string)
-        @printf "  %d delete %s\n" location genome.string[location]
+        push!(fragments, genome.string[start:location-1])
+        size = 1 + rand(size_dist)
+        @printf "  %d delete %s\n" location genome.string[location:location+size]
+        start = location + size
         location += rand(geom_dist)
     end
+
+    push!(fragments, genome.string[start:end])
+
+    return join(fragments)
 end
 
 
