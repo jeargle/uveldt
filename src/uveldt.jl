@@ -614,15 +614,24 @@ function add_insertions(genome::Genome, rate; size_param=0.5)
     location_dist = Geometric(rate)
     location = 1 + rand(location_dist)
     alphabet = alphabet_string(genome.chemistry)
+    fragments = []
+    start = 1
 
     size_dist = Geometric(size_param)
 
     while location <= length(genome.string)
+        push!(fragments, genome.string[start:location-1])
         size = 1 + rand(size_dist)
         insert = randstring(alphabet, size)
         @printf "  %d insert %s\n" location insert
+        push!(fragments, insert)
+        start = location
         location += rand(location_dist)
     end
+
+    push!(fragments, genome.string[start:end])
+
+    return join(fragments)
 end
 
 
