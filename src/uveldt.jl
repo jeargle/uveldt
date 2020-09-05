@@ -671,6 +671,120 @@ end
 
 
 """
+    add_duplications(genome, rate; size_param)
+
+Add large duplications to Genome.
+
+# Arguments
+- genome::Genome
+- rate
+- size_param
+
+# Returns
+- Mutated Genome String
+"""
+function add_duplications(genome::Genome, rate; size_param=0.5)
+    location_dist = Geometric(rate)
+    location = 1 + rand(location_dist)
+    alphabet = alphabet_string(genome.chemistry)
+    fragments = []
+    start = 1
+
+    size_dist = Geometric(size_param)
+
+    while location <= length(genome.string)
+        push!(fragments, genome.string[start:location-1])
+        size = 1 + rand(size_dist)
+        # insert = randstring(alphabet, size)
+        # @printf "  %d insert %s\n" location insert
+        # push!(fragments, insert)
+        start = location
+        location += rand(location_dist)
+    end
+
+    push!(fragments, genome.string[start:end])
+
+    return join(fragments)
+end
+
+
+"""
+    add_inversions(genome, rate; size_param)
+
+Add large inversions to Genome.
+
+# Arguments
+- genome::Genome
+- rate
+- size_param
+
+# Returns
+- Mutated Genome String
+"""
+function add_inversions(genome::Genome, rate; size_param=0.5)
+    location_dist = Geometric(rate)
+    location = 1 + rand(location_dist)
+    alphabet = alphabet_string(genome.chemistry)
+    fragments = []
+    start = 1
+
+    size_dist = Geometric(size_param)
+
+    while location <= length(genome.string)
+        push!(fragments, genome.string[start:location-1])
+        size = 1 + rand(size_dist)
+        # insert = randstring(alphabet, size)
+        # @printf "  %d insert %s\n" location insert
+        # push!(fragments, insert)
+        start = location
+        location += rand(location_dist)
+    end
+
+    push!(fragments, genome.string[start:end])
+
+    return join(fragments)
+end
+
+
+"""
+    add_translocations(genome, rate; size_param)
+
+Add large translocations to Genome.
+
+# Arguments
+- genome::Genome
+- rate
+- size_param
+
+# Returns
+- Mutated Genome String
+"""
+function add_translocations(genome::Genome, rate; size_param=0.5)
+    location_dist = Geometric(rate)
+    location = 1 + rand(location_dist)
+    alphabet = alphabet_string(genome.chemistry)
+    fragments = []
+    start = 1
+
+    size_dist = Geometric(size_param)
+
+    while location <= length(genome.string)
+        push!(fragments, genome.string[start:location-1])
+        size = 1 + rand(size_dist)
+        # insert = randstring(alphabet, size)
+        # @printf "  %d insert %s\n" location insert
+        # push!(fragments, insert)
+        start = location
+        location += rand(location_dist)
+    end
+
+    push!(fragments, genome.string[start:end])
+
+    return join(fragments)
+end
+
+
+"""
     cross_over(genome1, genome2)
 
 Cross over two Genomes to produce two child Genomes.
