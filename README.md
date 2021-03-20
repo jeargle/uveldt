@@ -25,7 +25,7 @@ For example, atoms of elements "A" and "B" can be connected to make the molecule
 Genome
 ------
 
-Genomes in &mu;Veldt are simply long strings which can contain genes that code for specific chemical reactions, pores, or transporters.  All genes start with "(" and end at the next occurence of ")".  For example, the string "AB(CABC)AB)" contains a single gene: "(CABC)"
+Genomes in &mu;Veldt are simply long strings which can contain genes that code for specific chemical reactions, pores, or transporters.  All genes start with "(" and end at the next occurence of ")".  For example, the string "AB(CABC)AB)" contains the single gene: `(CABC)`.
 
 Reactions specify a set of reactants and a set of products.  They contain element characters as well as the join ("\*") and split ("/") reaction operators.  "\*" means that the elements to either side are separate in the reactants but bonded in the products.  "/" means that they are bonded in the reactants and separate in the products.  To create a reaction string for the inverse of a given reaction, just switch all joins to splits and vice versa.  Multiple joins and/or splits may be defined within a reaction gene.
 
