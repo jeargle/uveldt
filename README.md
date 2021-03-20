@@ -19,15 +19,15 @@ Chemistry
 
 The chemistry of &mu;Veldt is based around simple string operations.  Elements are represented as single characters, molecules are 1-dimensional strings of elements, and bonds connect pairs of elements together.  All chemical reactions involve making and/or breaking bonds between the elements in molecules.
 
-For example, atoms of elements "A" and "B" can be connected to make the molecule "AB".
+For example, atoms of elements `A` and `B` can be connected to make the molecule `AB`.
 
 
 Genome
 ------
 
-Genomes in &mu;Veldt are simply long strings which can contain genes that code for specific chemical reactions, pores, or transporters.  All genes start with "(" and end at the next occurence of ")".  For example, the string "AB(CABC)AB)" contains the single gene: `(CABC)`.
+Genomes in &mu;Veldt are simply long strings which can contain genes that code for specific chemical reactions, pores, or transporters.  All genes start with `(` and end at the next occurence of `)`.  For example, the string `AB(CABC)AB)` contains the single gene: `(CABC)`.
 
-Reactions specify a set of reactants and a set of products.  They contain element characters as well as the join ("\*") and split ("/") reaction operators.  "\*" means that the elements to either side are separate in the reactants but bonded in the products.  "/" means that they are bonded in the reactants and separate in the products.  To create a reaction string for the inverse of a given reaction, just switch all joins to splits and vice versa.  Multiple joins and/or splits may be defined within a reaction gene.
+Reactions specify a set of reactants and a set of products.  They contain element characters as well as the join (`\*`) and split (`/`) reaction operators.  `\*` means that the elements to either side are separate in the reactants but bonded in the products.  `/` means that they are bonded in the reactants and separate in the products.  To create a reaction string for the inverse of a given reaction, just switch all joins to splits and vice versa.  Multiple joins and/or splits may be defined within a reaction gene.
 
 Examples:
 
@@ -66,7 +66,7 @@ Evolution is biased replication with variation.  In &mu;Veldt, selection is made
 Lattice
 -------
 
-The microbes in &mu;Veldt are embedded in a reaction-diffusion simulation where molecules move randomly throughout the system.  The "world" where these digital microbes live is a 2D or 3D lattice (Veldt), and cells live at specific lattice points (VeldtPoints).  Across discrete time steps, molecules perform random walks from point to point through the lattice.  If a molecule is located at a point shared by a cell, and the cell is permeable to that molecule, there is some probability that the molecule will enter the cell in the next time step, and vice versa.  Biochemistry encoded by a cell's genome can happen to available reactant molecules within the cell.  Chemistry only occurs within cells.  For now, cells are fixed at their initial lattice locations, and they only interact with the environment though molecular diffusion.
+The microbes in &mu;Veldt are embedded in a reaction-diffusion simulation where molecules move randomly throughout the system.  The "world" where these digital microbes live is a 2D or 3D lattice (`Veldt`), and cells live at specific lattice points (`VeldtPoints`).  Across discrete time steps, molecules perform random walks from point to point through the lattice.  If a molecule is located at a point shared by a cell, and the cell is permeable to that molecule, there is some probability that the molecule will enter the cell in the next time step, and vice versa.  Biochemistry encoded by a cell's genome can happen to available reactant molecules within the cell.  Chemistry only occurs within cells.  For now, cells are fixed at their initial lattice locations, and they only interact with the environment though molecular diffusion.
 
 
 Dependencies
