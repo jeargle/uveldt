@@ -1,0 +1,46 @@
+dimensions: [3, 4, 5]
+
+chemistry: ./chemistries/chemistry1.yml
+
+molecules:
+  - name: AAA
+    distribution:
+    - type: even
+    - count: 15
+  - name: BBB
+    distribution:
+    - type: even
+    - count: 25
+
+genomes:
+  - ./genomes/genomes1.fasta
+
+cells:
+  - genome: genome1
+    location: [1, 1, 1]
+    molecules:
+    - name: AAA
+      count: 11
+    - name: BBB
+      count: 22
+  - genome: genome1
+    location: [2, 2, 2]
+    molecules:
+    - name: AA
+      count: 33
+    - name: AB
+      count: 44
+  - genome: genome2
+    location: [3, 3, 3]
+    molecules:
+    - name: AA
+      count: 11
+    - name: AB
+      count: 22
+  - genome: genome3
+    location: [1, 4, 5]
+    molecules:
+    - name: AAA
+      count: 33
+    - name: BBB
+      count: 44

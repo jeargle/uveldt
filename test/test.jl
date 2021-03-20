@@ -545,7 +545,7 @@ function main()
     test_veldt_point()
     test_veldt()
     test_veldt_setup_2d()
-    # test_veldt_setup_3d()
+    test_veldt_setup_3d()
 end
 
 main()
