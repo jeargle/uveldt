@@ -72,24 +72,6 @@ end
 
 
 """
-Membrane-bound compartment containing Molecules and a Genome.  Chemical Reactions happen
-within.
-"""
-struct Cell
-    genome::Genome
-    molecule_counts::Array{Dict{AbstractString, Int64}, 1}  # 2 Dicts: current, future
-    energy::Int64
-
-    function Cell(genome::Genome)
-        molecule_counts = Array{Dict{AbstractString, Int64}, 1}(undef, 2)
-        molecule_counts[1] = Dict{AbstractString, Int64}()
-        molecule_counts[2] = Dict{AbstractString, Int64}()
-        new(genome, molecule_counts, 0)
-    end
-end
-
-
-"""
     parse_reaction(reaction_string)
 
 Parse the reactants and products from a reaction string.
