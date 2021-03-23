@@ -78,7 +78,7 @@ end
 
 
 """
-    init_molecules(veldt, coord, molecules_counts)
+    init_molecules(veldt, coord, molecule_counts)
 
 Initialize the Molecule count for a specific location in a Veldt.
 
@@ -218,22 +218,22 @@ Simulate one timestep for a Veldt.
 """
 function step(veldt::Veldt)
 
-    # Cells
-    # for each Cell
-    #   choose molecules to react or transport
-    #   run reactions
-    #   put products in next buffer
-    #   choose molecules to move (transport or diffusion)
-    #   move molecules to containing VeldtPoint; next buffer
-    # end
-
     # VeldtPoints
     # for each VeldtPoint
-    #   choose molecules to move in each direction
+    #   choose molecules to move in each direction (transport or diffusion)
+    #     2D: 4 directions, 3D: 6 directions; +1 into Cell
     #   move molecules to neighboring VeldtPoints or internal Cell; next buffer
+    #   if Cell
+    #     choose molecules to react
+    #     run reactions
+    #     put products in next buffer
+    #     choose molecules to move (transport or diffusion)
+    #       1 direction out of Cell
+    #     move molecules to containing VeldtPoint; next buffer
+    #   end
     # end
 
-    # Switch buffers
+    # Switch current buffer
 
     return veldt
 end
@@ -252,6 +252,10 @@ Simulate one or more timesteps for a Veldt.
 - Veldt after one or more timesteps
 """
 function simulate(veldt::Veldt, numsteps)
+
+    step(veldt)
+
+    # Record state
 
     return veldt
 end
