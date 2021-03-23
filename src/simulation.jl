@@ -201,5 +201,57 @@ function setup_veldt(filename)
         end
     end
 
-    return Veldt
+    return veldt
+end
+
+
+"""
+    step(veldt::Veldt)
+
+Simulate one timestep for a Veldt.
+
+# Arguments
+- veldt::Veldt
+
+# Returns
+- Veldt after one timestep
+"""
+function step(veldt::Veldt)
+
+    # Cells
+    # for each Cell
+    #   choose molecules to react or transport
+    #   run reactions
+    #   put products in next buffer
+    #   choose molecules to move (transport or diffusion)
+    #   move molecules to containing VeldtPoint; next buffer
+    # end
+
+    # VeldtPoints
+    # for each VeldtPoint
+    #   choose molecules to move in each direction
+    #   move molecules to neighboring VeldtPoints or internal Cell; next buffer
+    # end
+
+    # Switch buffers
+
+    return veldt
+end
+
+
+"""
+    simulate(veldt::Veldt, numsteps)
+
+Simulate one or more timesteps for a Veldt.
+
+# Arguments
+- veldt::Veldt
+- numsteps
+
+# Returns
+- Veldt after one or more timesteps
+"""
+function simulate(veldt::Veldt, numsteps)
+
+    return veldt
 end
