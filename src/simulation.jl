@@ -153,7 +153,7 @@ function get_neighbors(veldt::Veldt, coord::Array{Int64, 1})
             neighbors[1] = veldt.points[x-1][y]
         end
 
-        if x < length(veldt.points)
+        if x < veldt.dims[1]
             neighbors[2] = veldt.points[x+1][y]
         end
 
@@ -161,7 +161,7 @@ function get_neighbors(veldt::Veldt, coord::Array{Int64, 1})
             neighbors[3] = veldt.points[x][y-1]
         end
 
-        if y < length(veldt.points[1])
+        if y < veldt.dims[2]
             neighbors[4] = veldt.points[x][y+1]
         end
     elseif length(dims) == 3
@@ -172,7 +172,7 @@ function get_neighbors(veldt::Veldt, coord::Array{Int64, 1})
             neighbors[1] = veldt.points[x-1][y][z]
         end
 
-        if x < length(veldt.points)
+        if x < veldt.dims[1]
             neighbors[2] = veldt.points[x+1][y][z]
         end
 
@@ -180,7 +180,7 @@ function get_neighbors(veldt::Veldt, coord::Array{Int64, 1})
             neighbors[3] = veldt.points[x][y-1][z]
         end
 
-        if y < length(veldt.points[1])
+        if y < veldt.dims[2]
             neighbors[4] = veldt.points[x][y+1][z]
         end
 
@@ -188,7 +188,7 @@ function get_neighbors(veldt::Veldt, coord::Array{Int64, 1})
             neighbors[5] = veldt.points[x][y][z-1]
         end
 
-        if z < length(veldt.points[1][1])
+        if z < veldt.dims[3]
             neighbors[6] = veldt.points[x][y][z+1]
         end
     end
