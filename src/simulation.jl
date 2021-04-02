@@ -28,13 +28,6 @@ mutable struct VeldtPoint
     molecule_counts::Array{Dict{AbstractString, Int64}, 1}  # 2 Dicts: current, future
     cell::Cell
 
-    # function VeldtPoint()
-    #     molecule_counts = Array{Dict{AbstractString, Int64}, 1}(2)
-    #     molecule_counts[1] = Dict{AbstractString, Int64}()
-    #     molecule_counts[2] = Dict{AbstractString, Int64}()
-    #     new(molecule_counts)
-    # end
-
     function VeldtPoint(; molecules=[], cell=nothing)
         molecule_counts = Array{Dict{AbstractString, Int64}, 1}(undef, 2)
         molecule_counts[1] = Dict{AbstractString, Int64}()
@@ -136,6 +129,75 @@ end
 
 
 """
+    get_neighbors(veldt, coord)
+
+Return VeldtPoints neighboring VeldtPoint at coord.
+2D: [x, -x, y, -y]
+3D: [x, -x, y, -y, z, -z]
+If neighbor does not exist, defaults to VeldtPoint at coord.
+
+# Arguments
+- veldt::Veldt
+- coord::Array{Int64, 1}
+
+# Returns
+- Array of VeldtPoints
+"""
+function get_neighbors(veldt::Veldt, coord::Array{Int64, 1})
+
+    if length(veldt.dims) == 2
+        x, y = coord
+        neighbors = [veldt.points[x][y] for i in 1:4]
+
+        if x > 1
+            neighbors[1] = veldt.points[x-1][y]
+        end
+
+        if x < length(veldt.points)
+            neighbors[2] = veldt.points[x+1][y]
+        end
+
+        if y > 1
+            neighbors[3] = veldt.points[x][y-1]
+        end
+
+        if y < length(veldt.points[1])
+            neighbors[4] = veldt.points[x][y+1]
+        end
+    elseif length(dims) == 3
+        x, y, z = coord
+        neighbors = [veldt.points[x][y][z] for i in 1:6]
+
+        if x > 1
+            neighbors[1] = veldt.points[x-1][y][z]
+        end
+
+        if x < length(veldt.points)
+            neighbors[2] = veldt.points[x+1][y][z]
+        end
+
+        if y > 1
+            neighbors[3] = veldt.points[x][y-1][z]
+        end
+
+        if y < length(veldt.points[1])
+            neighbors[4] = veldt.points[x][y+1][z]
+        end
+
+        if z > 1
+            neighbors[5] = veldt.points[x][y][z-1]
+        end
+
+        if z < length(veldt.points[1][1])
+            neighbors[6] = veldt.points[x][y][z+1]
+        end
+    end
+
+    return neighbors
+end
+
+
+"""
     setup_veldt(filename)
 
 Create a Veldt from a YAML setup file.
@@ -206,9 +268,9 @@ end
 
 
 """
-    step(veldt::Veldt)
+    step2D(veldt::Veldt)
 
-Simulate one timestep for a Veldt.
+Simulate one timestep for a 2D Veldt.
 
 # Arguments
 - veldt::Veldt
@@ -216,10 +278,56 @@ Simulate one timestep for a Veldt.
 # Returns
 - Veldt after one timestep
 """
-function step(veldt::Veldt)
+function step2D(veldt::Veldt)
 
     # VeldtPoints
     # for each VeldtPoint
+    for i in 1:veldt.dims[1]
+        for j in 1:veldt.dims[2]
+            vp = veldt.points[i][j]
+            # choose molecules to move in each direction (transport or diffusion)
+            #   2D: 4 directions; +1 into Cell
+            for (mol, count) in vp.molecule_counts
+                for k in 1:count
+
+                end
+                # move molecules to neighboring VeldtPoints or internal Cell; next buffer
+            end
+
+            if vp.cell != nothing
+
+                # choose molecules to react
+                # run reactions
+                # put products in next buffer
+                # choose molecules to move (transport or diffusion)
+                #   1 direction out of Cell
+                # move molecules to containing VeldtPoint; next buffer
+            end
+        end
+    end
+
+    # Switch current buffer
+
+    return veldt
+end
+
+
+"""
+    step3D(veldt::Veldt)
+
+Simulate one timestep for a 3D Veldt.
+
+# Arguments
+- veldt::Veldt
+
+# Returns
+- Veldt after one timestep
+"""
+function step3D(veldt::Veldt)
+
+    # VeldtPoints
+    # for each VeldtPoint
+    for i in 1:veldt.dims[1]
     #   choose molecules to move in each direction (transport or diffusion)
     #     2D: 4 directions, 3D: 6 directions; +1 into Cell
     #   move molecules to neighboring VeldtPoints or internal Cell; next buffer
@@ -231,7 +339,7 @@ function step(veldt::Veldt)
     #       1 direction out of Cell
     #     move molecules to containing VeldtPoint; next buffer
     #   end
-    # end
+    end
 
     # Switch current buffer
 
@@ -245,15 +353,17 @@ end
 Simulate one or more timesteps for a Veldt.
 
 # Arguments
-- veldt::Veldt
-- numsteps
+- veldt::Veldt: Veldt to simulate
+- numsteps: number of timesteps to simulate
 
 # Returns
 - Veldt after one or more timesteps
 """
 function simulate(veldt::Veldt, numsteps)
 
-    step(veldt)
+    for i in 1:numsteps
+        step(veldt)
+    end
 
     # Record state
 
