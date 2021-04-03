@@ -195,6 +195,54 @@ end
 
 
 """
+    print_molecule_counts(veldt)
+
+Print molecule counts per VeldtPoint in a Veldt.
+
+# Arguments
+- veldt::Veldt
+"""
+function print_molecule_counts(veldt)
+    current = veldt.current
+
+    mol_count = 0
+    for (mol, count) in veldt.molecule_counts
+        mol_count += count
+    end
+    @printf "total: %d\n" mol_count
+
+    if length(veldt.dims) == 2
+        for i in 1:veldt.dims[1]
+            for j in 1:veldt.dims[2]
+                vp = veldt.points[i][j]
+                mol_count = 0
+                println(vp)
+                for (mol, count) in vp.molecule_counts[current]
+                    @printf "%s: %d" mol count
+                    mol_count += count
+                end
+                @printf "(%d,%d): %d\n" i j mol_count
+            end
+        end
+    elseif length(veldt.dims) == 3
+        for i in 1:veldt.dims[1]
+            for j in 1:veldt.dims[2]
+                for k in 1:veldt.dims[3]
+                    vp = veldt.points[i][j][k]
+                    mol_count = 0
+                    for (mol, count) in vp.molecule_counts[current]
+                        mol_count += count
+                    end
+                    @printf "(%d,%d): %d\n" i j mol_count
+                end
+            end
+        end
+    end
+
+end
+
+
+"""
     setup_veldt(filename)
 
 Create a Veldt from a YAML setup file.
@@ -369,9 +417,13 @@ Simulate one or more timesteps for a Veldt.
 function simulate(veldt::Veldt, numsteps)
 
     if length(veldt.dims) == 2
+        print_molecule_counts(veldt)
+        println()
         for i in 1:numsteps
             println("  step: ", i)
             step2D(veldt)
+            print_molecule_counts(veldt)
+            println()
         end
     elseif length(veldt.dims) == 3
         for i in 1:numsteps
