@@ -549,9 +549,17 @@ end
 
 
 function test_simulation_2d()
-    print_test_header("Veldt Simulation")
+    print_test_header("Veldt 2D Simulation")
 
     veldt1 = setup_veldt("./veldts/veldt3.yml")
+    simulate(veldt1, 10)
+end
+
+
+function test_simulation_3d()
+    print_test_header("Veldt 3D Simulation")
+
+    veldt1 = setup_veldt("./veldts/veldt6.yml")
     simulate(veldt1, 10)
 end
 
@@ -586,7 +594,8 @@ function main()
     # test_veldt_setup_2d()
     # test_veldt_setup_3d()
     # test_simulation_2d()
-    test_diffusion()
+    test_simulation_3d()
+    # test_diffusion()
 end
 
 main()

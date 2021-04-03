@@ -161,7 +161,7 @@ function get_neighbors(veldt::Veldt, coord::Array{Int64, 1})
         if y < veldt.dims[2]
             neighbors[4] = veldt.points[x][y+1]
         end
-    elseif length(dims) == 3
+    elseif length(veldt.dims) == 3
         x, y, z = coord
         neighbors = [veldt.points[x][y][z] for i in 1:6]
 
@@ -228,16 +228,21 @@ function print_molecule_counts(veldt)
         end
     elseif length(veldt.dims) == 3
         for i in 1:veldt.dims[1]
+            @printf "  slice %d\n" i
             for j in 1:veldt.dims[2]
+                @printf "  %d:" j
                 for k in 1:veldt.dims[3]
                     vp = veldt.points[i][j][k]
                     mol_count = 0
                     for (mol, count) in vp.molecule_counts[current]
                         mol_count += count
                     end
-                    @printf "  (%d,%d): %d\n" i j mol_count
+                    # @printf "  (%d,%d,%d): %d\n" i j k mol_count
+                    @printf "%4d" mol_count
                 end
+                println()
             end
+            println()
         end
     end
 
@@ -402,20 +407,44 @@ Simulate one timestep for a 3D Veldt.
 """
 function step3D(veldt::Veldt)
 
+    current = veldt.current
+    next = (current == 1) ? 2 : 1
+
+    # println("  current: ", current)
+
     # VeldtPoints
     # for each VeldtPoint
     for i in 1:veldt.dims[1]
-    #   Choose molecules to move in each direction (transport or diffusion)
-    #     2D: 4 directions, 3D: 6 directions; +1 into Cell
-    #   Move molecules to neighboring VeldtPoints or internal Cell; next buffer
-    #   if Cell
-    #     Choose molecules to react
-    #     Run reactions
-    #     Put products in next buffer
-    #     Choose molecules to move (transport or diffusion)
-    #       1 direction out of Cell
-    #     Move molecules to containing VeldtPoint; next buffer
-    #   end
+        for j in 1:veldt.dims[2]
+            for k in 1:veldt.dims[3]
+                vp = veldt.points[i][j][k]
+                # Choose molecules to move in each direction (transport or diffusion)
+                #   3D: 6 directions; +1 into Cell
+                neighbors = get_neighbors(veldt, [i, j, k])
+                for (mol, count) in vp.molecule_counts[current]
+                    # Move molecules to neighboring VeldtPoints or internal Cell; next buffer
+                    for k in 1:count
+                        chosen = rand([1, 2, 3, 4, 5, 6])
+                        if haskey(neighbors[chosen].molecule_counts[next], mol)
+                            neighbors[chosen].molecule_counts[next][mol] += 1
+                        else
+                            neighbors[chosen].molecule_counts[next][mol] = 1
+                        end
+                    end
+                    vp.molecule_counts[current][mol] = 0
+                end
+
+                #   if Cell
+                if vp.cell
+                    #     Choose molecules to react
+                    #     Run reactions
+                    #     Put products in next buffer
+                    #     Choose molecules to move (transport or diffusion)
+                    #       1 direction out of Cell
+                    #     Move molecules to containing VeldtPoint; next buffer
+                end
+            end
+        end
     end
 
     # Switch current buffer
@@ -449,8 +478,13 @@ function simulate(veldt::Veldt, numsteps)
             println()
         end
     elseif length(veldt.dims) == 3
+        print_molecule_counts(veldt)
+        println()
         for i in 1:numsteps
+            println("step: ", i)
             step3D(veldt)
+            print_molecule_counts(veldt)
+            println()
         end
     end
 
