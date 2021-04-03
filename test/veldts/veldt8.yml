@@ -1,20 +1,16 @@
-dimensions: [3, 3, 3]
+dimensions: [5, 5, 5]
 
 chemistry: ./chemistries/chemistry1.yml
 
 molecules:
   - name: AAA
     locations:
-    - location: [1, 1, 1]
-      count: 40
     - location: [3, 3, 3]
-      count: 4
+      count: 200
   - name: BBB
     locations:
-    - location: [1, 1, 1]
-      count: 4
     - location: [3, 3, 3]
-      count: 40
+      count: 200
 
 genomes:
   - ./genomes/genomes1.fasta

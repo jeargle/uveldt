@@ -559,21 +559,34 @@ end
 function test_simulation_3d()
     print_test_header("Veldt 3D Simulation")
 
-    veldt1 = setup_veldt("./veldts/veldt6.yml")
+    veldt1 = setup_veldt("./veldts/veldt4.yml")
     simulate(veldt1, 10)
 end
 
 
-function test_diffusion()
-    print_test_header("Veldt Diffusion")
-
-    println("  * veldt4")
-    veldt1 = setup_veldt("./veldts/veldt4.yml")
-    simulate(veldt1, 20)
+function test_diffusion_2d()
+    print_test_header("Veldt 2D Diffusion")
 
     println("  * veldt5")
-    veldt2 = setup_veldt("./veldts/veldt5.yml")
-    simulate(veldt2, 20)
+    veldt5 = setup_veldt("./veldts/veldt5.yml")
+    simulate(veldt5, 20)
+
+    println("  * veldt6")
+    veldt6 = setup_veldt("./veldts/veldt6.yml")
+    simulate(veldt6, 20)
+end
+
+
+function test_diffusion_3d()
+    print_test_header("Veldt 3D Diffusion")
+
+    println("  * veldt7")
+    veldt7 = setup_veldt("./veldts/veldt7.yml")
+    simulate(veldt7, 20)
+
+    println("  * veldt8")
+    veldt8 = setup_veldt("./veldts/veldt8.yml")
+    simulate(veldt8, 20)
 end
 
 
@@ -594,8 +607,9 @@ function main()
     # test_veldt_setup_2d()
     # test_veldt_setup_3d()
     # test_simulation_2d()
-    test_simulation_3d()
-    # test_diffusion()
+    # test_simulation_3d()
+    # test_diffusion_2d()
+    test_diffusion_3d()
 end
 
 main()
