@@ -26,7 +26,7 @@ VeldtPoint time evolution is controlled by a Veldt.
 """
 mutable struct VeldtPoint
     molecule_counts::Array{Dict{AbstractString, Int64}, 1}  # 2 Dicts: current, future
-    cell::Cell
+    cell::Union{Cell, Nothing}
 
     function VeldtPoint(; molecules=[], cell=nothing)
         molecule_counts = Array{Dict{AbstractString, Int64}, 1}(undef, 2)
@@ -36,11 +36,8 @@ mutable struct VeldtPoint
             molecule_counts[1][mol] = 0
             molecule_counts[2][mol] = 0
         end
-        if cell == nothing
-            return new(molecule_counts)
-        else
-            return new(molecule_counts, cell)
-        end
+
+        return new(molecule_counts, cell)
     end
 end
 
@@ -48,7 +45,7 @@ end
 """
 Multidimensional array representing locations that can hold Molecules and Cells.
 """
-struct Veldt
+mutable struct Veldt
     dims::Array{Int64, 1}   # num points per dimension; 2 or 3 dimensions
     points  # Array with length(dims) dimensions holding VeldtPoints
     current # buffer with current (not future) data, 1 or 2
@@ -280,33 +277,42 @@ Simulate one timestep for a 2D Veldt.
 """
 function step2D(veldt::Veldt)
 
+    current = veldt.current
+    next = (current == 1) ? 2 : 1
+
+    println("    current: ", current)
+
     # VeldtPoints
     # for each VeldtPoint
     for i in 1:veldt.dims[1]
         for j in 1:veldt.dims[2]
             vp = veldt.points[i][j]
-            # choose molecules to move in each direction (transport or diffusion)
+            # Choose molecules to move in each direction (transport or diffusion)
             #   2D: 4 directions; +1 into Cell
-            for (mol, count) in vp.molecule_counts
+            neighbors = get_neighbors(veldt, [i, j])
+            for (mol, count) in vp.molecule_counts[current]
+                # Move molecules to neighboring VeldtPoints or internal Cell; next buffer
                 for k in 1:count
-
+                    chosen = rand([1, 2, 3, 4])
+                    neighbors[chosen].molecule_counts[next][mol] += 1
                 end
-                # move molecules to neighboring VeldtPoints or internal Cell; next buffer
+                vp.molecule_counts[current][mol] = 0
             end
 
-            if vp.cell != nothing
+            if vp.cell
 
-                # choose molecules to react
-                # run reactions
-                # put products in next buffer
-                # choose molecules to move (transport or diffusion)
+                # Choose molecules to react
+                # Run reactions
+                # Put products in next buffer
+                # Choose molecules to move (transport or diffusion)
                 #   1 direction out of Cell
-                # move molecules to containing VeldtPoint; next buffer
+                # Move molecules to containing VeldtPoint; next buffer
             end
         end
     end
 
     # Switch current buffer
+    veldt.current = next
 
     return veldt
 end
@@ -328,20 +334,21 @@ function step3D(veldt::Veldt)
     # VeldtPoints
     # for each VeldtPoint
     for i in 1:veldt.dims[1]
-    #   choose molecules to move in each direction (transport or diffusion)
+    #   Choose molecules to move in each direction (transport or diffusion)
     #     2D: 4 directions, 3D: 6 directions; +1 into Cell
-    #   move molecules to neighboring VeldtPoints or internal Cell; next buffer
+    #   Move molecules to neighboring VeldtPoints or internal Cell; next buffer
     #   if Cell
-    #     choose molecules to react
-    #     run reactions
-    #     put products in next buffer
-    #     choose molecules to move (transport or diffusion)
+    #     Choose molecules to react
+    #     Run reactions
+    #     Put products in next buffer
+    #     Choose molecules to move (transport or diffusion)
     #       1 direction out of Cell
-    #     move molecules to containing VeldtPoint; next buffer
+    #     Move molecules to containing VeldtPoint; next buffer
     #   end
     end
 
     # Switch current buffer
+    veldt.current = next
 
     return veldt
 end
@@ -361,8 +368,15 @@ Simulate one or more timesteps for a Veldt.
 """
 function simulate(veldt::Veldt, numsteps)
 
-    for i in 1:numsteps
-        step(veldt)
+    if length(veldt.dims) == 2
+        for i in 1:numsteps
+            println("  step: ", i)
+            step2D(veldt)
+        end
+    elseif length(veldt.dims) == 3
+        for i in 1:numsteps
+            step3D(veldt)
+        end
     end
 
     # Record state

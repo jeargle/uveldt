@@ -548,6 +548,14 @@ function test_veldt_setup_3d()
 end
 
 
+function test_simulation_2d()
+    print_test_header("Veldt Simulation")
+
+    veldt1 = setup_veldt("./veldts/veldt3.yml")
+    simulate(veldt1, 10)
+end
+
+
 function main()
     # test_element()
     # test_element_table()
@@ -561,9 +569,10 @@ function main()
     # test_genome()
     # test_cell()
     # test_veldt_point()
-    test_veldt()
+    # test_veldt()
     # test_veldt_setup_2d()
     # test_veldt_setup_3d()
+    test_simulation_2d()
 end
 
 main()
