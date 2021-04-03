@@ -1,0 +1,20 @@
+dimensions: [3, 3]
+
+chemistry: ./chemistries/chemistry1.yml
+
+molecules:
+  - name: AAA
+    locations:
+    - location: [1, 1]
+      count: 10
+    - location: [3, 3]
+      count: 2
+  - name: BBB
+    locations:
+    - location: [1, 1]
+      count: 2
+    - location: [3, 3]
+      count: 10
+
+genomes:
+  - ./genomes/genomes1.fasta

@@ -213,16 +213,18 @@ function print_molecule_counts(veldt)
 
     if length(veldt.dims) == 2
         for i in 1:veldt.dims[1]
+            @printf "  %d:" i
             for j in 1:veldt.dims[2]
                 vp = veldt.points[i][j]
                 mol_count = 0
-                println(vp)
                 for (mol, count) in vp.molecule_counts[current]
-                    @printf "%s: %d" mol count
+                    # @printf "  %s: %d\n" mol count
                     mol_count += count
                 end
-                @printf "(%d,%d): %d\n" i j mol_count
+                # @printf "  (%d,%d): %d" i j mol_count
+                @printf "%4d" mol_count
             end
+            println()
         end
     elseif length(veldt.dims) == 3
         for i in 1:veldt.dims[1]
@@ -233,7 +235,7 @@ function print_molecule_counts(veldt)
                     for (mol, count) in vp.molecule_counts[current]
                         mol_count += count
                     end
-                    @printf "(%d,%d): %d\n" i j mol_count
+                    @printf "  (%d,%d): %d\n" i j mol_count
                 end
             end
         end
@@ -285,6 +287,23 @@ function setup_veldt(filename)
 
     @printf "  genomes: %s\n" genomes
 
+    # build Molecules
+    if haskey(setup, "molecules")
+        for mol_info in setup["molecules"]
+            if haskey(mol_info, "name")
+                mol_name = mol_info["name"]
+            end
+
+            if haskey(mol_info, "locations")
+                for loc_info in mol_info["locations"]
+                    mol_loc = loc_info["location"]
+                    mol_count = loc_info["count"]
+                    init_molecules(veldt, mol_loc, Dict(mol_name => mol_count))
+                end
+            end
+        end
+    end
+
     # build Cells
     if haskey(setup, "cells")
         for cell_info in setup["cells"]
@@ -328,7 +347,7 @@ function step2D(veldt::Veldt)
     current = veldt.current
     next = (current == 1) ? 2 : 1
 
-    println("    current: ", current)
+    # println("  current: ", current)
 
     # VeldtPoints
     # for each VeldtPoint
@@ -342,7 +361,11 @@ function step2D(veldt::Veldt)
                 # Move molecules to neighboring VeldtPoints or internal Cell; next buffer
                 for k in 1:count
                     chosen = rand([1, 2, 3, 4])
-                    neighbors[chosen].molecule_counts[next][mol] += 1
+                    if haskey(neighbors[chosen].molecule_counts[next], mol)
+                        neighbors[chosen].molecule_counts[next][mol] += 1
+                    else
+                        neighbors[chosen].molecule_counts[next][mol] = 1
+                    end
                 end
                 vp.molecule_counts[current][mol] = 0
             end
@@ -420,7 +443,7 @@ function simulate(veldt::Veldt, numsteps)
         print_molecule_counts(veldt)
         println()
         for i in 1:numsteps
-            println("  step: ", i)
+            println("step: ", i)
             step2D(veldt)
             print_molecule_counts(veldt)
             println()
