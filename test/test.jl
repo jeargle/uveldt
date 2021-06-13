@@ -1,6 +1,14 @@
 # John Eargle (mailto: jeargle at gmail.com)
 # 2018-2021
 # test
+#
+# To build sysimage boom.so from uveldt/test:
+#   using PackageCompiler
+#   create_sysimage([:Distributions, :YAML, :Printf, :Random], sysimage_path="../boom.so", precompile_execution_file="so_builder.jl")
+#
+# To run from uveldt/test:
+#   julia --project=.. -J../boom.so test.jl
+
 
 using Printf
 using uveldt
@@ -591,24 +599,24 @@ end
 
 
 function main()
-    # test_element()
-    # test_element_table()
-    # test_bond()
-    # test_bond_table()
-    # test_chemistry()
-    # test_chemistry_setup()
-    # test_molecule()
-    # test_reaction()
-    # test_gene()
-    # test_genome()
-    # test_cell()
-    # test_veldt_point()
-    # test_veldt()
-    # test_veldt_setup_2d()
-    # test_veldt_setup_3d()
-    # test_simulation_2d()
-    # test_simulation_3d()
-    # test_diffusion_2d()
+    test_element()
+    test_element_table()
+    test_bond()
+    test_bond_table()
+    test_chemistry()
+    test_chemistry_setup()
+    test_molecule()
+    test_reaction()
+    test_gene()
+    test_genome()
+    test_cell()
+    test_veldt_point()
+    test_veldt()
+    test_veldt_setup_2d()
+    test_veldt_setup_3d()
+    test_simulation_2d()
+    test_simulation_3d()
+    test_diffusion_2d()
     test_diffusion_3d()
 end
 
