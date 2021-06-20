@@ -9,6 +9,8 @@ using Printf
 using Random
 using YAML
 
+using UUIDs
+
 # Chemistry
 include("chemistry.jl")
 export Element, ElementTable, Bond, BondTable, Chemistry, Molecule

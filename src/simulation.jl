@@ -7,6 +7,7 @@ Membrane-bound compartment containing Molecules and a Genome.  Chemical Reaction
 within.
 """
 struct Cell
+    uuid::UUID
     genome::Genome
     molecule_counts::Array{Dict{AbstractString, Int64}, 1}  # 2 Dicts: current, future
     energy::Int64
@@ -15,7 +16,7 @@ struct Cell
         molecule_counts = Array{Dict{AbstractString, Int64}, 1}(undef, 2)
         molecule_counts[1] = Dict{AbstractString, Int64}()
         molecule_counts[2] = Dict{AbstractString, Int64}()
-        new(genome, molecule_counts, 0)
+        new(UUIDs.uuid4(), genome, molecule_counts, 0)
     end
 end
 
@@ -283,9 +284,14 @@ function setup_veldt(filename)
         genome_files = setup["genomes"]
         for genome_file in genome_files
             genome_info = read_fasta(genome_file)
-            for (name, genome_str) in genome_info
-                @printf "  genome: %s\n" name
-                genomes[name] = Genome(name, genome_str, chemistry)
+            for (name, uuid, genome_str) in genome_info
+                if uuid == nothing
+                    @printf "  genome: %s\n" name
+                    genomes[name] = Genome(name, genome_str, chemistry)
+                else
+                    @printf "  genome: %s %s\n" name uuid
+                    genomes[name] = Genome(uuid, name, genome_str, chemistry)
+                end
             end
         end
     end

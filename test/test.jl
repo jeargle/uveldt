@@ -312,7 +312,7 @@ function test_genome()
 
     genome_info = read_fasta("genome1.fasta")
     println("length(genome_info): ", length(genome_info))
-    genome_str2 = genome_info[1][2]
+    genome_str2 = genome_info[1][3]
     println("genome_str2: ", genome_str2)
     println("name1 == name2: ", genome_info[1][1] == "genome1")
     println("genome_str1 == genome_str2: ", genome_str1 == genome_str2)
