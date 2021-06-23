@@ -3,6 +3,21 @@
 # uveldt.evolution
 
 """
+Evolution parameters for evolution algorithm.
+"""
+struct MutationParams
+    snp_rate::Float64
+    insertion_rate::Float64
+    deletion_rate::Float64
+    duplication_rate::Float64
+    inversion_rate::Float64
+    translocation_rate::Float64
+
+    MutationParams(snp_rate, insertion_rate, deletion_rate, duplication_rate, inversion_rate, translocation_rate) = new(snp_rate, insertion_rate, deletion_rate, duplication_rate, inversion_rate, translocation_rate)
+end
+
+
+"""
     add_snps(genome, rate)
 
 Add SNPs to Genome.
@@ -258,4 +273,41 @@ function cross_over(genome1::Genome, genome2::Genome)
     child_str2 = head_str * tail_str
 
     return (child_str1, child_str2)
+end
+
+
+"""
+    mutate(genomes, params)
+
+Take an Array of parent Genomes and create a set of child Genomes.
+
+# Arguments
+- genomes::Array{Genome, 1}
+
+# Returns
+- Array{Genome, 1} containing new child Genomes
+"""
+function mutate(genomes::Array{Genome, 1}, params::MutationParams)
+
+    # # Create initial child genomes
+    # child_genomes = genomes
+
+    # for genome in child_genomes
+    #     # SNPs
+    #     add_snps(genome, rate)
+    #     # Insertions
+    #     add_insertions(genome, rate; size_param=0.5)
+    #     # Deletions
+    #     remove_deletions(genome, rate; size_param=0.5)
+    #     # Duplications
+    #     add_duplications(genome, rate; size_param=0.5)
+    #     # Inversions
+    #     add_inversions(genome, rate; size_param=0.5)
+    #     # Translocations
+    #     add_translocations(genome, rate; size_param=0.5)
+    # end
+
+    # # Crossing over
+    # cross_over(genome1, genome2)
+
 end
