@@ -84,18 +84,36 @@ end
 
 
 """
-    add_snps(genome, rate)
+    substitute(sub_mat, original_char)
+
+Pick a substitution character based on a SubstitutionMatrix.
+
+# Arguments
+- sub_mat::SubstitutionMatrix
+- original_char::Char
+
+# Returns
+- Substitution Char
+"""
+function substitution(sub_mat::SubstitutionMatrix, original_char::Char)
+    return sub_mat.alphabet[random(sub_mat.substitutions[original_char])]
+end
+
+
+"""
+    add_snps(genome, rate; sub_mat)
 
 Add SNPs to Genome.
 
 # Arguments
 - genome::Genome
 - rate
+- sub_mat::SubstitutionMatrix
 
 # Returns
 - Mutated Genome String
 """
-function add_snps(genome::Genome, rate)
+function add_snps(genome::Genome, rate; sub_mat::Union{SubstitutionMatrix, Nothing}=nothing)
     geom_dist = Geometric(rate)
     location = 1 + rand(geom_dist)
     alphabet = alphabet_string(genome.chemistry)
@@ -104,7 +122,11 @@ function add_snps(genome::Genome, rate)
 
     while location <= length(genome.string)
         push!(fragments, genome.string[start:location-1])
-        snp = string(rand(alphabet))
+        if sub_mat == nothing
+            snp = string(rand(alphabet))
+        else
+            snp = string(substitute(sub_mat, genome.string[location]))
+        end
         @printf "  %d SNP %s->%s\n" location genome.string[location] snp
         push!(fragments, snp)
         start = location + 1
