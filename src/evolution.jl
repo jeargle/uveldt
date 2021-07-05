@@ -18,6 +18,71 @@ end
 
 
 """
+Substitution matrix for SNPs.
+"""
+struct SubstitutionMatrix
+    alphabet::AbstractString
+    substitutions::Dict{Char, Categorical}
+
+    function SubstitutionMatrix(alphabet, substitutions)
+        new(alphabet, substitutions)
+    end
+end
+
+
+"""
+    read_substition_matrix(filename)
+
+Read a substitution matrix file and return a SubstitutionMatrix.
+
+Substitution matrix files have the form:
+
+     A    B    C    (    )    *    /
+A    0    5    5    2    2    2    2
+B    5    0    5    2    2    2    2
+C    5    5    0    2    2    2    2
+(    1    1    1    0    1    1    1
+)    1    1    1    1    0    1    1
+*    1    1    1    1    1    0    1
+/    1    1    1    1    1    1    0
+
+where 'A', 'B', and 'C' are Elements in the Chemistry, and '(', ')',
+'*', and '/' are the standard operator characters.  The numbers Mij
+give odds that a character in column j will turn into a character in
+row i.  SNP target selection already takes into account which bases
+will remain the same so the matrix diagonal (Mii) is ignored by the
+evolution engine.
+
+# Arguments
+- filename
+
+# Returns
+- SubstitutionMatrix
+"""
+function read_substitution_matrix(filename, chemistry)
+    alphabet = alphabet_string(chemistry)
+    substitutions = Dict{Char, Categorical}()
+
+    lines = readlines(filename, "r")
+    ordered_chars = join(split(lines[1]))
+    for oc in ordered_chars
+        if !(oc in alphabet)
+            error("substitution characters must be in the provided Chemistry")
+        end
+    end
+
+    for line in lines[2:end]
+        line_contents = split(line)
+        # current_char = line_contents[1]
+        odds = [parse(Int64, lc) for lc in line_contents[2:end]]
+        substitutions[current_char] = Categorical(odds)
+    end
+
+    return SubstitutionMatrix(alphabet, substitutions)
+end
+
+
+"""
     add_snps(genome, rate)
 
 Add SNPs to Genome.
