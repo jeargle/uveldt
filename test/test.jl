@@ -598,6 +598,23 @@ function test_diffusion_3d()
 end
 
 
+function test_substitution_matrix()
+    print_test_header("SubstitutionMatrix")
+
+    println("  * Setup Chemistry")
+    chem1 = setup_chemistry("./chemistries/chemistry1.yml")
+
+    println("  * Read SubstitutionMatrix")
+    sm1 = read_substitution_matrix("./chemistries/sub1.txt", chem1)
+
+    println(sm1.substitutions['A'])
+    println(sm1.substitutions['B'])
+    println(sm1.substitutions['('])
+    println(sm1.substitutions['/'])
+
+end
+
+
 function main()
     test_element()
     test_element_table()
@@ -618,6 +635,7 @@ function main()
     test_simulation_3d()
     test_diffusion_2d()
     test_diffusion_3d()
+    test_substitution_matrix()
 end
 
 main()

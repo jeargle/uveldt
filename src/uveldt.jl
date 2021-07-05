@@ -9,6 +9,7 @@ using Printf
 using Random
 using YAML
 
+using LinearAlgebra
 using UUIDs
 
 # Chemistry
@@ -26,6 +27,7 @@ export is_pseudogene, read_fasta, write_fasta
 
 # Evolution
 include("evolution.jl")
+export read_substitution_matrix
 export add_snps, add_insertions, remove_deletions, add_duplications
 export add_inversions, add_translocations, cross_over
 

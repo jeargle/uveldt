@@ -38,20 +38,20 @@ Read a substitution matrix file and return a SubstitutionMatrix.
 Substitution matrix files have the form:
 
      A    B    C    (    )    *    /
-A    0    5    5    2    2    2    2
-B    5    0    5    2    2    2    2
-C    5    5    0    2    2    2    2
-(    1    1    1    0    1    1    1
-)    1    1    1    1    0    1    1
-*    1    1    1    1    1    0    1
-/    1    1    1    1    1    1    0
+A    0    5    5    1    1    1    1
+B    5    0    5    1    1    1    1
+C    5    5    0    1    1    1    1
+(    2    2    2    0    1    1    1
+)    2    2    2    1    0    1    1
+*    2    2    2    1    1    0    1
+/    2    2    2    1    1    1    0
 
 where 'A', 'B', and 'C' are Elements in the Chemistry, and '(', ')',
 '*', and '/' are the standard operator characters.  The numbers Mij
-give odds that a character in column j will turn into a character in
-row i.  SNP target selection already takes into account which bases
-will remain the same so the matrix diagonal (Mii) is ignored by the
-evolution engine.
+give odds that a character in row i will turn into a character in
+column j.  SNP target selection already takes into account which bases
+will remain the same so the matrix diagonal (Mii) should normally be
+set to 0.
 
 # Arguments
 - filename
@@ -63,7 +63,7 @@ function read_substitution_matrix(filename, chemistry)
     alphabet = alphabet_string(chemistry)
     substitutions = Dict{Char, Categorical}()
 
-    lines = readlines(filename, "r")
+    lines = readlines(filename)
     ordered_chars = join(split(lines[1]))
     for oc in ordered_chars
         if !(oc in alphabet)
@@ -73,8 +73,9 @@ function read_substitution_matrix(filename, chemistry)
 
     for line in lines[2:end]
         line_contents = split(line)
-        # current_char = line_contents[1]
-        odds = [parse(Int64, lc) for lc in line_contents[2:end]]
+        current_char = line_contents[1][1]
+        # Use L1 norm to generate probabilities.
+        odds = normalize([parse(Int64, lc) for lc in line_contents[2:end]], 1)
         substitutions[current_char] = Categorical(odds)
     end
 
