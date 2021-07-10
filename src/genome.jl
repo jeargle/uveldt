@@ -68,6 +68,8 @@ struct Genome
 
     Genome(name::AbstractString, string::AbstractString, chemistry::Chemistry) = new(UUIDs.uuid4(), name, string, chemistry)
 
+    Genome(string::AbstractString, chemistry::Chemistry) = new(UUIDs.uuid4(), "", string, chemistry)
+
     function Genome(uuid::UUID, name::AbstractString, size::Int64, chemistry::Chemistry)
         Genome(uuid, name, genome_string(size, chemistry), chemistry)
     end

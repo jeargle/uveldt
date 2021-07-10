@@ -111,7 +111,7 @@ Add SNPs to Genome.
 - sub_mat::SubstitutionMatrix
 
 # Returns
-- Mutated Genome String
+- Mutated Genome
 """
 function add_snps(genome::Genome, rate; sub_mat::Union{SubstitutionMatrix, Nothing}=nothing)
     geom_dist = Geometric(rate)
@@ -135,7 +135,7 @@ function add_snps(genome::Genome, rate; sub_mat::Union{SubstitutionMatrix, Nothi
 
     push!(fragments, genome.string[start:end])
 
-    return join(fragments)
+    return Genome(join(fragments), genome.chemistry)
 end
 
 
@@ -173,7 +173,7 @@ function add_insertions(genome::Genome, rate; size_param=0.5)
 
     push!(fragments, genome.string[start:end])
 
-    return join(fragments)
+    return Genome(join(fragments), genome.chemistry)
 end
 
 
@@ -208,7 +208,7 @@ function remove_deletions(genome::Genome, rate; size_param=0.5)
 
     push!(fragments, genome.string[start:end])
 
-    return join(fragments)
+    return Genome(join(fragments), genome.chemistry)
 end
 
 
@@ -380,20 +380,20 @@ function mutate(genomes::Array{Genome, 1}, params::MutationParams)
     # # Create initial child genomes
     # child_genomes = genomes
 
-    # for genome in child_genomes
-    #     # SNPs
-    #     add_snps(genome, rate)
-    #     # Insertions
-    #     add_insertions(genome, rate; size_param=0.5)
-    #     # Deletions
-    #     remove_deletions(genome, rate; size_param=0.5)
-    #     # Duplications
-    #     add_duplications(genome, rate; size_param=0.5)
-    #     # Inversions
-    #     add_inversions(genome, rate; size_param=0.5)
-    #     # Translocations
-    #     add_translocations(genome, rate; size_param=0.5)
-    # end
+    for genome in child_genomes
+        # SNPs
+        genome = add_snps(genome, snp_rate; sub_mat=nothing)
+        # Insertions
+        genome = add_insertions(genome, insertion_rate; size_param=0.5)
+        # Deletions
+        genome = remove_deletions(genome, deletion_rate; size_param=0.5)
+        # # Duplications
+        # add_duplications(genome, rate; size_param=0.5)
+        # # Inversions
+        # add_inversions(genome, rate; size_param=0.5)
+        # # Translocations
+        # add_translocations(genome, rate; size_param=0.5)
+    end
 
     # # Crossing over
     # cross_over(genome1, genome2)
