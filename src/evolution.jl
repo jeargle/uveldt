@@ -3,21 +3,6 @@
 # uveldt.evolution
 
 """
-Evolution parameters for evolution algorithm.
-"""
-struct MutationParams
-    snp_rate::Float64
-    insertion_rate::Float64
-    deletion_rate::Float64
-    duplication_rate::Float64
-    inversion_rate::Float64
-    translocation_rate::Float64
-
-    MutationParams(snp_rate, insertion_rate, deletion_rate, duplication_rate, inversion_rate, translocation_rate) = new(snp_rate, insertion_rate, deletion_rate, duplication_rate, inversion_rate, translocation_rate)
-end
-
-
-"""
 Substitution matrix for SNPs.
 """
 struct SubstitutionMatrix
@@ -27,6 +12,23 @@ struct SubstitutionMatrix
     function SubstitutionMatrix(alphabet, substitutions)
         new(alphabet, substitutions)
     end
+end
+
+
+"""
+Evolution parameters for evolution algorithm.
+"""
+struct MutationParams
+    snp_rate::Float64
+    insertion_rate::Float64
+    deletion_rate::Float64
+    duplication_rate::Float64
+    inversion_rate::Float64
+    translocation_rate::Float64
+    substitution_matrix::Union{SubstitutionMatrix, Nothing}
+
+    MutationParams(snp_rate, insertion_rate, deletion_rate, duplication_rate, inversion_rate, translocation_rate) = new(snp_rate, insertion_rate, deletion_rate, duplication_rate, inversion_rate, translocation_rate, nothing)
+    MutationParams(snp_rate, insertion_rate, deletion_rate, duplication_rate, inversion_rate, translocation_rate, substitution_matrix) = new(snp_rate, insertion_rate, deletion_rate, duplication_rate, inversion_rate, translocation_rate, substitution_matrix)
 end
 
 
@@ -375,27 +377,24 @@ Take an Array of parent Genomes and create a set of child Genomes.
 # Returns
 - Array{Genome, 1} containing new child Genomes
 """
-function mutate(genomes::Array{Genome, 1}, params::MutationParams)
+function mutate(genomes, params::MutationParams)
+    child_genomes = []
 
-    # # Create initial child genomes
-    # child_genomes = genomes
-
-    for genome in child_genomes
-        # SNPs
-        genome = add_snps(genome, snp_rate; sub_mat=nothing)
-        # Insertions
-        genome = add_insertions(genome, insertion_rate; size_param=0.5)
-        # Deletions
-        genome = remove_deletions(genome, deletion_rate; size_param=0.5)
+    for genome in genomes
+        genome = add_snps(genome, params.snp_rate; sub_mat=params.substitution_matrix)
+        genome = add_insertions(genome, params.insertion_rate; size_param=0.5)
+        genome = remove_deletions(genome, params.deletion_rate; size_param=0.5)
         # # Duplications
-        # add_duplications(genome, rate; size_param=0.5)
+        # add_duplications(genome, params.duplication_rate; size_param=0.5)
         # # Inversions
-        # add_inversions(genome, rate; size_param=0.5)
+        # add_inversions(genome, params.inversion_rate; size_param=0.5)
         # # Translocations
-        # add_translocations(genome, rate; size_param=0.5)
+        # add_translocations(genome, params.translocation_rate; size_param=0.5)
+        push!(child_genomes, genome)
     end
 
     # # Crossing over
     # cross_over(genome1, genome2)
 
+    return child_genomes
 end

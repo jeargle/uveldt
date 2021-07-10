@@ -611,8 +611,48 @@ function test_substitution_matrix()
     println(sm1.substitutions['B'])
     println(sm1.substitutions['('])
     println(sm1.substitutions['/'])
-
 end
+
+
+function test_mutate()
+    print_test_header("Mutate")
+
+    println("  * Setup Chemistry")
+    chem1 = setup_chemistry("./chemistries/chemistry1.yml")
+
+    println("  * Read SubstitutionMatrix")
+    sm1 = read_substitution_matrix("./chemistries/sub1.txt", chem1)
+
+    println("  * Setup MutationParams")
+    snp_rate = 0.01
+    insertion_rate = 0.002
+    deletion_rate = 0.002
+    duplication_rate = 0.002
+    inversion_rate = 0.002
+    translocation_rate = 0.002
+    mut_params = MutationParams(snp_rate, insertion_rate, deletion_rate,
+                                duplication_rate, inversion_rate,
+                                translocation_rate)
+
+    println("  * Create Genomes")
+    genomes = []
+    push!(genomes, Genome("genome1", genome_string(500, chem1), chem1))
+    push!(genomes, Genome("genome2", genome_string(500, chem1), chem1))
+    push!(genomes, Genome("genome3", genome_string(500, chem1), chem1))
+    push!(genomes, Genome("genome4", genome_string(500, chem1), chem1))
+    push!(genomes, Genome("genome5", genome_string(500, chem1), chem1))
+
+    for (i, genome) in enumerate(genomes)
+        println("genome: ", genome)
+    end
+
+    child_genomes = mutate(genomes, mut_params)
+
+    for (i, child_genome) in enumerate(child_genomes)
+        println("child_genome: ", child_genome)
+    end
+end
+
 
 
 function main()
@@ -636,6 +676,7 @@ function main()
     test_diffusion_2d()
     test_diffusion_3d()
     test_substitution_matrix()
+    test_mutate()
 end
 
 main()
