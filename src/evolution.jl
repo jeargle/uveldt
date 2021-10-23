@@ -3,7 +3,7 @@
 # uveldt.evolution
 
 """
-Substitution matrix for SNPs.
+Substitution matrix for SNVs.
 """
 struct SubstitutionMatrix
     alphabet::AbstractString
@@ -19,7 +19,7 @@ end
 Evolution parameters for evolution algorithm.
 """
 struct MutationParams
-    snp_rate::Float64
+    snv_rate::Float64
     insertion_rate::Float64
     deletion_rate::Float64
     duplication_rate::Float64
@@ -27,8 +27,8 @@ struct MutationParams
     translocation_rate::Float64
     substitution_matrix::Union{SubstitutionMatrix, Nothing}
 
-    MutationParams(snp_rate, insertion_rate, deletion_rate, duplication_rate, inversion_rate, translocation_rate) = new(snp_rate, insertion_rate, deletion_rate, duplication_rate, inversion_rate, translocation_rate, nothing)
-    MutationParams(snp_rate, insertion_rate, deletion_rate, duplication_rate, inversion_rate, translocation_rate, substitution_matrix) = new(snp_rate, insertion_rate, deletion_rate, duplication_rate, inversion_rate, translocation_rate, substitution_matrix)
+    MutationParams(snv_rate, insertion_rate, deletion_rate, duplication_rate, inversion_rate, translocation_rate) = new(snv_rate, insertion_rate, deletion_rate, duplication_rate, inversion_rate, translocation_rate, nothing)
+    MutationParams(snv_rate, insertion_rate, deletion_rate, duplication_rate, inversion_rate, translocation_rate, substitution_matrix) = new(snv_rate, insertion_rate, deletion_rate, duplication_rate, inversion_rate, translocation_rate, substitution_matrix)
 end
 
 
@@ -51,7 +51,7 @@ C    5    5    0    1    1    1    1
 where 'A', 'B', and 'C' are Elements in the Chemistry, and '(', ')',
 '*', and '/' are the standard operator characters.  The numbers Mij
 give odds that a character in row i will turn into a character in
-column j.  SNP target selection already takes into account which bases
+column j.  SNV target selection already takes into account which bases
 will remain the same so the matrix diagonal (Mii) should normally be
 set to 0.
 
@@ -103,9 +103,9 @@ end
 
 
 """
-    add_snps(genome, rate; sub_mat)
+    add_snvs(genome, rate; sub_mat)
 
-Add SNPs to Genome.
+Add SNVs to Genome.
 
 # Arguments
 - genome::Genome
@@ -115,7 +115,7 @@ Add SNPs to Genome.
 # Returns
 - Mutated Genome
 """
-function add_snps(genome::Genome, rate; sub_mat::Union{SubstitutionMatrix, Nothing}=nothing)
+function add_snvs(genome::Genome, rate; sub_mat::Union{SubstitutionMatrix, Nothing}=nothing)
     geom_dist = Geometric(rate)
     location = 1 + rand(geom_dist)
     alphabet = alphabet_string(genome.chemistry)
@@ -125,12 +125,12 @@ function add_snps(genome::Genome, rate; sub_mat::Union{SubstitutionMatrix, Nothi
     while location <= length(genome.string)
         push!(fragments, genome.string[start:location-1])
         if sub_mat == nothing
-            snp = string(rand(alphabet))
+            snv = string(rand(alphabet))
         else
-            snp = string(substitute(sub_mat, genome.string[location]))
+            snv = string(substitute(sub_mat, genome.string[location]))
         end
-        @printf "  %d SNP %s->%s\n" location genome.string[location] snp
-        push!(fragments, snp)
+        @printf "  %d SNV %s->%s\n" location genome.string[location] snv
+        push!(fragments, snv)
         start = location + 1
         location += rand(geom_dist)
     end
@@ -381,7 +381,7 @@ function mutate(genomes, params::MutationParams)
     child_genomes = []
 
     for genome in genomes
-        genome = add_snps(genome, params.snp_rate; sub_mat=params.substitution_matrix)
+        genome = add_snvs(genome, params.snv_rate; sub_mat=params.substitution_matrix)
         genome = add_insertions(genome, params.insertion_rate; size_param=0.5)
         genome = remove_deletions(genome, params.deletion_rate; size_param=0.5)
         # # Duplications

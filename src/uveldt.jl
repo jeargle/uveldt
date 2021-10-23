@@ -29,7 +29,7 @@ export is_pseudogene, read_fasta, write_fasta
 include("evolution.jl")
 export MutationParams, SubstitutionMatrix
 export read_substitution_matrix
-export add_snps, add_insertions, remove_deletions, add_duplications
+export add_snvs, add_insertions, remove_deletions, add_duplications
 export add_inversions, add_translocations, cross_over, mutate
 
 # Simulation

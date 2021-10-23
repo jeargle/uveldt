@@ -366,8 +366,8 @@ function test_genome()
     println("genome2: ", genome2)
 
     println()
-    println("  * Add SNPs")
-    genome3 = add_snps(genome1, 0.01)
+    println("  * Add SNVs")
+    genome3 = add_snvs(genome1, 0.01)
     println("genome3: ", genome3)
     println()
     println("  * Add insertions")
@@ -624,13 +624,13 @@ function test_mutate()
     sm1 = read_substitution_matrix("./chemistries/sub1.txt", chem1)
 
     println("  * Setup MutationParams")
-    snp_rate = 0.01
+    snv_rate = 0.01
     insertion_rate = 0.002
     deletion_rate = 0.002
     duplication_rate = 0.002
     inversion_rate = 0.002
     translocation_rate = 0.002
-    mut_params = MutationParams(snp_rate, insertion_rate, deletion_rate,
+    mut_params = MutationParams(snv_rate, insertion_rate, deletion_rate,
                                 duplication_rate, inversion_rate,
                                 translocation_rate)
 
