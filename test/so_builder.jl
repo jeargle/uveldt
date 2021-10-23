@@ -1,4 +1,11 @@
 # Run create_sysimage() from this directory.
+#
+# pkg> add PackageCompiler Distributions YAML Printf Random
+# julia> using PackageCompiler
+# julia> create_sysimage([:Distributions, :YAML, :Printf, :Random]; sysimage_path="../uveldt.so", precompile_execution_file="so_builder.jl")
+#
+# Then run tests with:
+# > julia -J../uveldt.so tests.jl
 
 using Distributions
 using Printf
