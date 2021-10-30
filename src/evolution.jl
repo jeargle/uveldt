@@ -3,6 +3,48 @@
 # uveldt.evolution
 
 """
+Node in a Phylogeny.
+"""
+struct PhyloNode
+    genomeName::AbstractString
+    genomeUuid::UUID
+
+    function PhyloNode(genome)
+        new(genome)
+    end
+end
+
+
+"""
+Edge in a Phylogeny.
+"""
+struct PhyloEdge
+    parent::PhyloNode
+    child::PhyloNode
+    mutations
+
+    function PhyloNode(genome)
+        new(genome)
+    end
+end
+
+
+"""
+Phylogenic graph for multiple, related Genomes.
+"""
+struct Phylogeny
+    nodes::Array{PhyloNode, 1}
+    edges::Array{PhyloEdge, 1}
+    roots::Array{PhyloNode, 1}
+    leaves::Array{PhyloNode, 1}
+
+    function Phylogeny(nodes, edges)
+        new(nodes, edges)
+    end
+end
+
+
+"""
 Substitution matrix for SNVs.
 """
 struct SubstitutionMatrix
