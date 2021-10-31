@@ -336,9 +336,8 @@ Add large inversions to Genome.
 - Mutated Genome String
 """
 function add_inversions(genome::Genome, rate; size_param=0.5)
-    location_dist = Geometric(rate)
-    location = 1 + rand(location_dist)
-    alphabet = alphabet_string(genome.chemistry)
+    geom_dist = Geometric(rate)
+    location = 1 + rand(geom_dist)
     fragments = []
     start = 1
 
@@ -347,16 +346,18 @@ function add_inversions(genome::Genome, rate; size_param=0.5)
     while location <= length(genome.string)
         push!(fragments, genome.string[start:location-1])
         size = 1 + rand(size_dist)
-        # insert = randstring(alphabet, size)
-        # @printf "  %d insert %s\n" location insert
-        # push!(fragments, insert)
-        start = location
-        location += rand(location_dist)
+        if length(genome.string) < location+size
+            size = length(genome.string) - location
+        end
+        @printf "  %d invert %s\n" location genome.string[location:location+size]
+        push!(fragments, reverse(genome.string[location:location+size]))
+        start = location + size
+        location += rand(geom_dist)
     end
 
     push!(fragments, genome.string[start:end])
 
-    return join(fragments)
+    return Genome(join(fragments), genome.chemistry)
 end
 
 
