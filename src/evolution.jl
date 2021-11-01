@@ -383,19 +383,60 @@ function add_translocations(genome::Genome, rate; size_param=0.5)
 
     size_dist = Geometric(size_param)
 
+    @printf "  length(genome.string) %d\n" length(genome.string)
+
+    # Find, duplicate, and remove segments.
+    duplications = []
     while location <= length(genome.string)
-        push!(fragments, genome.string[start:location-1])
         size = 1 + rand(size_dist)
-        # insert = randstring(alphabet, size)
-        # @printf "  %d insert %s\n" location insert
-        # push!(fragments, insert)
-        start = location
-        location += rand(location_dist)
+        if length(genome.string) < location+size
+            size = length(genome.string) - location
+        end
+        push!(fragments, genome.string[start:location-1])
+        duplication = genome.string[location:location+size]
+        push!(duplications, duplication)
+        @printf "  %d duplicate %s %d\n" location duplication length(duplication)
+        start = location + size + 1
+        location += size + rand(location_dist)
     end
 
     push!(fragments, genome.string[start:end])
 
-    return join(fragments)
+    # Build intermediate genome string with segments removed.
+    genome_string = join(fragments)
+
+    # Find insertion points.
+    insertion_points = []
+    location = 1 + rand(location_dist)
+    for duplication in duplications
+        while location > length(genome_string)
+            location -= length(genome_string)
+        end
+        push!(insertion_points, location)
+        location += rand(location_dist)
+    end
+
+    # Make sure insertion_points are in order, but keep them
+    # associated with their corresponding duplications.
+    ordered_inserts = collect(zip(insertion_points, duplications))
+    sort!(ordered_inserts, by = x -> x[1])
+
+    # Insert duplications.
+    start = 1
+    fragments = []
+    @printf "  length(genome_string) %d\n" length(genome_string)
+    for (insertion_point, duplication) in ordered_inserts
+        @printf "  start: %d insertion_point-1 %d duplication %s\n" start insertion_point-1 duplication
+        push!(fragments, genome_string[start:insertion_point-1])
+        push!(fragments, duplication)
+        start = insertion_point
+    end
+
+    push!(fragments, genome_string[start:end])
+
+    @printf "  length(genome.string) %d\n" length(join(fragments))
+
+    return Genome(join(fragments), genome.chemistry)
 end
 
 
