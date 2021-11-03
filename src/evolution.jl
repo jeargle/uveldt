@@ -62,15 +62,25 @@ Evolution parameters for evolution algorithm.
 """
 struct MutationParams
     snv_rate::Float64
-    insertion_rate::Float64
-    deletion_rate::Float64
-    duplication_rate::Float64
-    inversion_rate::Float64
-    translocation_rate::Float64
     substitution_matrix::Union{SubstitutionMatrix, Nothing}
+    insertion_rate::Float64
+    insertion_size::Float64
+    deletion_rate::Float64
+    deletion_size::Float64
+    duplication_rate::Float64
+    duplication_size::Float64
+    inversion_rate::Float64
+    inversion_size::Float64
+    translocation_rate::Float64
+    translocation_size::Float64
 
-    MutationParams(snv_rate, insertion_rate, deletion_rate, duplication_rate, inversion_rate, translocation_rate) = new(snv_rate, insertion_rate, deletion_rate, duplication_rate, inversion_rate, translocation_rate, nothing)
-    MutationParams(snv_rate, insertion_rate, deletion_rate, duplication_rate, inversion_rate, translocation_rate, substitution_matrix) = new(snv_rate, insertion_rate, deletion_rate, duplication_rate, inversion_rate, translocation_rate, substitution_matrix)
+    MutationParams(; snv_rate=0.0, substitution_matrix=nothing,
+                   insertion_rate=0.0, insertion_size=0.5,
+                   deletion_rate=0.0, deletion_size=0.5,
+                   duplication_rate=0.0, duplication_size=0.02,
+                   inversion_rate=0.0, inversion_size=0.02,
+                   translocation_rate=0.0, translocation_size=0.02) = new(snv_rate, substitution_matrix, insertion_rate, insertion_size, deletion_rate, deletion_size, duplication_rate, duplication_size, inversion_rate, inversion_size, translocation_rate, translocation_size)
+    # MutationParams(;snv_rate=0.0, insertion_rate=0.0, deletion_rate=0.0, duplication_rate, inversion_rate, translocation_rate, substitution_matrix) = new(snv_rate, insertion_rate, deletion_rate, duplication_rate, inversion_rate, translocation_rate, substitution_matrix)
 end
 
 
@@ -493,15 +503,36 @@ function mutate(genomes, params::MutationParams)
     child_genomes = []
 
     for genome in genomes
-        genome = add_snvs(genome, params.snv_rate; sub_mat=params.substitution_matrix)
-        genome = add_insertions(genome, params.insertion_rate; size_param=0.5)
-        genome = remove_deletions(genome, params.deletion_rate; size_param=0.5)
-        # # Duplications
-        # add_duplications(genome, params.duplication_rate; size_param=0.5)
-        # # Inversions
-        # add_inversions(genome, params.inversion_rate; size_param=0.5)
-        # # Translocations
-        # add_translocations(genome, params.translocation_rate; size_param=0.5)
+        if params.snv_rate > 0
+            genome = add_snvs(genome, params.snv_rate;
+                              sub_mat=params.substitution_matrix)
+        end
+
+        if params.insertion_rate > 0
+            genome = add_insertions(genome, params.insertion_rate;
+                                    size_param=params.insertion_size)
+        end
+
+        if params.deletion_rate > 0
+            genome = remove_deletions(genome, params.deletion_rate;
+                                      size_param=params.deletion_size)
+        end
+
+        if params.duplication_rate > 0
+            genome = add_duplications(genome, params.duplication_rate;
+                                      size_param=params.duplication_size)
+        end
+
+        if params.inversion_rate > 0
+            genome = add_inversions(genome, params.inversion_rate;
+                                    size_param=params.inversion_size)
+        end
+
+        if params.translocation_rate > 0
+            genome = add_translocations(genome, params.translocation_rate;
+                                        size_param=params.translocation_size)
+        end
+
         push!(child_genomes, genome)
     end
 
