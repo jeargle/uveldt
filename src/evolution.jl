@@ -46,6 +46,19 @@ end
 
 """
 Selection parameters for evolution algorithm.
+
+Convert string to function name:
+  julia> s = Symbol("sin")
+  :sin
+
+  julia> f = getfield(Main, s)
+  sin (generic function with 10 methods)
+
+  julia> f(3)
+  0.1411200080598672
+
+  julia> sin(3)
+  0.1411200080598672
 """
 struct SelectionParams
     fitness_function
@@ -112,18 +125,43 @@ calculated fitness scores.
 
 # Arguments
 - genomes::Array{Genome, 1}
-- params
+- params::SelectionParams
 
 # Returns
 - Array{Genome, 1} sub array of selected Genomes
 """
 function select_genomes(genomes, params::SelectionParams)
+    uuid_to_genome = Dict(genome.uuid => genome
+                          for genome in genomes)
+
     # Calculate fitness scores.
+    fitnesses = [(params.fitness_function(genome), genome.uuid)
+                 for genome in genomes]
 
     # Sort by fitness.
+    sort!(fitnesses, by = x -> x[1], rev=true)
 
     # Select final Genomes.
+    if params.select_count > 0
+        # by count
+        if params.select_count < length(fitnesses)
+            fitnesses = fitnesses[1:params.select_count]
+        end
+    elseif params.select_fraction > 0.0 && params.select_fraction <= 1.0
+        # by fraction
+        select_count = Int(params.select_fraction * length(fitnesses))
+        if select_count < length(fitnesses)
+            fitnesses = fitnesses[1:select_count]
+        end
+    elseif params.fitness_threshold > 0.0
+        # by fitness threshold
+        filter!(fitness -> fitness >= params.fitness_threshold, fitnesses)
+    end
 
+    selected_genomes = [uuid_to_genome[uuid]
+                        for (fitness, genome) in fitnesses]
+
+    return selected_genomes
 end
 
 
@@ -134,19 +172,44 @@ Take an Array of Cells and return a subset of them based on
 calculated fitness scores.
 
 # Arguments
-- genomes::Array{Cell, 1}
-- params
+- cells::Array{Cell, 1}
+- params::SelectionParams
 
 # Returns
-- Array{Cell, 1} sub array of selected Genomes
+- Array{Cell, 1} sub array of selected Cells
 """
 function select_cells(cells, params::SelectionParams)
+    uuid_to_cell = Dict(cell.uuid => cell
+                        for cell in cells)
+
     # Calculate fitness scores.
+    fitnesses = [(params.fitness_function(cell), cell.uuid)
+                 for cell in cells]
 
     # Sort by fitness.
+    sort!(fitnesses, by = x -> x[1], rev=true)
 
     # Select final Cells.
+    if params.select_count > 0
+        # by count
+        if params.select_count < length(fitnesses)
+            fitnesses = fitnesses[1:params.select_count]
+        end
+    elseif params.select_fraction > 0.0 && params.select_fraction <= 1.0
+        # by fraction
+        select_count = Int(params.select_fraction * length(fitnesses))
+        if select_count < length(fitnesses)
+            fitnesses = fitnesses[1:select_count]
+        end
+    elseif params.fitness_threshold > 0.0
+        # by fitness threshold
+        filter!(fitness -> fitness >= params.fitness_threshold, fitnesses)
+    end
 
+    selected_cells = [uuid_to_cell[uuid]
+                      for (fitness, cell) in fitnesses]
+
+    return selected_cells
 end
 
 
