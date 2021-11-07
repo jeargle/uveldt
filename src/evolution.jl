@@ -45,6 +45,22 @@ end
 
 
 """
+Selection parameters for evolution algorithm.
+"""
+struct SelectionParams
+    fitness_function
+    select_count::Int64
+    select_fraction::Float64
+    fitness_threshold::Float64
+
+    function SelectionParams(fitness_function; select_count=0, select_fraction=0.0,
+                             fitness_threshold=0.0)
+        new(fitness_function, select_count, select_fraction, fitness_threshold)
+    end
+end
+
+
+"""
 Substitution matrix for SNVs.
 """
 struct SubstitutionMatrix
@@ -58,7 +74,7 @@ end
 
 
 """
-Evolution parameters for evolution algorithm.
+Mutation parameters for evolution algorithm.
 """
 struct MutationParams
     snv_rate::Float64
@@ -74,14 +90,65 @@ struct MutationParams
     translocation_rate::Float64
     translocation_size::Float64
 
-    MutationParams(; snv_rate=0.0, substitution_matrix=nothing,
-                   insertion_rate=0.0, insertion_size=0.5,
-                   deletion_rate=0.0, deletion_size=0.5,
-                   duplication_rate=0.0, duplication_size=0.02,
-                   inversion_rate=0.0, inversion_size=0.02,
-                   translocation_rate=0.0, translocation_size=0.02) = new(snv_rate, substitution_matrix, insertion_rate, insertion_size, deletion_rate, deletion_size, duplication_rate, duplication_size, inversion_rate, inversion_size, translocation_rate, translocation_size)
-    # MutationParams(;snv_rate=0.0, insertion_rate=0.0, deletion_rate=0.0, duplication_rate, inversion_rate, translocation_rate, substitution_matrix) = new(snv_rate, insertion_rate, deletion_rate, duplication_rate, inversion_rate, translocation_rate, substitution_matrix)
+    function MutationParams(; snv_rate=0.0, substitution_matrix=nothing,
+                            insertion_rate=0.0, insertion_size=0.5,
+                            deletion_rate=0.0, deletion_size=0.5,
+                            duplication_rate=0.0, duplication_size=0.02,
+                            inversion_rate=0.0, inversion_size=0.02,
+                            translocation_rate=0.0, translocation_size=0.02)
+        new(snv_rate, substitution_matrix, insertion_rate,
+            insertion_size, deletion_rate, deletion_size,
+            duplication_rate, duplication_size, inversion_rate,
+            inversion_size, translocation_rate, translocation_size)
+    end
 end
+
+
+"""
+    select_genomes(genomes, params)
+
+Take an Array of Genomes and return a subset of them based on
+calculated fitness scores.
+
+# Arguments
+- genomes::Array{Genome, 1}
+- params
+
+# Returns
+- Array{Genome, 1} sub array of selected Genomes
+"""
+function select_genomes(genomes, params::SelectionParams)
+    # Calculate fitness scores.
+
+    # Sort by fitness.
+
+    # Select final Genomes.
+
+end
+
+
+"""
+    select_cells(cells, params)
+
+Take an Array of Cells and return a subset of them based on
+calculated fitness scores.
+
+# Arguments
+- genomes::Array{Cell, 1}
+- params
+
+# Returns
+- Array{Cell, 1} sub array of selected Genomes
+"""
+function select_cells(cells, params::SelectionParams)
+    # Calculate fitness scores.
+
+    # Sort by fitness.
+
+    # Select final Cells.
+
+end
+
 
 
 """
