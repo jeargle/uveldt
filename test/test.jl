@@ -632,48 +632,102 @@ function test_mutate()
                                 crossing_over=true)
 
     println("  * Create Genomes")
-    genomes = []
-    push!(genomes, Genome("genome1", genome_string(500, chem1), chem1))
-    push!(genomes, Genome("genome2", genome_string(500, chem1), chem1))
-    push!(genomes, Genome("genome3", genome_string(500, chem1), chem1))
-    push!(genomes, Genome("genome4", genome_string(500, chem1), chem1))
-    push!(genomes, Genome("genome5", genome_string(500, chem1), chem1))
+    genomes = [Genome("genome$i", genome_string(500, chem1), chem1)
+               for i in 1:5]
 
-    for (i, genome) in enumerate(genomes)
-        println("genome: ", genome)
+    for genome in genomes
+        println(genome)
     end
 
     child_genomes = mutate(genomes, mut_params)
 
-    for (i, child_genome) in enumerate(child_genomes)
-        println("child_genome: ", child_genome)
+    for genome in child_genomes
+        println(genome)
+    end
+end
+
+
+function test_select_genomes()
+    print_test_header("Select Genomes")
+
+    println("  * Setup Chemistry")
+    chem1 = setup_chemistry("./chemistries/chemistry1.yml")
+
+    println("  * Read SubstitutionMatrix")
+    sm1 = read_substitution_matrix("./chemistries/sub1.txt", chem1)
+
+    println("  * Setup SelectionParams")
+    sel_params = SelectionParams()
+
+    println("  * Create Genomes")
+    genomes = [Genome("genome$i", genome_string(500, chem1), chem1)
+               for i in 1:8]
+
+    for genome in genomes
+        println(genome)
+    end
+
+    selected_genomes = select_genomes(genomes, sel_params)
+
+    for genome in selected_genomes
+        println(genome)
+    end
+end
+
+
+function test_select_cells()
+    print_test_header("Select Cells")
+
+    println("  * Setup Chemistry")
+    chem1 = setup_chemistry("./chemistries/chemistry1.yml")
+
+    println("  * Read SubstitutionMatrix")
+    sm1 = read_substitution_matrix("./chemistries/sub1.txt", chem1)
+
+    println("  * Setup SelectionParams")
+    sel_params = SelectionParams()
+
+    println("  * Create Genomes")
+    cells = [Cell(Genome("genome$i", genome_string(500, chem1), chem1))
+             for i in 1:8]
+
+    # for genome in genomes
+    #     println(genome)
+    # end
+
+    selected_cells = select_cells(cells, sel_params)
+
+    for cell in selected_cells
+        println(cell)
     end
 end
 
 
 
 function main()
-    test_element()
-    test_element_table()
-    test_bond()
-    test_bond_table()
-    test_chemistry()
-    test_chemistry_setup()
-    test_molecule()
-    test_reaction()
-    test_gene()
-    test_genome()
-    test_cell()
-    test_veldt_point()
-    test_veldt()
-    test_veldt_setup_2d()
-    test_veldt_setup_3d()
-    test_simulation_2d()
-    test_simulation_3d()
-    test_diffusion_2d()
-    test_diffusion_3d()
-    test_substitution_matrix()
+    # test_element()
+    # test_element_table()
+    # test_bond()
+    # test_bond_table()
+    # test_chemistry()
+    # test_chemistry_setup()
+    # test_molecule()
+    # test_reaction()
+    # test_gene()
+    # test_genome()
+    # test_cell()
+    # test_veldt_point()
+    # test_veldt()
+    # test_veldt_setup_2d()
+    # test_veldt_setup_3d()
+    # test_simulation_2d()
+    # test_simulation_3d()
+    # test_diffusion_2d()
+    # test_diffusion_3d()
+    # test_substitution_matrix()
     test_mutate()
+    # test_select_genomes()
+    # test_select_cells()
 end
 
 main()
