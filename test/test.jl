@@ -392,9 +392,9 @@ function test_genome()
 
     println()
     println("  * Cross over")
-    genome_str6, genome_str7 = cross_over(genome1, genome2)
-    println(genome_str6)
-    println(genome_str7)
+    genome9, genome10 = cross_over(genome1, genome2)
+    println("genome9: ", genome9)
+    println("genome10: ", genome10)
 
     println()
 end
@@ -623,18 +623,13 @@ function test_mutate()
     sm1 = read_substitution_matrix("./chemistries/sub1.txt", chem1)
 
     println("  * Setup MutationParams")
-    # snv_rate = 0.01
-    # insertion_rate = 0.002
-    # deletion_rate = 0.002
-    # duplication_rate = 0.002
-    # inversion_rate = 0.002
-    # translocation_rate = 0.002
     mut_params = MutationParams(snv_rate=0.01,
                                 insertion_rate=0.002,
                                 deletion_rate=0.002,
                                 duplication_rate=0.002,
                                 inversion_rate=0.002,
-                                translocation_rate=0.002)
+                                translocation_rate=0.002,
+                                crossing_over=true)
 
     println("  * Create Genomes")
     genomes = []
@@ -658,26 +653,26 @@ end
 
 
 function main()
-    # test_element()
-    # test_element_table()
-    # test_bond()
-    # test_bond_table()
-    # test_chemistry()
-    # test_chemistry_setup()
-    # test_molecule()
-    # test_reaction()
-    # test_gene()
-    # test_genome()
-    # test_cell()
-    # test_veldt_point()
-    # test_veldt()
-    # test_veldt_setup_2d()
-    # test_veldt_setup_3d()
-    # test_simulation_2d()
-    # test_simulation_3d()
-    # test_diffusion_2d()
-    # test_diffusion_3d()
-    # test_substitution_matrix()
+    test_element()
+    test_element_table()
+    test_bond()
+    test_bond_table()
+    test_chemistry()
+    test_chemistry_setup()
+    test_molecule()
+    test_reaction()
+    test_gene()
+    test_genome()
+    test_cell()
+    test_veldt_point()
+    test_veldt()
+    test_veldt_setup_2d()
+    test_veldt_setup_3d()
+    test_simulation_2d()
+    test_simulation_3d()
+    test_diffusion_2d()
+    test_diffusion_3d()
+    test_substitution_matrix()
     test_mutate()
 end
 

@@ -102,17 +102,19 @@ struct MutationParams
     inversion_size::Float64
     translocation_rate::Float64
     translocation_size::Float64
+    crossing_over::Bool
 
     function MutationParams(; snv_rate=0.0, substitution_matrix=nothing,
                             insertion_rate=0.0, insertion_size=0.5,
                             deletion_rate=0.0, deletion_size=0.5,
                             duplication_rate=0.0, duplication_size=0.02,
                             inversion_rate=0.0, inversion_size=0.02,
-                            translocation_rate=0.0, translocation_size=0.02)
+                            translocation_rate=0.0, translocation_size=0.02,
+                            crossing_over=false)
         new(snv_rate, substitution_matrix, insertion_rate,
             insertion_size, deletion_rate, deletion_size,
             duplication_rate, duplication_size, inversion_rate,
-            inversion_size, translocation_rate, translocation_size)
+            inversion_size, translocation_rate, translocation_size, crossing_over)
     end
 end
 
@@ -606,15 +608,15 @@ function cross_over(genome1::Genome, genome2::Genome)
     tail_str = genome2.string[location2+1:end]
     @printf "  head: %s\n" head_str
     @printf "  tail: %s\n" tail_str
-    child_str1 = head_str * tail_str
+    child_genome1 = Genome(head_str * tail_str, genome1.chemistry)
 
     head_str = genome2.string[1:location2]
     tail_str = genome1.string[location1+1:end]
     @printf "  head: %s\n" head_str
     @printf "  tail: %s\n" tail_str
-    child_str2 = head_str * tail_str
+    child_genome2 = Genome(head_str * tail_str, genome1.chemistry)
 
-    return (child_str1, child_str2)
+    return (child_genome1, child_genome2)
 end
 
 
@@ -666,8 +668,19 @@ function mutate(genomes, params::MutationParams)
         push!(child_genomes, genome)
     end
 
-    # # Crossing over
-    # cross_over(genome1, genome2)
+    # Crossing over
+    if params.crossing_over
+        # Shuffle the order of the Genomes.
+        shuffled_genomes = shuffle(child_genomes)
+        child_genomes = []
+        # Perform crossing over by pairs; ignore the last Genome if
+        # there's an odd number.
+        for i in 1:div(length(shuffled_genomes), 2)
+            genome1, genome2 = cross_over(shuffled_genomes[i*2-1],
+                                          shuffled_genomes[i*2])
+            vcat(child_genomes, [genome1, genome2])
+        end
+    end
 
     return child_genomes
 end
