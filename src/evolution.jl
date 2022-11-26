@@ -161,7 +161,7 @@ function select_genomes(genomes, params::SelectionParams)
     end
 
     selected_genomes = [uuid_to_genome[uuid]
-                        for (fitness, genome) in fitnesses]
+                        for (fitness, uuid) in fitnesses]
 
     return selected_genomes
 end
@@ -212,6 +212,19 @@ function select_cells(cells, params::SelectionParams)
                       for (fitness, cell) in fitnesses]
 
     return selected_cells
+end
+
+
+#####
+# Fitness functions
+#####
+
+function gene_count(genome)
+    return length(find_genes(genome))
+end
+
+function genome_length(genome)
+    return length(genome.string)
 end
 
 

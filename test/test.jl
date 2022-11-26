@@ -653,24 +653,22 @@ function test_select_genomes()
     println("  * Setup Chemistry")
     chem1 = setup_chemistry("./chemistries/chemistry1.yml")
 
-    println("  * Read SubstitutionMatrix")
-    sm1 = read_substitution_matrix("./chemistries/sub1.txt", chem1)
-
     println("  * Setup SelectionParams")
-    sel_params = SelectionParams()
+    sel_params = SelectionParams(gene_count, select_count=4)
 
     println("  * Create Genomes")
     genomes = [Genome("genome$i", genome_string(500, chem1), chem1)
                for i in 1:8]
 
     for genome in genomes
-        println(genome)
+        fitness = sel_params.fitness_function(genome)
+        @printf "%s: %d\n" genome.name fitness
     end
 
     selected_genomes = select_genomes(genomes, sel_params)
 
     for genome in selected_genomes
-        println(genome)
+        println(genome.name)
     end
 end
 
@@ -680,9 +678,6 @@ function test_select_cells()
 
     println("  * Setup Chemistry")
     chem1 = setup_chemistry("./chemistries/chemistry1.yml")
-
-    println("  * Read SubstitutionMatrix")
-    sm1 = read_substitution_matrix("./chemistries/sub1.txt", chem1)
 
     println("  * Setup SelectionParams")
     sel_params = SelectionParams()
@@ -725,8 +720,8 @@ function main()
     # test_diffusion_2d()
     # test_diffusion_3d()
     # test_substitution_matrix()
-    test_mutate()
-    # test_select_genomes()
+    # test_mutate()
+    test_select_genomes()
     # test_select_cells()
 end
 

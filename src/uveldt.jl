@@ -27,7 +27,9 @@ export is_pseudogene, read_fasta, write_fasta
 
 # Evolution
 include("evolution.jl")
-export PhyloNode, PhyloEdge, Phylogeny, MutationParams, SubstitutionMatrix
+export PhyloNode, PhyloEdge, Phylogeny, SelectionParams, MutationParams, SubstitutionMatrix
+export select_genomes, select_cells
+export gene_count, genome_length
 export read_substitution_matrix
 export add_snvs, add_insertions, remove_deletions, add_duplications
 export add_inversions, add_translocations, cross_over, mutate

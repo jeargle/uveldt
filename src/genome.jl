@@ -143,21 +143,24 @@ function transcribe_gene(gene_string::AbstractString, chemistry::Chemistry)
         println("Error: Gene must end with \")\"")
     end
 
+    # println("  elements: ", elements)
+    # println("  in: ", gene_string)
+
     for el in gene_string[2:end-1]
         if mode == 0
             if el == '*' || el == '/'
                 push!(gene_chars, el)
                 mode = 1
-            elseif !in(el, elements)
+            elseif in(el, elements)
                 push!(gene_chars, el)
                 mode = 0
             end
         elseif mode == 1
-            if !in(el, elements)
+            if in(el, elements)
                 push!(gene_chars, el)
                 mode = 0
             elseif el != '*' && el != '/'
-                @printf "Error: bad character in Gene string - %s" el
+                @printf "Error: bad character in Gene string - %s\n" el
             end
         end
     end
@@ -167,6 +170,7 @@ function transcribe_gene(gene_string::AbstractString, chemistry::Chemistry)
         pop!(gene_chars)
     end
 
+    # println("  out: ", join(gene_chars))
     return join(gene_chars)
 end
 
