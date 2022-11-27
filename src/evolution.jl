@@ -636,7 +636,10 @@ end
 """
     mutate(genomes, params)
 
-Take an Array of parent Genomes and create a set of child Genomes.
+Take an Array of cloned parent Genomes and create a set of child Genomes.
+
+Replication is done prior to this step so the number of input Genomes
+should equal the number of mutant child Genomes.
 
 # Arguments
 - genomes::Array{Genome, 1}

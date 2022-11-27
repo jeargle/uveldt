@@ -188,9 +188,7 @@ Randomly generate a valid Genome string.
 - Genome string
 """
 function genome_string(size::Int64, chemistry::Chemistry)
-    genome = randstring(alphabet_string(chemistry), size)
-    # return join(genome)
-    return genome
+    return randstring(alphabet_string(chemistry), size)
 end
 
 
@@ -220,6 +218,10 @@ end
 
 Identify pseudogene.
 
+There currently aren't many ways to code a pseudogene.  The main one
+is to have an empty transcript.  Repeated and tail-end directives get
+ignored.
+
 # Arguments
 - gene::Gene
 
@@ -233,7 +235,7 @@ function is_pseudogene(gene::Gene)
         return true
     end
 
-    m = match(r"([\*/]*[$(elements)])", gene.transcript)
+    m = match(r"([\*/]*[$(elements)]+[\*/$(elements)]*)", gene.string)
     if m === nothing
         return true
     end
