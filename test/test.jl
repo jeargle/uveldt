@@ -712,6 +712,53 @@ function test_select_cells()
 end
 
 
+function test_genetic_algorithm1()
+    print_test_header("Genetic Algorithm 1")
+
+    println("  * Setup Chemistry")
+    chem1 = setup_chemistry("./chemistries/chemistry1.yml")
+
+    println("  * Setup SelectionParams")
+    sel_params = SelectionParams(gene_count, select_count=10)
+
+    println("  * Setup MutationParams")
+    mut_params = MutationParams(snv_rate=0.01,
+                                insertion_rate=0.0002,
+                                deletion_rate=0.0002,
+                                duplication_rate=0.0001,
+                                inversion_rate=0.00004,
+                                translocation_rate=0.00004,
+                                crossing_over=false)
+
+    println("  * Create Genomes")
+    genomes = [Genome("genome$i", genome_string(500 + rand(-5:5), chem1), chem1)
+               for i in 1:20]
+
+    for i in 1:20
+        println("  * Selection ", i)
+        for genome in genomes
+            fitness = sel_params.fitness_function(genome)
+            @printf "%s: %d\n" genome.uuid fitness
+        end
+
+        selected_genomes = select_genomes(genomes, sel_params)
+
+        println("Selected - gene_count")
+        for genome in selected_genomes
+            println("  ", genome.uuid)
+        end
+
+        println("  * Replication")
+        new_genomes = [Genome(sel_genome.string, sel_genome.chemistry)
+                       for sel_genome in selected_genomes]
+        replicated_genomes = vcat(selected_genomes, new_genomes)
+
+        println("  * Mutation")
+        genomes = mutate(replicated_genomes, mut_params)
+    end
+end
+
+
 
 function main()
     # test_element()
@@ -735,8 +782,9 @@ function main()
     # test_diffusion_3d()
     # test_substitution_matrix()
     # test_mutate()
-    test_select_genomes()
+    # test_select_genomes()
     # test_select_cells()
+    test_genetic_algorithm1()
 end
 
 main()

@@ -326,7 +326,7 @@ function add_snvs(genome::Genome, rate; sub_mat::Union{SubstitutionMatrix, Nothi
         else
             snv = string(substitute(sub_mat, genome.string[location]))
         end
-        @printf "  %d SNV %s->%s\n" location genome.string[location] snv
+        # @printf "  %d SNV %s->%s\n" location genome.string[location] snv
         push!(fragments, snv)
         start = location + 1
         location += rand(geom_dist)
@@ -364,7 +364,7 @@ function add_insertions(genome::Genome, rate; size_param=0.5)
         push!(fragments, genome.string[start:location-1])
         size = 1 + rand(size_dist)
         insert = randstring(alphabet, size)
-        @printf "  %d insert %s\n" location insert
+        # @printf "  %d insert %s\n" location insert
         push!(fragments, insert)
         start = location
         location += rand(location_dist)
@@ -400,7 +400,7 @@ function remove_deletions(genome::Genome, rate; size_param=0.5)
     while location <= length(genome.string)
         push!(fragments, genome.string[start:location-1])
         size = 1 + rand(size_dist)
-        @printf "  %d delete %s\n" location genome.string[location:location+size]
+        # @printf "  %d delete %s\n" location genome.string[location:location+size]
         start = location + size
         location += rand(geom_dist)
     end
@@ -440,7 +440,7 @@ function add_duplications(genome::Genome, rate; size_param=0.5)
         end
         duplication = genome.string[location:location+size]
         push!(duplications, duplication)
-        @printf "  %d duplicate %s\n" location duplication
+        # @printf "  %d duplicate %s\n" location duplication
         location += size + rand(location_dist)
     end
 
@@ -463,9 +463,9 @@ function add_duplications(genome::Genome, rate; size_param=0.5)
     # Insert duplications.
     start = 1
     fragments = []
-    @printf "  length(genome.string) %d\n" length(genome.string)
+    # @printf "  length(genome.string) %d\n" length(genome.string)
     for (insertion_point, duplication) in ordered_inserts
-        @printf "  start: %d insertion_point-1 %d duplication %s\n" start insertion_point-1 duplication
+        # @printf "  start: %d insertion_point-1 %d duplication %s\n" start insertion_point-1 duplication
         push!(fragments, genome.string[start:insertion_point-1])
         push!(fragments, duplication)
         start = insertion_point
@@ -504,7 +504,7 @@ function add_inversions(genome::Genome, rate; size_param=0.5)
         if length(genome.string) < location+size
             size = length(genome.string) - location
         end
-        @printf "  %d invert %s\n" location genome.string[location:location+size]
+        # @printf "  %d invert %s\n" location genome.string[location:location+size]
         push!(fragments, reverse(genome.string[location:location+size]))
         start = location + size
         location += rand(geom_dist)
@@ -538,7 +538,7 @@ function add_translocations(genome::Genome, rate; size_param=0.5)
 
     size_dist = Geometric(size_param)
 
-    @printf "  length(genome.string) %d\n" length(genome.string)
+    # @printf "  length(genome.string) %d\n" length(genome.string)
 
     # Find, duplicate, and remove segments.
     duplications = []
@@ -550,7 +550,7 @@ function add_translocations(genome::Genome, rate; size_param=0.5)
         push!(fragments, genome.string[start:location-1])
         duplication = genome.string[location:location+size]
         push!(duplications, duplication)
-        @printf "  %d duplicate %s %d\n" location duplication length(duplication)
+        # @printf "  %d duplicate %s %d\n" location duplication length(duplication)
         start = location + size + 1
         location += size + rand(location_dist)
     end
@@ -579,9 +579,9 @@ function add_translocations(genome::Genome, rate; size_param=0.5)
     # Insert duplications.
     start = 1
     fragments = []
-    @printf "  length(genome_string) %d\n" length(genome_string)
+    # @printf "  length(genome_string) %d\n" length(genome_string)
     for (insertion_point, duplication) in ordered_inserts
-        @printf "  start: %d insertion_point-1 %d duplication %s\n" start insertion_point-1 duplication
+        # @printf "  start: %d insertion_point-1 %d duplication %s\n" start insertion_point-1 duplication
         push!(fragments, genome_string[start:insertion_point-1])
         push!(fragments, duplication)
         start = insertion_point
@@ -589,7 +589,7 @@ function add_translocations(genome::Genome, rate; size_param=0.5)
 
     push!(fragments, genome_string[start:end])
 
-    @printf "  length(genome.string) %d\n" length(join(fragments))
+    # @printf "  length(genome.string) %d\n" length(join(fragments))
 
     return Genome(join(fragments), genome.chemistry)
 end
@@ -614,19 +614,19 @@ function cross_over(genome1::Genome, genome2::Genome)
 
     location1 = rand(0:length(genome1.string))
     location2 = rand(0:length(genome2.string))
-    @printf "  location1: %d\n" location1
-    @printf "  location2: %d\n" location2
+    # @printf "  location1: %d\n" location1
+    # @printf "  location2: %d\n" location2
 
     head_str = genome1.string[1:location1]
     tail_str = genome2.string[location2+1:end]
-    @printf "  head: %s\n" head_str
-    @printf "  tail: %s\n" tail_str
+    # @printf "  head: %s\n" head_str
+    # @printf "  tail: %s\n" tail_str
     child_genome1 = Genome(head_str * tail_str, genome1.chemistry)
 
     head_str = genome2.string[1:location2]
     tail_str = genome1.string[location1+1:end]
-    @printf "  head: %s\n" head_str
-    @printf "  tail: %s\n" tail_str
+    # @printf "  head: %s\n" head_str
+    # @printf "  tail: %s\n" tail_str
     child_genome2 = Genome(head_str * tail_str, genome1.chemistry)
 
     return (child_genome1, child_genome2)
@@ -694,7 +694,8 @@ function mutate(genomes, params::MutationParams)
         for i in 1:div(length(shuffled_genomes), 2)
             genome1, genome2 = cross_over(shuffled_genomes[i*2-1],
                                           shuffled_genomes[i*2])
-            vcat(child_genomes, [genome1, genome2])
+            push!(child_genomes, genome1)
+            push!(child_genomes, genome2)
         end
     end
 
