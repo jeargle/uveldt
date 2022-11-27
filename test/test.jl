@@ -654,21 +654,35 @@ function test_select_genomes()
     chem1 = setup_chemistry("./chemistries/chemistry1.yml")
 
     println("  * Setup SelectionParams")
-    sel_params = SelectionParams(gene_count, select_count=4)
+    sel_params1 = SelectionParams(gene_count, select_count=4)
+    sel_params2 = SelectionParams(genome_length, select_count=4)
 
     println("  * Create Genomes")
-    genomes = [Genome("genome$i", genome_string(500, chem1), chem1)
+    genomes = [Genome("genome$i", genome_string(500 + rand(-5:5), chem1), chem1)
                for i in 1:8]
 
     for genome in genomes
-        fitness = sel_params.fitness_function(genome)
+        fitness = sel_params1.fitness_function(genome)
         @printf "%s: %d\n" genome.name fitness
     end
 
-    selected_genomes = select_genomes(genomes, sel_params)
+    selected_genomes = select_genomes(genomes, sel_params1)
 
+    println("Selected - gene_count")
     for genome in selected_genomes
-        println(genome.name)
+        println("  ", genome.name)
+    end
+
+    for genome in genomes
+        fitness = sel_params2.fitness_function(genome)
+        @printf "%s: %d\n" genome.name fitness
+    end
+
+    selected_genomes = select_genomes(genomes, sel_params2)
+
+    println("Selected - genome_length")
+    for genome in selected_genomes
+        println("  ", genome.name)
     end
 end
 
