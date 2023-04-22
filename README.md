@@ -17,9 +17,36 @@ Organisms are judged based on their energy pools at the end of a generation, the
 Chemistry
 ---------
 
-The chemistry of &mu;Veldt is based around simple string operations.  Elements are represented as single characters, molecules are 1-dimensional strings of elements, and bonds connect pairs of elements together.  All chemical reactions involve making and/or breaking bonds between the elements in molecules.
+The chemistry of &mu;Veldt is based around simple string operations.  Elements are represented as single characters, molecules are 1-dimensional strings of elements, and bonds connect pairs of elements together.  All chemical reactions involve making and/or breaking bonds between the elements in molecules.  For example, atoms of elements `A` and `B` can be connected to make the molecule `AB`.
 
-For example, atoms of elements `A` and `B` can be connected to make the molecule `AB`.
+A `Chemistry` is a set of `Element` definitions and parameters for pairwise bonds between them.  These definitions can be set up in YAML files with a form like:
+
+    elements:
+      - name: A
+        mass: 1
+      - name: B
+        mass: 2
+      - name: C
+        mass: 3
+
+    bonds:
+      - elements:
+        - A
+        - B
+        energy_change: -5.5
+        transition_energy: 1.5
+      - elements:
+        - A
+        - C
+        energy_change: -6.5
+        transition_energy: 2.5
+      - elements:
+        - B
+        - C
+        energy_change: -7.5
+        transition_energy: 3.5
+
+Each `Element` has a mass, which defaults to 1.  Bonds have both an `energy_change`, which is the change in energy after bond formation, and a `transition_energy` needed up front to start the bond creation process.  These energies are tracked within each cell during simulations.  A complete `Chemistry` requires bond definitions for every pair of `Elements`.
 
 
 Genome
