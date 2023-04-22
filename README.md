@@ -89,6 +89,26 @@ Evolution
 
 Evolution is biased replication with variation.  In &mu;Veldt, selection is made explicitly using a defined fitness function, and mutations are introduced when the genomes reproduce.  Many types of variation are possible including SNPs, indels, large structural variants, and recombination across multiple genomes.  Support for insertions and deletions means that the genome size is not constant so genetic information can be created or destroyed.  This is uncommon in most genetic algorithms, but it is an important feature of biological evolution.
 
+The genetic algorithm parameters are defined through `SelectionParms` and `MutationParams`.  `SelectionParams` takes a `fitness_function` and one of `select_count`, `select_fraction`, or `fitness_threshold` to determine the final set of passing cells.  Currently, the `fitness_function` must be a function that takes a single `Genome` argument, but this will be extended to cells in the future.  `select_count` limits the passing genomes to a given number, `select_fraction` limits them to a specified fraction of genomes within the population, and `fitness_threshold` only admits those that pass the threshold.
+
+The `MutationParams` consist of mostly intuitive settings for each of the following:
+
+* snv_rate
+* substitution_matrix::SubstitutionMatrix
+* insertion_rate
+* insertion_size
+* deletion_rate
+* deletion_size
+* duplication_rate
+* duplication_size
+* inversion_rate
+* inversion_size
+* translocation_rate
+* translocation_size
+* crossing_over::Bool - whether or not crossing over occurs
+
+All of the `_size` and `_rate` parameters apply to geometrix distributions.
+
 
 Lattice
 -------
