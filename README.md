@@ -93,21 +93,21 @@ The genetic algorithm parameters are defined through `SelectionParms` and `Mutat
 
 The `MutationParams` consist of mostly intuitive settings for each of the following:
 
-* snv_rate
-* substitution_matrix::SubstitutionMatrix
-* insertion_rate
-* insertion_size
-* deletion_rate
-* deletion_size
-* duplication_rate
-* duplication_size
-* inversion_rate
-* inversion_size
-* translocation_rate
-* translocation_size
-* crossing_over::Bool - whether or not crossing over occurs
+* `snv_rate`
+* `substitution_matrix::SubstitutionMatrix`
+* `insertion_rate`
+* `insertion_size`
+* `deletion_rate`
+* `deletion_size`
+* `duplication_rate`
+* `duplication_size`
+* `inversion_rate`
+* `inversion_size`
+* `translocation_rate`
+* `translocation_size`
+* `crossing_over::Bool`: whether or not crossing over occurs
 
-All of the `_size` and `_rate` parameters apply to geometrix distributions.
+All of the `_rate` and `_size` parameters apply to geometric distributions.
 
 
 Lattice
