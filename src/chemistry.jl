@@ -15,8 +15,11 @@ end
 Chemical element.
 """
 struct Element
+    "single-character `Element` name"
     name::Char
+    "mass"
     mass::Int64
+
     Element(name::Char, mass::Int64) = new(name, mass)
 end
 
@@ -28,6 +31,7 @@ Base.show(io::IO, m::MIME"text/plain", el::Element) = show(io, m, string(el.name
 Periodic table for Elements.
 """
 struct ElementTable
+    "map from `Char` to `Element`"
     elements::Dict{Char, Element}
 
     function ElementTable(elements)
@@ -47,9 +51,13 @@ Base.show(io::IO, m::MIME"text/plain", et::ElementTable) = show(io, m, keys(et.e
 Bond between two Elements.
 """
 struct Bond
+    "first `Element`"
     element1::Element
+    "second `Element`"
     element2::Element
+    "free energy change on `Bond` formation"
     energy_change::Float64
+    "energy required to initiate `Bond` formation"
     transition_energy::Float64
 
     Bond(element1::Element,
@@ -67,6 +75,7 @@ Base.show(io::IO, m::MIME"text/plain", b::Bond) = show(io, m, string(b.element1.
 Set of all Bonds.
 """
 struct BondTable
+    "map from `Element` name to map from `Element` name to `Bond`"
     bonds::Dict{Char, Dict{Char, Bond}}
 
     function BondTable(bonds)
@@ -101,7 +110,9 @@ Base.show(io::IO, m::MIME"text/plain", bt::BondTable) = show(io, m, string(bt.bo
 Container for Elements and Bonds.
 """
 struct Chemistry
+    "`ElementTable`"
     element_table::ElementTable
+    "`BondTable`"
     bond_table::BondTable
 
     function Chemistry(element_table::ElementTable, bond_table::BondTable)
@@ -115,8 +126,11 @@ end
 1D String of Elements.
 """
 struct Molecule
+    "name"
     name::AbstractString
+    "string specifying the full `Molecule` representation"
     elements::AbstractString
+    "`Chemistry` used by this `Molecule`"
     chemistry::Chemistry
 
     Molecule(name::AbstractString,
@@ -135,12 +149,19 @@ Molecular reaction with reactants and products where Bonds are created and/or br
 Reaction is specified by a string derived from a Gene.
 """
 struct Reaction
+    "reaction type"
     reaction_type::ReactionType
+    "reactants"
     reactants::Array{Molecule, 1}
+    "products"
     products::Array{Molecule, 1}
+    "reactant bonds"
     old_bonds::Array{Bond, 1}
+    "product bonds"
     new_bonds::Array{Bond, 1}
+    "total free energy change of reaction"
     energy_change::Float64
+    "total transition energy of reaction"
     transition_energy::Float64
 
     function Reaction(reactants, products, chemistry::Chemistry)
@@ -217,13 +238,13 @@ Base.show(io::IO, m::MIME"text/plain", r::Reaction) = show(io, m, string(r.react
     alphabet_string(chemistry::Chemistry)
 
 Generate a string with all possible characters that can appear with
-this Chemistry.
+this `Chemistry`.
 
 # Arguments
-- chemistry::Chemistry
+- `chemistry::Chemistry`
 
 # Returns
-- String
+- `String`
 """
 function alphabet_string(chemistry::Chemistry)
     elements = [el for el in keys(chemistry.element_table.elements)]
@@ -234,15 +255,15 @@ end
 """
     get_bond(bond_table, element1, element2)
 
-Get a Bond from a BondTable.
+Get the `Bond` between `element1` and `element2` from a `BondTable`.
 
 # Arguments
-- bond_table::BondTable
-- element1::Char
-- element2::Char
+- `bond_table::BondTable`
+- `element1::Char`
+- `element2::Char`
 
 # Returns
-- Bond
+- `Bond`
 """
 function get_bond(bond_table::BondTable, element1::Char, element2::Char)
     return bond_table.bonds[element1][element2]
@@ -250,15 +271,15 @@ end
 
 
 """
-    mass(element)
+    mass(element::Element)
 
-Get the mass of an Element.
+Get the mass of a `Element`.
 
 # Arguments
-- element::Element
+- `element::Element`
 
 # Returns
-- Mass of the Elment
+- mass of the `Element`
 """
 function mass(element::Element)
     return element.mass
@@ -268,13 +289,13 @@ end
 """
     mass(molecule::Molecule)
 
-Get the mass of a Molecule.
+Get the mass of `molecule`.
 
 # Arguments
-- molecule::Molecule
+- `molecule::Molecule`
 
 # Returns
-- Mass of the Molecule
+- mass of the `Molecule`
 """
 function mass(molecule::Molecule)
     total_mass = 0
@@ -288,13 +309,13 @@ end
 """
     setup_chemistry(filename)
 
-Create a Chemistry from a YAML setup file.
+Create a `Chemistry` from a YAML setup file with name `filename`.
 
 # Arguments
-- filename: name of YAML setup file
+- `filename`: name of YAML setup file
 
 # Returns
-- Chemistry
+- `Chemistry`
 """
 function setup_chemistry(filename)
     setup = YAML.load(open(filename))
