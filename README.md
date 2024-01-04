@@ -119,7 +119,10 @@ The microbes in &mu;Veldt are embedded in a reaction-diffusion simulation where 
 Dependencies
 ------------
 
+* ArgParse
 * Distributions
+* LinearAlgebra
 * Printf
 * Random
+* UUIDs
 * YAML
