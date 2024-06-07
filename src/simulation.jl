@@ -1,5 +1,4 @@
 # John Eargle (mailto: jeargle at gmail.com)
-# 2018-2021
 # uveldt.simulation
 
 """

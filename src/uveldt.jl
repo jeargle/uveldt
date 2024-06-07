@@ -1,5 +1,4 @@
 # John Eargle (mailto: jeargle at gmail.com)
-# 2018-2021
 # uveldt
 
 module uveldt
@@ -24,6 +23,10 @@ include("genome.jl")
 export Gene, Genome
 export parse_reaction, transcribe_gene, genome_string, find_genes
 export is_pseudogene, read_fasta, write_fasta
+
+# Metabolism
+include("metabolism.jl")
+export Pathway, Metabolism
 
 # Evolution
 include("evolution.jl")
