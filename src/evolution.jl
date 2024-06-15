@@ -1,5 +1,4 @@
 # John Eargle (mailto: jeargle at gmail.com)
-# 2018-2021
 # uveldt.evolution
 
 """
@@ -700,4 +699,65 @@ function mutate(genomes, params::MutationParams)
     end
 
     return child_genomes
+end
+
+
+"""
+    read_evolution_params(filename)
+
+Create SelectionParams and MutationParams from a YAML setup file.
+
+# Arguments
+- filename: name of YAML setup file
+
+# Returns
+- (SelectionParams, MutationParams)
+"""
+function read_evolution_params(filename)
+    setup = YAML.load(open(filename))
+
+    selection_params = Nothing
+
+    # build SelectionParams
+    if haskey(setup, "selection_params")
+        params = setup["selection_params"]
+
+        if haskey(params, "fitness_function")
+            fitness_function = params["fitness_function"]
+        else
+            throw(ArgumentError("Must provide \"fitness_function\" argument."))
+        end
+
+        select_count = 0
+        select_fraction = 0.0
+        fitness_threshold = 0.0
+
+        if haskey(params, "select_count")
+            select_count = params["select_count"]
+            selection_params = SelectionParams(fitness_function, select_count=select_count)
+        elseif haskey(params, "select_fraction")
+            select_fraction = params["select_fraction"]
+            selection_params = SelectionParams(fitness_function, select_fraction=select_fraction)
+        elseif haskey(params, "fitness_threshold")
+            fitness_threshold = params["fitness_threshold"]
+            selection_params = SelectionParams(fitness_function, fitness_threshold=fitness_threshold)
+        end
+    end
+
+    mutation_params = Nothing
+
+    # build MutationParams
+    if haskey(setup, "mutation_params")
+        mut_params = Dict()
+
+        for (key, value) in setup["mutation_params"]
+            mut_params[key] = value
+        end
+
+        mutation_params = MutationParams(mut_params...)
+        # mutation_params = MutationParams(;params...)
+
+    end
+
+    return (selection_params, mutation_params)
 end
