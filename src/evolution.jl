@@ -226,6 +226,8 @@ function genome_length(genome)
     return length(genome.string)
 end
 
+fitness_functions = Dict("gene_count" => gene_count,
+                         "genome_length" => genome_length)
 
 
 """
@@ -723,7 +725,11 @@ function read_evolution_params(filename)
         params = setup["selection_params"]
 
         if haskey(params, "fitness_function")
-            fitness_function = params["fitness_function"]
+            if haskey(fitness_functions, params["fitness_function"])
+                fitness_function = fitness_functions[params["fitness_function"]]
+            else
+                fitness_function = getfield(Main, Symbol(params["fitness_function"]))
+            end
         else
             throw(ArgumentError("Must provide \"fitness_function\" argument."))
         end
@@ -751,12 +757,10 @@ function read_evolution_params(filename)
         mut_params = Dict()
 
         for (key, value) in setup["mutation_params"]
-            mut_params[key] = value
+            mut_params[Symbol(key)] = value
         end
 
-        mutation_params = MutationParams(mut_params...)
-        # mutation_params = MutationParams(;params...)
-
+        mutation_params = MutationParams(; mut_params...)
     end
 
     return (selection_params, mutation_params)

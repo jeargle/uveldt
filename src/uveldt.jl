@@ -33,7 +33,7 @@ export merge_pathways
 include("evolution.jl")
 export PhyloNode, PhyloEdge, Phylogeny, SelectionParams, MutationParams, SubstitutionMatrix
 export select_genomes, select_cells
-export gene_count, genome_length
+export gene_count, genome_length, fitness_functions
 export read_substitution_matrix, read_evolution_params
 export add_snvs, add_insertions, remove_deletions, add_duplications
 export add_inversions, add_translocations, cross_over, mutate

@@ -615,7 +615,7 @@ end
 function test_evolution_params()
     print_test_header("SelectionParams and MutationParams")
 
-    sel_params, mut_params = read_evolution_params("")
+    sel_params, mut_params = read_evolution_params("./evolution_params/evolution_params1.yml")
 end
 
 
@@ -771,20 +771,8 @@ function test_genetic_algorithm2()
     println("  * Setup Chemistry")
     chem1 = setup_chemistry("./chemistries/chemistry1.yml")
 
-    # println("  * Setup SelectionParams")
-    # sel_params = SelectionParams(gene_count, select_count=10)
-
-    # println("  * Setup MutationParams")
-    # mut_params = MutationParams(snv_rate=0.01,
-    #                             insertion_rate=0.0002,
-    #                             deletion_rate=0.0002,
-    #                             duplication_rate=0.0001,
-    #                             inversion_rate=0.00004,
-    #                             translocation_rate=0.00004,
-    #                             crossing_over=false)
-
     println("  * Setup SelectionParams and MutationParams")
-    sel_params, mut_params = read_evolution_params("")
+    sel_params, mut_params = read_evolution_params("./evolution_params/evolution_params1.yml")
 
     println("  * Create Genomes")
     genomes = [Genome("genome$i", genome_string(500 + rand(-5:5), chem1), chem1)
@@ -836,13 +824,13 @@ function main()
     # test_simulation_3d()
     # test_diffusion_2d()
     # test_diffusion_3d()
-    test_substitution_matrix()
-    # test_evolution_params()
-    test_mutate()
+    # test_substitution_matrix()
+    test_evolution_params()
+    # test_mutate()
     # test_select_genomes()
     # test_select_cells()
     # test_genetic_algorithm1()
-    # test_genetic_algorithm2()
+    test_genetic_algorithm2()
 end
 
 main()
