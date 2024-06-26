@@ -93,21 +93,49 @@ The genetic algorithm parameters are defined through `SelectionParms` and `Mutat
 
 The `MutationParams` consist of mostly intuitive settings for each of the following:
 
-* `snv_rate`
-* `substitution_matrix::SubstitutionMatrix`
-* `insertion_rate`
-* `insertion_size`
-* `deletion_rate`
-* `deletion_size`
-* `duplication_rate`
-* `duplication_size`
-* `inversion_rate`
-* `inversion_size`
-* `translocation_rate`
-* `translocation_size`
-* `crossing_over::Bool`: whether or not crossing over occurs
+* `snv_rate`: rate of Single Nucleotide Variant; individual character changes.
+* `substitution_matrix::SubstitutionMatrix`: frequency matrix for all SNV pairs; used with `snv_rate`.
+* `insertion_rate`: rate of multi-character insertions into the genome.
+* `insertion_size`: size parameter for the insertion strings.
+* `deletion_rate`: rate of multi-character deletions from the genome.
+* `deletion_size`: size parameter for the deletion strings.
+* `duplication_rate`: rate of multi-character copy/paste to the genome.
+* `duplication_size`: size parameter for the duplication strings.
+* `inversion_rate`: rate of multi-charcter inversion; string is removed, reversed, and reinserted into the genome.
+* `inversion_size`: size parameter for the inversion strings.
+* `translocation_rate`: rate of multi-character translocation within the genome; string is removed and then reinserted somewhere else in the genome.
+* `translocation_size`: size parameter for the translocation strings.
+* `crossing_over::Bool`: whether or not crossing over occurs.
 
 All of the `_rate` and `_size` parameters apply to geometric distributions.
+
+Here's an example evolution parameter YAML file:
+
+    selection_params:
+      fitness_function: gene_count
+      select_count: 10
+
+    mutation_params:
+      snv_rate: 0.01
+      insertion_rate: 0.0002
+      deletion_rate: 0.0002
+      duplication_rate: 0.0001
+      inversion_rate: 0.00004
+      translocation_rate: 0.00004
+      crossing_over: false
+
+And this is a `SubstitutionMatrix` file:
+
+         A    B    C    (    )    *    /
+    A    0    5    5    1    1    1    1
+    B    5    0    5    1    1    1    1
+    C    5    5    0    1    1    1    1
+    (    2    2    2    0    1    1    1
+    )    2    2    2    1    0    1    1
+    *    2    2    2    1    1    0    1
+    /    2    2    2    1    1    1    0
+
+Notice how the `Element` characters are included along the top row and down the first column.  Frequencies are read in row:column order, e.g. the frequency of changing B to C is 5 and B to ( is 1.  These frequencies get normalized into probabilities when the file is read in.  You can include the probabilities directly in the matrix, but it can be easier to think about relative frequencies where you start with "1" as the baseline and think of other frequencies as multiples of that.
 
 
 Lattice
