@@ -176,7 +176,44 @@ Notice how the `Element` characters are included along the top row and down the 
 Lattice
 -------
 
-The microbes in &mu;Veldt are embedded in a reaction-diffusion simulation where molecules move randomly throughout the system.  The "world" where these digital microbes live is a 2D or 3D lattice (`Veldt`), and cells live at specific lattice points (`VeldtPoints`).  Across discrete time steps, molecules perform random walks from point to point through the lattice.  If a molecule is located at a point shared by a cell, and the cell is permeable to that molecule, there is some probability that the molecule will enter the cell in the next time step, and vice versa.  Biochemistry encoded by a cell's genome can happen to available reactant molecules within the cell.  Chemistry only occurs within cells.  For now, cells are fixed at their initial lattice locations, and they only interact with the environment though molecular diffusion.
+The microbes in &mu;Veldt are embedded in a reaction-diffusion simulation where molecules move randomly throughout the system.  The "world" where these digital microbes live is a 2D or 3D lattice (`Veldt`), and cells live at specific lattice points (`VeldtPoints`).  Across discrete time steps, molecules perform random walks from point to point through the lattice.  If a molecule is located at a point shared by a cell, and the cell is permeable to that molecule, there is some probability that the molecule will enter the cell in the next time step, and vice versa.  Biochemistry encoded by a cell's `Genome` can happen to available reactant molecules within the cell.  Chemistry only occurs within cells.  For now, cells are fixed at their initial lattice locations, and they only interact with the environment though molecular diffusion.
+
+A lot of information is needed to set up a `Veldt`.  Here is example YAML input file that specifies the initial state of a `Veldt`:
+
+    dimensions: [3, 4]
+
+    chemistry: ./chemistries/chemistry1.yml
+
+    molecules:
+      - name: AAA
+        distribution:
+        - type: even
+        - count: 10
+      - name: BBB
+        distribution:
+        - type: even
+        - count: 30
+
+    genomes:
+      - ./genomes/genomes1.fasta
+
+    cells:
+      - genome: genome1
+        location: [1, 1]
+        molecules:
+        - name: AAA
+          count: 11
+        - name: BBB
+          count: 22
+      - genome: genome2
+        location: [2, 2]
+        molecules:
+        - name: AA
+          count: 33
+        - name: AB
+          count: 44
+
+In this `Veldt`, the lattice structure is defined by `dimensions`, which specifies a 2D lattice with 3 rows and 4 columns (12 `VeldtPoints` total).  To make a 3D lattice, you just need one more number for the "depth" dimension.  The `chemistry` line points to a YAML input file for the `Chemistry`.  The `molecules` section sets AAA and BBB as evenly distributed across the lattice with AAA having 10 molecules at each point and BBB 30.  The `genomes` section points to a FASTA file containing the "genome1" and "genome2" `Genomes`.  More than one FASTA file could be included here.  The `cells` section defines two cells: the first with `Genome` genome1 at `VeldtPoint` (1, 1) containing 11 AAA molecules and 22 BBB molecules, and the secont with `Genome` genome2 at `VeldtPoint` (2, 2) containing 33 AA molecules and 44 AB molecules.  Keeping `Chemistries` and `Genomes` separate in their own files makes it easy to reuse them and limit the focus of the `Veldt` file to the lattice and its contents.  The molecules and `Genomes` are constrained to elements present in the provided `Chemistry` so this `Chemistry` cleary includes elements A and B.
 
 
 Dependencies
