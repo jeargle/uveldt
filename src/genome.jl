@@ -80,12 +80,12 @@ end
 
 
 """
-    parse_reaction(reaction_string)
+    parse_reaction(reaction_string::AbstractString)
 
 Parse the reactants and products from a reaction string.
 
 # Arguments
-- reaction_string::AbstractString
+- `reaction_string::AbstractString`:
 
 # Returns
 - (reaction_type::ReactionType, reactants::Array, products::Array)
@@ -114,17 +114,17 @@ end
 
 
 """
-    transcribe_gene(gene_string, chemistry)
+    transcribe_gene(gene_string::AbstractString, chemistry::Chemistry)
 
 Convert a Gene string into a valid Reaction string by removing redundant directive
 characters.
 
 # Arguments
-- gene_string::AbstractString
-- chemistry::Chemistry
+- `gene_string::AbstractString`:
+- `chemistry::Chemistry`:
 
 # Returns
-- Reaction string
+- `AbstractString`: Reaction string
 """
 function transcribe_gene(gene_string::AbstractString, chemistry::Chemistry)
     # modes for parsing
@@ -175,16 +175,16 @@ end
 
 
 """
-    genome_string(size, chemistry)
+    genome_string(size::Int64, chemistry::Chemistry)
 
 Randomly generate a valid Genome string.
 
 # Arguments
-- size::Int64
-- chemistry::Chemistry
+- `size::Int64`:
+- `chemistry::Chemistry`:
 
 # Returns
-- Genome string
+- `AbstractString`: Genome string
 """
 function genome_string(size::Int64, chemistry::Chemistry)
     return randstring(alphabet_string(chemistry), size)
@@ -192,16 +192,16 @@ end
 
 
 """
-    find_genes(genome)
+    find_genes(genome::Genome)
 
 Search through a Genome for patterns that match possible Gene strings and build Genes from
 them.
 
 # Arguments
-- genome::Genome
+- `genome::Genome`:
 
 # Returns
-- Array of Genes
+- ``: Array of Genes
 """
 function find_genes(genome::Genome)
     rx = r"\([^\(]*?\)"
@@ -213,7 +213,7 @@ end
 
 
 """
-    is_pseudogene(gene)
+    is_pseudogene(gene::Gene)
 
 Identify pseudogene.
 
@@ -222,10 +222,10 @@ is to have an empty transcript.  Repeated and tail-end directives get
 ignored.
 
 # Arguments
-- gene::Gene
+- `gene::Gene`:
 
 # Returns
-- Bool
+- `Bool`:
 """
 function is_pseudogene(gene::Gene)
     elements = join(keys(gene.chemistry.element_table.elements))
@@ -249,10 +249,10 @@ end
 Read a FASTA file and return the information as tuples of names and a genome strings.
 
 # Arguments
-- filename
+- `filename`: name of input FASTA file
 
 # Returns
-- Array of tuples (name string, genome string)
+- ``: Array of tuples (name string, genome string)
 """
 function read_fasta(filename)
     genome_info = []
@@ -293,8 +293,8 @@ end
 Write a multi-FASTA file with the full genome strings for an array of Genomes.
 
 # Arguments
-- genomes
-- filename
+- `genomes`: array of Genomes
+- `filename`: name of output FASTA file
 """
 function write_fasta(genomes, filename)
     f = open(filename, "w")
@@ -312,13 +312,13 @@ end
 
 
 """
-    write_fasta(genome, filename)
+    write_fasta(genome::Genome, filename)
 
-Write a FASTA file with the full genome string.
+Write a FASTA file with the genome string for a single Genome.
 
 # Arguments
-- genome::Genomes
-- filename
+- `genome::Genome`: Genome
+- `filename`: name of output FASTA file
 """
 function write_fasta(genome::Genome, filename)
     write_fasta([genome], filename)
