@@ -52,9 +52,9 @@ Each `Element` has a mass, which defaults to 1.  Bonds have both an `energy_chan
 Genome
 ------
 
-Genomes in &mu;Veldt are simply long strings which can contain genes that code for specific chemical reactions, pores, or transporters.  All genes start with `(` and end at the next occurence of `)`.  For example, the string `AB(CABC)AB)` contains the single gene: `(CABC)`.
+`Genomes` in &mu;Veldt are simply long strings which can contain `Genes` that code for specific chemical reactions, pores, or transporters.  All `Genes` start with `(` and end at the next occurence of `)`.  For example, the string `AB(CABC)AB)` contains the single `Gene`: `(CABC)`.
 
-Reactions specify a set of reactants and a set of products.  They contain element characters as well as the join (`*`) and split (`/`) reaction operators.  `*` means that the elements to either side are separate in the reactants but bonded in the products.  `/` means that they are bonded in the reactants and separate in the products.  To create a reaction string for the inverse of a given reaction, just switch all joins to splits and vice versa.  Multiple joins and/or splits may be defined within a reaction gene.
+`Reactions` specify a set of reactants and a set of products.  They contain element characters as well as the join (`*`) and split (`/`) `Reaction` operators.  `*` means that the elements to either side are separate in the reactants but bonded in the products.  `/` means that they are bonded in the reactants and separate in the products.  To create a `Reaction` string for the inverse of a given `Reaction`, just switch all joins to splits and vice versa.  Multiple joins and/or splits may be defined within a `Reaction` `Gene`.
 
 Examples:
 
@@ -82,6 +82,41 @@ Examples:
 * (\*AB): AB(out) -> AB(in)
 * (/A): A(in) -> A(out)
 * (/AAA): AAA(in) -> AAA(out)
+
+`Genomes` can be built a couple of different ways: through `genome_string()` which creates a new genome string from scratch or by reading a genome from a FASTA file with `read_fasta()`.  Here is an example FASTA file containing two genomes using a chemistry with elements A and B:
+
+    >genome1
+    /(*(/B)BBB(/(B(A*A()*)(/B)A)/((B/A)BB*(//B)*A)B(/()B*)A)(*BB(BA*AB(/*/*)*B*/*A/B
+    *BA*/(/BA*)AB)(/BB*/AB)A/(BAAA*))AA(/A)*//))A(()(B*)/)B))))A(A/A)(B(////*BA*//A)
+    *///B(/A(/()ABAB/*)*ABAB/((B(ABB)/*/A*/)*/(ABA)//*AAABA)*((*())*/)A(B(/AAAA*B)A(
+    A*)A*A)AA)*B(//)/A*B)/AB/AB**/*/A*(**)B)((/(A(()B((/BBA)B*A*ABBA((AB*A/**A(/B/A(
+    AA)))AA(**AA(**)//)AA*A**(BB///(A(B*B**(B/A)BB)(((A)B((//)A(B)A///B)A*)B*B/***((
+    /(**A/*))/AAB))AA(BA)A)B(()B///*ABAB/BA)((A/*AA/(BAB*A(/BB(A)*BA*A/A*/A()A)(//)(
+    BA(A)***B*)(B/)/*A)B/)A)B*)/A(*BB)/A(AA()/)B/AB/)*(**(A)(A/**A/)*(BA*/*AB()//B)B
+    A/B)B)/B/A)((/*/(/)BB/*AA/B()B)()()*(AA/B))(/(*()(B()A/*(A)(()B/*BB/(**((A*BA*B)
+    *(()B/(*))/)AA()B(*//**//(/*/////))/ABB)A/A(A/*A())*(BB)BAB*((B(B//()*)*)/(((ABB
+    (*BA))/)*B()***AB))(B()*)B//()(A*A)A)))(A/A)(/BBB*A/B))*(*()*A)B)*(A/(B//A)///A/
+    ())**BAA*)BB/)*B*/AB)))(B/(A/(/B/BB))(A*A*)((B/*///)()(ABABAA)///BA*B(((*)*))AA(
+    ((*/))*(/*AB/B***(AA(*/)B*A))/*/****/B*/AA/())BB)*A)*ABB/ABA/(A)*AA/B(A*)//()AAB
+    A*))*//)/)(//B/*B/B(/AB(A**A(B*((B/*(())
+    >genome2
+    ((A)A*B//A((/B)*/A(//))/)AB(*/)B)*)(A)/()A(A)/)BB*//(/)A*B)*)B)/A*AAABA)*AAB*((B
+    /BB)((*)(*AA*((B*/*(B)(AA()B/A*)*()B)*A)/A(/**BA)BB/)AB)**()*B/A*(//AAA***(/A/B/
+    AB*()ABAB/*(///A(BA*BBBBB)*/()/A*(/(*((())B)*B)/)AA/)(**BB/(A(*AA(B)B(A((A(A*BAB
+    *A)()AB)(((BB(*))/A)()B*)/)(AABB())()AA/))*AA(()A)(ABB//)B/)(/BB*B)*)A***A)B)/AA
+    )B(/*A)*/((A*BABA((B(*B))AA(BAAA*(BB((B/B)AA(A((AB(/)B**/(AA(B()*A)A)))*)A//)B*A
+    )*)(A())()AB))A//B))/A*B/(/B/)/B/()(*(*(B(*(/**)((//*(*AB//(B/)**B*)/AB))(B)(ABB
+    *AAB(B)B)/AB)/*A/A/B*//)*)A)*/)B)*)(AB)B(A**A*A*//A*BA/BA)*AA((BB(A(/***)/A*)/)A
+    )A*B/B*B**B(A*()/*/**A((*B)B/*((A)(*B/B)A(A)B/AA/*(()BB(B/)AA(**/*/B//(*(*)/)(BB
+    A((*//A))/B/)/A**ABA*BBBB//))A()AABAA(/(BB/*/BBA(/B)(/B//)(AB*((BBBA*BB)/AA))/((
+    *AA*B)(A)A/AB/)))A(AA/)(*(()/(*(/B)*/AAAB)*(/A/A(()/B)*(B*A))B/(B*(BB**((*A)AABA
+    )B)//B/(/(A/*(BB/))BA(B*A*/AA/(*(/)BAAB)B(*/B/B)*//*BA)(//(AA(A))*)B//B/B((A/*/B
+    B//)*)()(ABA/*A/BA)(B*/B*/*B*)/(/()B(B*B)B*(A*AA//()/*AA(*)*B)B*)B))(*A//(*(*/*)
+    (/*((/A/*)*(())/*A//B*)(A*/B)BA))/*(/(A/
+
+You can write one or more genomes to a FASTA file with `write_fasta()`.
+
+When you have a `Genome` loaded, you can use `find_genes()` to discover all of the `Genes` then turn them into their corresponding `Reactions` through calls to `transcribe_gene()` and `parse_reaction()`.
 
 
 Evolution
