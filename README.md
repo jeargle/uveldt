@@ -216,6 +216,18 @@ A lot of information is needed to set up a `Veldt`.  Here is example YAML input 
 In this `Veldt`, the lattice structure is defined by `dimensions`, which specifies a 2D lattice with 3 rows and 4 columns (12 `VeldtPoints` total).  To make a 3D lattice, you just need one more number for the "depth" dimension.  The `chemistry` line points to a YAML input file for the `Chemistry`.  The `molecules` section sets AAA and BBB as evenly distributed across the lattice with AAA having 10 molecules at each point and BBB 30.  The `genomes` section points to a FASTA file containing the "genome1" and "genome2" `Genomes`.  More than one FASTA file could be included here.  The `cells` section defines two cells: the first with `Genome` genome1 at `VeldtPoint` (1, 1) containing 11 AAA molecules and 22 BBB molecules, and the secont with `Genome` genome2 at `VeldtPoint` (2, 2) containing 33 AA molecules and 44 AB molecules.  Keeping `Chemistries` and `Genomes` separate in their own files makes it easy to reuse them and limit the focus of the `Veldt` file to the lattice and its contents.  The molecules and `Genomes` are constrained to elements present in the provided `Chemistry` so this `Chemistry` cleary includes elements A and B.
 
 
+How to Run
+----------
+
+&mu;Veldt has a commandline script `uveldtsim.jl` that reads a setup file and runs the specified simulation.  For example, to run the 20-step test simulation in `simulation1.yml`, navigate to `uveldt/bin` and run
+
+```
+> ./uveldtsim.jl ../test/simulations/simulation1.yml
+```
+
+Data for each step of the simulation will be printed to stdout.
+
+
 Dependencies
 ------------
 
