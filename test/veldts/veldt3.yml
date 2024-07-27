@@ -1,6 +1,6 @@
 dimensions: [3, 3]
 
-chemistry: ./chemistries/chemistry1.yml
+chemistry: ../chemistries/chemistry1.yml
 
 molecules:
   - name: AAA
@@ -17,4 +17,4 @@ molecules:
       count: 10
 
 genomes:
-  - ./genomes/genomes1.fasta
+  - ../genomes/genomes1.fasta

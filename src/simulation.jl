@@ -250,34 +250,42 @@ end
 
 
 """
-    setup_veldt(filename)
+    setup_veldt(filepath)
 
 Create a Veldt from a YAML setup file.
 
 # Arguments
-- filename: name of YAML setup file
+- filepath: path to YAML setup file
 
 # Returns
 - Veldt
 """
-function setup_veldt(filename)
+function setup_veldt(filepath)
+    # Move to setup file directory.
+    dir = dirname(filepath)
+    base_dir = pwd()
+    if dir != ""
+        cd(dir)
+    end
+
+    filename = basename(filepath)
     setup = YAML.load(open(filename))
 
-    # build Veldt
+    # Build Veldt.
     if haskey(setup, "dimensions")
         dimensions = setup["dimensions"]
     end
 
     veldt = Veldt(dimensions)
 
-    # build Chemistry
+    # Build Chemistry.
     if haskey(setup, "chemistry")
         chemistry_file = setup["chemistry"]
     end
     chemistry = setup_chemistry(chemistry_file)
 
 
-    # build Genomes
+    # Build Genomes.
     genomes = Dict{String, Genome}()
     if haskey(setup, "genomes")
         genome_files = setup["genomes"]
@@ -297,7 +305,7 @@ function setup_veldt(filename)
 
     @printf "  genomes: %s\n" genomes
 
-    # build Molecules
+    # Build Molecules.
     if haskey(setup, "molecules")
         for mol_info in setup["molecules"]
             if haskey(mol_info, "name")
@@ -314,7 +322,7 @@ function setup_veldt(filename)
         end
     end
 
-    # build Cells
+    # Build Cells.
     if haskey(setup, "cells")
         for cell_info in setup["cells"]
             if haskey(cell_info, "genome")
@@ -335,6 +343,10 @@ function setup_veldt(filename)
                 add_cell(veldt, location, cell)
             end
         end
+    end
+
+    if dir != ""
+        cd(base_dir)
     end
 
     return veldt
@@ -493,33 +505,45 @@ function simulate(veldt::Veldt, numsteps)
         end
     end
 
-    # Record state
+    # Record state.
 
     return veldt
 end
 
 
 """
-    setup_simulation(filename)
+    setup_simulation(filepath)
 
 Load and run a simulation from a YAML setup file.
 
 # Arguments
-- filename: name of YAML setup file
+- filepath: path to YAML setup file
 """
-function setup_simulation(filename)
+function setup_simulation(filepath)
+    # Move to setup file directory.
+    dir = dirname(filepath)
+    base_dir = pwd()
+    if dir != ""
+        cd(dir)
+    end
+
+    filename = basename(filepath)
     setup = YAML.load(open(filename))
 
-    # build Veldt
+    # Build Veldt.
     if haskey(setup, "veldt")
         veldt_file = setup["veldt"]
     end
     veldt = setup_veldt(veldt_file)
 
-    # simulation parameters
+    # Simulation parameters
     step_count = 0
     if haskey(setup, "steps")
         step_count = setup["steps"]
+    end
+
+    if dir != ""
+        cd(base_dir)
     end
 
     simulate(veldt, step_count)
