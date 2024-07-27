@@ -1,4 +1,4 @@
-#!/usr/local/bin/julia
+#!/usr/local/bin/julia --project=..
 
 # John Eargle (mailto: jeargle at gmail.com)
 # uveldtsim
@@ -9,19 +9,6 @@ using Dates
 
 using ArgParse
 using Printf
-
-
-"""
-    read_file_and_simulate(filename)
-
-Simulate a system specified by a config file.
-
-# Arguments
-- filename: YAML config file
-"""
-function read_file_and_simulate(filename)
-
-end
 
 
 """
@@ -39,7 +26,7 @@ function main()
 
     parsed_args = parse_args(ARGS, aps)
 
-    read_file_and_simulate(parsed_args["configfile"])
+    setup_simulation(parsed_args["configfile"])
 end
 
 main()
