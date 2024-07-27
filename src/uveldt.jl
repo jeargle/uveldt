@@ -41,6 +41,7 @@ export add_inversions, add_translocations, cross_over, mutate
 # Simulation
 include("simulation.jl")
 export Cell, VeldtPoint, Veldt
-export init_molecules, add_cell, get_neighbors, setup_veldt, simulate
+export init_molecules, add_cell, get_neighbors, setup_veldt
+export simulate, setup_simulation
 
 end

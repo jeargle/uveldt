@@ -537,7 +537,7 @@ end
 
 
 function test_veldt_setup_2d()
-    print_test_header("Veldt Setup")
+    print_test_header("Veldt Setup 2D")
 
     veldt1 = setup_veldt("./veldts/veldt1.yml")
 
@@ -546,7 +546,7 @@ end
 
 
 function test_veldt_setup_3d()
-    print_test_header("Veldt Setup")
+    print_test_header("Veldt Setup 3D")
 
     veldt2 = setup_veldt("./veldts/veldt2.yml")
 
@@ -593,6 +593,20 @@ function test_diffusion_3d()
     println("  * veldt8")
     veldt8 = setup_veldt("./veldts/veldt8.yml")
     simulate(veldt8, 20)
+end
+
+
+function test_simulation_setup_2d()
+    print_test_header("Simulation Setup 2D")
+
+    setup_simulation("./simulations/simulation1.yml")
+end
+
+
+function test_simulation_setup_3d()
+    print_test_header("Simulation Setup 3D")
+
+    setup_simulation("./simulations/simulation2.yml")
 end
 
 
@@ -824,13 +838,15 @@ function main()
     # test_simulation_3d()
     # test_diffusion_2d()
     # test_diffusion_3d()
+    test_simulation_setup_2d()
+    test_simulation_setup_3d()
     # test_substitution_matrix()
-    test_evolution_params()
+    # test_evolution_params()
     # test_mutate()
     # test_select_genomes()
     # test_select_cells()
     # test_genetic_algorithm1()
-    test_genetic_algorithm2()
+    # test_genetic_algorithm2()
 end
 
 main()

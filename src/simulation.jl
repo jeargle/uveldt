@@ -380,7 +380,7 @@ function step2D(veldt::Veldt)
                 vp.molecule_counts[current][mol] = 0
             end
 
-            if vp.cell
+            if vp.cell != nothing
 
                 # Choose molecules to react
                 # Run reactions
@@ -440,7 +440,7 @@ function step3D(veldt::Veldt)
                 end
 
                 #   if Cell
-                if vp.cell
+                if vp.cell != nothing
                     #     Choose molecules to react
                     #     Run reactions
                     #     Put products in next buffer
@@ -496,4 +496,31 @@ function simulate(veldt::Veldt, numsteps)
     # Record state
 
     return veldt
+end
+
+
+"""
+    setup_simulation(filename)
+
+Load and run a simulation from a YAML setup file.
+
+# Arguments
+- filename: name of YAML setup file
+"""
+function setup_simulation(filename)
+    setup = YAML.load(open(filename))
+
+    # build Veldt
+    if haskey(setup, "veldt")
+        veldt_file = setup["veldt"]
+    end
+    veldt = setup_veldt(veldt_file)
+
+    # simulation parameters
+    step_count = 0
+    if haskey(setup, "steps")
+        step_count = setup["steps"]
+    end
+
+    simulate(veldt, step_count)
 end
