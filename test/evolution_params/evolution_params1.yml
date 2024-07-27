@@ -1,0 +1,12 @@
+selection_params:
+  fitness_function: gene_count
+  select_count: 10
+
+mutation_params:
+  snv_rate: 0.01
+  insertion_rate: 0.0002
+  deletion_rate: 0.0002
+  duplication_rate: 0.0001
+  inversion_rate: 0.00004
+  translocation_rate: 0.00004
+  crossing_over: false
