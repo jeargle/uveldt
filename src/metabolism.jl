@@ -50,11 +50,11 @@ no shared components, the result will be a disconnected graph containing
 full copies of the input Pathways.
 
 # Arguments
-- pathway1: Pathway
-- pathway2: Pathway
+- `pathway1`: Pathway
+- `pathway2`: Pathway
 
 # Returns
-- Pathway
+- `Pathway`:
 """
 function merge_pathways(pathway1, pathway2)
     # Collect nodes and edges into dictionaries for fast lookup.
