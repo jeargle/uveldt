@@ -73,9 +73,9 @@ end
 Initialize the Molecule count for a specific location in a Veldt.
 
 # Arguments
-- veldt::Veldt
-- coord::Array{Int64, 1}
-- molecule_counts::Dict{AbstractString, Int64}
+- `veldt::Veldt`:
+- `coord::Array{Int64, 1}`:
+- `molecule_counts::Dict{AbstractString, Int64}`:
 """
 function init_molecules(veldt::Veldt, coord::Array{Int64, 1}, molecule_counts::Dict{String, Int64})
     for (mol, count) in molecule_counts
@@ -102,9 +102,9 @@ end
 Add a cell to a specific location in a Veldt.
 
 # Arguments
-- veldt::Veldt
-- coord::Array{Int64, 1}
-- cell::Cell
+- `veldt::Veldt`:
+- `coord::Array{Int64, 1}`:
+- `cell::Cell`:
 """
 function add_cell(veldt::Veldt, coord::Array{Int64, 1}, cell::Cell)
     for (mol, count) in cell.molecule_counts[1]
@@ -134,11 +134,11 @@ Return VeldtPoints neighboring VeldtPoint at coord.
 If neighbor does not exist, defaults to VeldtPoint at coord.
 
 # Arguments
-- veldt::Veldt
-- coord::Array{Int64, 1}
+- `veldt::Veldt`:
+- `coord::Array{Int64, 1}`:
 
 # Returns
-- Array of VeldtPoints
+- `Array`: Array of VeldtPoints
 """
 function get_neighbors(veldt::Veldt, coord::Array{Int64, 1})
 
@@ -200,7 +200,7 @@ end
 Print molecule counts per VeldtPoint in a Veldt.
 
 # Arguments
-- veldt::Veldt
+- `veldt::Veldt`:
 """
 function print_molecule_counts(veldt)
     current = veldt.current
@@ -255,10 +255,10 @@ end
 Create a Veldt from a YAML setup file.
 
 # Arguments
-- filepath: path to YAML setup file
+- `filepath`: path to YAML setup file
 
 # Returns
-- Veldt
+- `Veldt`:
 """
 function setup_veldt(filepath)
     # Move to setup file directory.
@@ -359,10 +359,10 @@ end
 Simulate one timestep for a 2D Veldt.
 
 # Arguments
-- veldt::Veldt
+- `veldt::Veldt`:
 
 # Returns
-- Veldt after one timestep
+- `Veldt`: Veldt after one timestep
 """
 function step2D(veldt::Veldt)
 
@@ -417,10 +417,10 @@ end
 Simulate one timestep for a 3D Veldt.
 
 # Arguments
-- veldt::Veldt
+- `veldt::Veldt`:
 
 # Returns
-- Veldt after one timestep
+- `Veldt`: Veldt after one timestep
 """
 function step3D(veldt::Veldt)
 
@@ -477,11 +477,11 @@ end
 Simulate one or more timesteps for a Veldt.
 
 # Arguments
-- veldt::Veldt: Veldt to simulate
-- numsteps: number of timesteps to simulate
+- `veldt::Veldt`: Veldt to simulate
+- `numsteps`: number of timesteps to simulate
 
 # Returns
-- Veldt after one or more timesteps
+- `Veldt`: Veldt after one or more timesteps
 """
 function simulate(veldt::Veldt, numsteps)
 
@@ -517,7 +517,7 @@ end
 Load and run a simulation from a YAML setup file.
 
 # Arguments
-- filepath: path to YAML setup file
+- `filepath`: path to YAML setup file
 """
 function setup_simulation(filepath)
     # Move to setup file directory.
