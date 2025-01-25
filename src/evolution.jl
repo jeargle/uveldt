@@ -125,11 +125,11 @@ Take an Array of Genomes and return a subset of them based on
 calculated fitness scores.
 
 # Arguments
-- genomes::Array{Genome, 1}
-- params::SelectionParams
+- `genomes::Array{Genome, 1}`:
+- `params::SelectionParams`:
 
 # Returns
-- Array{Genome, 1} sub array of selected Genomes
+- `Array{Genome, 1}`: sub array of selected Genomes
 """
 function select_genomes(genomes, params::SelectionParams)
     uuid_to_genome = Dict(genome.uuid => genome
@@ -173,11 +173,11 @@ Take an Array of Cells and return a subset of them based on
 calculated fitness scores.
 
 # Arguments
-- cells::Array{Cell, 1}
-- params::SelectionParams
+- `cells::Array{Cell, 1}`:
+- `params::SelectionParams`:
 
 # Returns
-- Array{Cell, 1} sub array of selected Cells
+- `Array{Cell, 1}`: sub array of selected Cells
 """
 function select_cells(cells, params::SelectionParams)
     uuid_to_cell = Dict(cell.uuid => cell
@@ -218,10 +218,32 @@ end
 # Fitness functions
 #####
 
+"""
+    gene_count(genome)
+
+x
+
+# Arguments
+- `genome`:
+
+# Returns
+- ``:
+"""
 function gene_count(genome)
     return length(find_genes(genome))
 end
 
+"""
+    gene_count(genome)
+
+x
+
+# Arguments
+- `genome`:
+
+# Returns
+- ``:
+"""
 function genome_length(genome)
     return length(genome.string)
 end
@@ -231,7 +253,7 @@ fitness_functions = Dict("gene_count" => gene_count,
 
 
 """
-    read_substition_matrix(filename)
+    read_substition_matrix(filename, chemistry)
 
 Read a substitution matrix file and return a SubstitutionMatrix.
 
@@ -254,10 +276,11 @@ will remain the same so the matrix diagonal (Mii) should normally be
 set to 0.
 
 # Arguments
-- filename
+- `filename`:
+- `chemistry`:
 
 # Returns
-- SubstitutionMatrix
+- `SubstitutionMatrix`:
 """
 function read_substitution_matrix(filename, chemistry)
     alphabet = alphabet_string(chemistry)
@@ -289,11 +312,11 @@ end
 Pick a substitution character based on a SubstitutionMatrix.
 
 # Arguments
-- sub_mat::SubstitutionMatrix
-- original_char::Char
+- `sub_mat::SubstitutionMatrix`:
+- `original_char::Char`:
 
 # Returns
-- Substitution Char
+- `Char`:
 """
 function substitution(sub_mat::SubstitutionMatrix, original_char::Char)
     return sub_mat.alphabet[random(sub_mat.substitutions[original_char])]
@@ -306,12 +329,12 @@ end
 Add SNVs to Genome.
 
 # Arguments
-- genome::Genome
-- rate
-- sub_mat::SubstitutionMatrix
+- `genome::Genome`:
+- `rate`:
+- `sub_mat::SubstitutionMatrix`:
 
 # Returns
-- Mutated Genome
+- `Genome`: Mutated Genome
 """
 function add_snvs(genome::Genome, rate; sub_mat::Union{SubstitutionMatrix, Nothing}=nothing)
     geom_dist = Geometric(rate)
@@ -345,12 +368,12 @@ end
 Add small insertions to Genome.
 
 # Arguments
-- genome::Genome
-- rate
-- size_param
+- `genome::Genome`:
+- `rate`:
+- `size_param`:
 
 # Returns
-- Mutated Genome String
+- `Genome`: Mutated Genome
 """
 function add_insertions(genome::Genome, rate; size_param=0.5)
     location_dist = Geometric(rate)
@@ -378,17 +401,17 @@ end
 
 
 """
-    remove_deletions(genome, rate)
+    remove_deletions(genome, rate; size_param)
 
 Remove small deletions from Genome.
 
 # Arguments
-- genome::Genome
-- rate
-- size_param
+- `genome::Genome`:
+- `rate`:
+- `size_param`:
 
 # Returns
-- Mutated Genome String
+- `Genome`: Mutated Genome
 """
 function remove_deletions(genome::Genome, rate; size_param=0.5)
     geom_dist = Geometric(rate)
@@ -418,12 +441,12 @@ end
 Add large duplications to Genome.
 
 # Arguments
-- genome::Genome
-- rate
-- size_param
+- `genome::Genome`:
+- `rate`:
+- `size_param`:
 
 # Returns
-- Mutated Genome String
+- `Genome`: Mutated Genome
 """
 function add_duplications(genome::Genome, rate; size_param=0.5)
     location_dist = Geometric(rate)
@@ -484,12 +507,12 @@ end
 Add large inversions to Genome.
 
 # Arguments
-- genome::Genome
-- rate
-- size_param
+- `genome::Genome`:
+- `rate`:
+- `size_param`:
 
 # Returns
-- Mutated Genome String
+- `Genome`: Mutated Genome
 """
 function add_inversions(genome::Genome, rate; size_param=0.5)
     geom_dist = Geometric(rate)
@@ -523,12 +546,12 @@ end
 Add large translocations to Genome.
 
 # Arguments
-- genome::Genome
-- rate
-- size_param
+- `genome::Genome`:
+- `rate`:
+- `size_param`:
 
 # Returns
-- Mutated Genome String
+- `Genome`: Mutated Genome
 """
 function add_translocations(genome::Genome, rate; size_param=0.5)
     location_dist = Geometric(rate)
@@ -602,11 +625,11 @@ end
 Cross over two Genomes to produce two child Genomes.
 
 # Arguments
-- genome1::Genome
-- genome2::Genome
+- `genome1::Genome`:
+- `genome2::Genome`:
 
 # Returns
-- Tuple of mutated Genome Strings, (String, String)
+- `(String, String)`: Tuple of mutated Genome Strings
 """
 function cross_over(genome1::Genome, genome2::Genome)
     if genome1.chemistry != genome2.chemistry
@@ -643,10 +666,10 @@ Replication is done prior to this step so the number of input Genomes
 should equal the number of mutant child Genomes.
 
 # Arguments
-- genomes::Array{Genome, 1}
+- `genomes::Array{Genome, 1}`:
 
 # Returns
-- Array{Genome, 1} containing new child Genomes
+- `Array{Genome, 1}`: Array containing new child Genomes
 """
 function mutate(genomes, params::MutationParams)
     child_genomes = []
@@ -710,10 +733,10 @@ end
 Create SelectionParams and MutationParams from a YAML setup file.
 
 # Arguments
-- filename: name of YAML setup file
+- `filename`: name of YAML setup file
 
 # Returns
-- (SelectionParams, MutationParams)
+- `(SelectionParams, MutationParams)`:
 """
 function read_evolution_params(filename)
     setup = YAML.load(open(filename))
