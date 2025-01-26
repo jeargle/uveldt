@@ -9,7 +9,17 @@ elements:
 bonds:
   - elements:
     - A
+    - A
+    energy_change: -5.5
+    transition_energy: 1.5
+  - elements:
+    - A
     - B
+    energy_change: -5.5
+    transition_energy: 1.5
+  - elements:
+    - B
+    - A
     energy_change: -5.5
     transition_energy: 1.5
   - elements:
@@ -18,7 +28,27 @@ bonds:
     energy_change: -6.5
     transition_energy: 2.5
   - elements:
+    - C
+    - A
+    energy_change: -6.5
+    transition_energy: 2.5
+  - elements:
     - B
+    - B
+    energy_change: -7.5
+    transition_energy: 3.5
+  - elements:
+    - B
+    - C
+    energy_change: -7.5
+    transition_energy: 3.5
+  - elements:
+    - C
+    - B
+    energy_change: -7.5
+    transition_energy: 3.5
+  - elements:
+    - C
     - C
     energy_change: -7.5
     transition_energy: 3.5

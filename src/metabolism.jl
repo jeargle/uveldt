@@ -5,61 +5,78 @@
 """
 Graph with nodes representing Molecules and Reactions.
 """
-struct Pathway
-    molecules::Array{Molecule, 1}
-    reactions::Array{Reaction, 1}
-    reactant_edges::Array
-    product_edges::Array
-
-    function Pathway(molecules::Array{Molecule, 1},
-                     reactions::Array{Reaction, 1},
-                     reactant_edges::Array,
-                     product_edges::Array)
-        new(molecules, reactions, reactant_edges, product_edges)
-    end
-end
-
-
-"""
-Set of disconnected Pathways.
-
-If nodes or edges are present in multiple Pathways, they will be merged
-into a connected graph.  The individual Pathway representations will be
-maintained, but the base graph will be the result of all possible merges
-between Pathways.
-"""
 struct Metabolism
-    pathways::Array{Pathway, 1}
-    graph::Pathway
+    nodes::Set{Union{Molecule, Reaction}}
+    edges::Set{Tuple{Union{Molecule, Reaction}, Union{Molecule, Reaction}}}
+    children::Dict{Union{Molecule, Reaction}, Set{Union{Molecule, Reaction}}}
+    parents::Dict{Union{Molecule, Reaction}, Set{Union{Molecule, Reaction}}}
 
-    function Metabolism(pathways::Array{Pathway, 1})
-        # Build graph by performing all possible Pathway-Pathway merges.
-        graph = pathways[1]
+    function Metabolism(nodes, edges, children, parents)
+        # Used for taking subsets of existing Metabolisms.
+        new(nodes, edges, children, parents)
+    end
 
-        new(pathways, graph)
+    function Metabolism(reactions::Array{Reaction, 1})
+        nodes = Set{Union{Molecule, Reaction}}()
+        edges = Set{Tuple{Union{Molecule, Reaction}, Union{Molecule, Reaction}}}()
+        children = Dict{Union{Molecule, Reaction}, Set{Union{Molecule, Reaction}}}()
+        parents = Dict{Union{Molecule, Reaction}, Set{Union{Molecule, Reaction}}}()
+
+        for reaction in reactions
+            push!(nodes, reaction)
+            for reactant in reaction.reactants
+                push!(nodes, reactant)
+                push!(edges, (reactant, reaction))
+                if haskey(children, reactant)
+                    push!(children[reactant], reaction)
+                else
+                    children[reactant] = Set([reaction])
+                end
+                if haskey(parents, reaction)
+                    push!(parents[reaction], reactant)
+                else
+                    parents[reaction] = Set([reactant])
+                end
+            end
+            for product in reaction.products
+                push!(nodes, product)
+                push!(edges, (reaction, product))
+                if haskey(children, reaction)
+                    push!(children[reaction], product)
+                else
+                    children[reaction] = Set([product])
+                end
+                if haskey(parents, product)
+                    push!(parents[product], reaction)
+                else
+                    parents[product] = Set([reaction])
+                end
+            end
+        end
+        new(nodes, edges, children, parents)
     end
 end
 
 
 """
-    merge_pathways(pathway1, pathway2)
+    merge_metabolisms(metabolism1, metabolism2)
 
-Create new Pathway from the nodes and edges of two Pathways, but
+Create new Metabolism from the nodes and edges of two Metabolisms, but
 any shared components are reduced to single copies.  If there are
 no shared components, the result will be a disconnected graph containing
-full copies of the input Pathways.
+full copies of the input Metabolisms.
 
 # Arguments
-- `pathway1`: Pathway
-- `pathway2`: Pathway
+- `metabolism1`: Metabolism
+- `metabolism2`: Metabolism
 
 # Returns
-- `Pathway`:
+- `Metabolism`:
 """
-function merge_pathways(pathway1, pathway2)
+function merge_metabolisms(metabolism1, metabolism2)
     # Collect nodes and edges into dictionaries for fast lookup.
 
-    # merged_pathway = Pathway(molecules, reactions, reactant_edges, product_edges)
+    # merged_metabolism = Metabolism(molecules, reactions, reactant_edges, product_edges)
 
-    # return merged_pathway
+    # return merged_metabolism
 end

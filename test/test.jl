@@ -816,6 +816,63 @@ function test_genetic_algorithm2()
     end
 end
 
+function test_metabolism1()
+    print_test_header("Metabolism 1")
+
+    println("  * Setup Chemistry")
+    chem1 = setup_chemistry("./chemistries/chemistry1.yml")
+
+    println("  * Reactions")
+    reactions1 = [Reaction(["A", "B"], ["AB"], chem1),
+                  Reaction(["B", "A"], ["BA"], chem1),
+                  Reaction(["AB", "BA"], ["ABBA"], chem1),
+                  Reaction(["ABBA"], ["ABB", "A"], chem1),
+                  Reaction(["ABBA"], ["A", "BBA"], chem1)]
+    println("  ** reactions1")
+    for (i, reaction) in enumerate(reactions1)
+        @printf "reaction%d: %s\n" i reaction
+    end
+
+    reactions2 = [Reaction(["A", "B"], ["AB"], chem1),
+                  Reaction(["B", "A"], ["BA"], chem1),
+                  Reaction(["A", "BB"], ["ABB"], chem1),
+                  Reaction(["AB", "BA"], ["ABBA"], chem1),
+                  Reaction(["AA"], ["A", "A"], chem1),
+                  Reaction(["BB"], ["B", "B"], chem1),
+                  Reaction(["ABBA"], ["ABB", "A"], chem1),
+                  Reaction(["ABBA"], ["A", "BBA"], chem1)]
+    println("  ** reactions2")
+    for (i, reaction) in enumerate(reactions2)
+        @printf "reaction%d: %s\n" i reaction
+    end
+
+    println("  * Metabolism")
+    met1 = Metabolism(reactions1)
+    met2 = Metabolism(reactions2)
+
+    println("  ** met1")
+    println("  *** nodes")
+    for node in met1.nodes
+        println(node)
+    end
+
+    println("  *** edges")
+    for edge in met1.edges
+        println(edge)
+    end
+
+    println("  ** met2")
+    println("  *** nodes")
+    for node in met2.nodes
+        println(node)
+    end
+
+    println("  *** edges")
+    for edge in met2.edges
+        println(edge)
+    end
+end
+
 
 
 function main()
@@ -832,12 +889,12 @@ function main()
     # test_cell()
     # test_veldt_point()
     # test_veldt()
-    test_veldt_setup_2d()
-    test_veldt_setup_3d()
-    test_simulation_2d()
-    test_simulation_3d()
-    test_diffusion_2d()
-    test_diffusion_3d()
+    # test_veldt_setup_2d()
+    # test_veldt_setup_3d()
+    # test_simulation_2d()
+    # test_simulation_3d()
+    # test_diffusion_2d()
+    # test_diffusion_3d()
     # test_simulation_setup_2d()
     # test_simulation_setup_3d()
     # test_substitution_matrix()
@@ -847,6 +904,7 @@ function main()
     # test_select_cells()
     # test_genetic_algorithm1()
     # test_genetic_algorithm2()
+    test_metabolism1()
 end
 
 main()
