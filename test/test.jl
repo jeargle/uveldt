@@ -10,6 +10,7 @@
 
 
 using Printf
+using Test
 using uveldt
 
 
@@ -64,10 +65,18 @@ function test_element()
     println("el3: ", el3)
     println()
 
+    @test el1.name == 'A'
+    @test el2.name == 'B'
+    @test el3.name == 'C'
+
     println("mass(el1): ", mass(el1))
     println("mass(el2): ", mass(el2))
     println("mass(el3): ", mass(el3))
     println()
+
+    @test mass(el1) == 1
+    @test mass(el2) == 2
+    @test mass(el3) == 3
 end
 
 function test_element_table()
@@ -77,9 +86,12 @@ function test_element_table()
     el_table1 = ElementTable(elements)
 
     println("el_table1: ", el_table1)
-    println("el_table1.elements[\"A\"]: ", el_table1.elements['A'])
-    println("el_table1.elements[\"B\"]: ", el_table1.elements['B'])
+    println("el_table1.elements['A']: ", el_table1.elements['A'])
+    println("el_table1.elements['B']: ", el_table1.elements['B'])
     println()
+
+    @test el_table1.elements['A'] == elements[1]
+    @test el_table1.elements['B'] == elements[2]
 end
 
 function test_bond()
@@ -876,16 +888,21 @@ end
 
 
 function main()
-    # test_element()
-    # test_element_table()
+    # Chemistry
+    test_element()
+    test_element_table()
     # test_bond()
     # test_bond_table()
     # test_chemistry()
     # test_chemistry_setup()
     # test_molecule()
     # test_reaction()
+
+    # Genome
     # test_gene()
     # test_genome()
+
+    # Simulation
     # test_cell()
     # test_veldt_point()
     # test_veldt()
@@ -897,6 +914,8 @@ function main()
     # test_diffusion_3d()
     # test_simulation_setup_2d()
     # test_simulation_setup_3d()
+
+    # Evolution
     # test_substitution_matrix()
     # test_evolution_params()
     # test_mutate()
@@ -904,7 +923,9 @@ function main()
     # test_select_cells()
     # test_genetic_algorithm1()
     # test_genetic_algorithm2()
-    test_metabolism1()
+
+    # Metabolism
+    # test_metabolism1()
 end
 
 main()
