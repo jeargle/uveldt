@@ -232,6 +232,7 @@ Dependencies
 ------------
 
 * ArgParse
+* DataStructures
 * Distributions
 * LinearAlgebra
 * Printf
