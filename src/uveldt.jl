@@ -3,6 +3,7 @@
 
 module uveldt
 
+using DataStructures
 using Distributions
 using Printf
 using Random

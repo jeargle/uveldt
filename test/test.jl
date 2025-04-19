@@ -9,6 +9,7 @@
 #   julia --project=.. -J../boom.so test.jl
 
 
+using DataStructures
 using Printf
 using Test
 using uveldt
@@ -515,13 +516,41 @@ function test_veldt()
     println("veldt1: ", veldt1)
 
     println("  * initialize Molecule counts")
-    init_molecules(veldt1, [1, 1], Dict("AAA" => 10, "BBB" => 10))
-    init_molecules(veldt1, [1, 2], Dict("AAA" => 10, "BBB" => 20))
-    init_molecules(veldt1, [1, 3], Dict("AAA" => 10, "BBB" => 30))
-    init_molecules(veldt1, [2, 1], Dict("AAA" => 20, "BBB" => 10))
-    init_molecules(veldt1, [2, 2], Dict("AAA" => 20, "BBB" => 20))
-    init_molecules(veldt1, [2, 3], Dict("AAA" => 20, "BBB" => 30))
-    init_molecules(veldt1, [3, 3], Dict("AAA" => 30, "BBB" => 30))
+    dd1 = DefaultDict{AbstractString, Int64}(0)
+    dd1["AAA"] = 10
+    dd1["BBB"] = 10
+    init_molecules(veldt1, [1, 1], dd1)
+
+    dd1 = DefaultDict{AbstractString, Int64}(0)
+    dd1["AAA"] = 10
+    dd1["BBB"] = 20
+    init_molecules(veldt1, [1, 2], dd1)
+
+    dd1 = DefaultDict{AbstractString, Int64}(0)
+    dd1["AAA"] = 10
+    dd1["BBB"] = 30
+    init_molecules(veldt1, [1, 3], dd1)
+
+    dd1 = DefaultDict{AbstractString, Int64}(0)
+    dd1["AAA"] = 20
+    dd1["BBB"] = 10
+    init_molecules(veldt1, [2, 1], dd1)
+
+    dd1 = DefaultDict{AbstractString, Int64}(0)
+    dd1["AAA"] = 20
+    dd1["BBB"] = 20
+    init_molecules(veldt1, [2, 2], dd1)
+
+    dd1 = DefaultDict{AbstractString, Int64}(0)
+    dd1["AAA"] = 20
+    dd1["BBB"] = 30
+    init_molecules(veldt1, [2, 3], dd1)
+
+    dd1 = DefaultDict{AbstractString, Int64}(0)
+    dd1["AAA"] = 30
+    dd1["BBB"] = 30
+    init_molecules(veldt1, [3, 3], dd1)
+
     println("veldt1: ", veldt1)
 
     println("  * add Cells")
@@ -889,8 +918,8 @@ end
 
 function main()
     # Chemistry
-    test_element()
-    test_element_table()
+    # test_element()
+    # test_element_table()
     # test_bond()
     # test_bond_table()
     # test_chemistry()
@@ -903,9 +932,9 @@ function main()
     # test_genome()
 
     # Simulation
-    # test_cell()
-    # test_veldt_point()
-    # test_veldt()
+    test_cell()
+    test_veldt_point()
+    test_veldt()
     # test_veldt_setup_2d()
     # test_veldt_setup_3d()
     # test_simulation_2d()

@@ -114,6 +114,46 @@ end
 
 
 """
+    parse_reactions(genome::Genome)
+
+Search through a Genome and find all of the Reactions it codes for.
+
+# Arguments
+- `genome::Genome`:
+
+# Returns
+- `Array{Reaction, 1}`: Array of Reactions
+"""
+function parse_reactions(genome::Genome)
+    println("  * Gene transcripts")
+    genes = find_genes(genome)
+    reactions = Array{Reaction, 1}()
+    chemistry = genome.chemistry
+
+    for gene in genes
+        # @printf "gene%d.transcript: %s\n" i genes[i].transcript
+        if !is_pseudogene(gene)
+            reaction_type, reactants, products = parse_reaction(gene.transcript)
+            push!(reactions, )
+            # println("  reaction type: ", reaction_type)
+            # println("  reactants: ", reactants)
+            # println("  products: ", products)
+
+            if reaction_type == reaction
+                push!(reactions, Reaction(reactants, products, chemistry))
+            elseif reaction_type == pore
+                push!(reactions, Reaction(reactants[1], chemistry))
+            else
+                push!(reactions, Reaction(reactants[1], chemistry, reaction_type, -3.0))
+            end
+        end
+    end
+
+    return reactions
+end
+
+
+"""
     transcribe_gene(gene_string::AbstractString, chemistry::Chemistry)
 
 Convert a Gene string into a valid Reaction string by removing redundant directive
