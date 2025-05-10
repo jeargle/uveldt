@@ -12,6 +12,15 @@ using YAML
 using LinearAlgebra
 using UUIDs
 
+# utils
+macro exported_enum(name, args...)
+    esc(quote
+        @enum($name, $(args...))
+        export $name
+        $([:(export $arg) for arg in args]...)
+        end)
+end
+
 # Chemistry
 include("chemistry.jl")
 export Element, ElementTable, Bond, BondTable, Chemistry, Molecule

@@ -1,6 +1,8 @@
 # John Eargle (mailto: jeargle at gmail.com)
 # uveldt.genome
 
+@exported_enum GenomeStrand positive negative
+
 """
 Genes are strings bracketed by start '(' and stop ')' characters that code for specific
 chemical reactions, pores, or transporters.
@@ -44,10 +46,15 @@ struct Gene
     string::AbstractString
     transcript::AbstractString
     chemistry::Chemistry
+    strand::GenomeStrand
+
+    function Gene(location::Int64, gene_string::AbstractString, chemistry::Chemistry, strand::GenomeStrand)
+        transcript = transcribe_gene(gene_string, chemistry)
+        new(location, gene_string, transcript, chemistry, strand)
+    end
 
     function Gene(location::Int64, gene_string::AbstractString, chemistry::Chemistry)
-        transcript = transcribe_gene(gene_string, chemistry)
-        new(location, gene_string, transcript, chemistry)
+        Gene(location, gene_string, transcript, chemistry, positive)
     end
 end
 
@@ -224,7 +231,7 @@ Randomly generate a valid Genome string.
 - `chemistry::Chemistry`:
 
 # Returns
-- `AbstractString`: Genome string
+- `AbstractString`: string representation of Genome contents
 """
 function genome_string(size::Int64, chemistry::Chemistry)
     return randstring(alphabet_string(chemistry), size)
@@ -232,22 +239,49 @@ end
 
 
 """
-    find_genes(genome::Genome)
+    find_genes(genome_string::AbstractString, chemistry::Chemistry)
+
+Search through a genome string for patterns that match possible Gene strings and build
+Genes from them.
+
+# Arguments
+- `genome_string::AbstractString`: string representation of Genome contents
+- `chemistry::Chemistry`:
+- `strand::GenomeStrand=positive`:
+
+# Returns
+- ``: Array of Genes
+"""
+function find_genes(genome_string::AbstractString, chemistry::Chemistry; strand::GenomeStrand=positive)
+    rx = r"\([^\(]*?\)"
+    gene_match = eachmatch(rx, genome_string)
+    genes = [Gene(gm.offset, gm.match, chemistry, strand)
+             for gm in gene_match]
+    return genes
+end
+
+
+"""
+    find_genes(genome::Genome; include_reverse::Bool=false)
 
 Search through a Genome for patterns that match possible Gene strings and build Genes from
 them.
 
 # Arguments
 - `genome::Genome`:
+- `include_reverse::Bool=false`:
 
 # Returns
 - ``: Array of Genes
 """
-function find_genes(genome::Genome)
-    rx = r"\([^\(]*?\)"
-    gene_match = eachmatch(rx, genome.string)
-    genes = [Gene(gm.offset, gm.match, genome.chemistry)
-             for gm in gene_match]
+function find_genes(genome::Genome; include_reverse::Bool=false)
+    genes = find_genes(genome.string, genome.chemistry)
+
+    if include_reverse
+        genes_reverse = find_genes(reverse(genome.string), genome.chemistry, strand=negative)
+        genes = vcat(genes, genes_reverse)
+    end
+
     return genes
 end
 

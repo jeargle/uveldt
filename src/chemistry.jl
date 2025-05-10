@@ -1,15 +1,6 @@
 # John Eargle (mailto: jeargle at gmail.com)
 # uveldt.chemistry
 
-macro exported_enum(name, args...)
-    esc(quote
-        @enum($name, $(args...))
-        export $name
-        $([:(export $arg) for arg in args]...)
-        end)
-end
-
-
 """
 Chemical element.
 """

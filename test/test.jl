@@ -301,6 +301,18 @@ function test_gene()
     println()
 end
 
+function print_genes(genes)
+    for gene in genes
+        if gene.strand == positive
+            strand_str = "+"
+        else
+            strand_str = "-"
+        end
+
+        @printf "%s%d %s\n" strand_str gene.location gene.string
+    end
+end
+
 function test_genome()
     print_test_header("Genome")
 
@@ -330,11 +342,22 @@ function test_genome()
     println("genome_str1 == genome_str2: ", genome_str1 == genome_str2)
 
     genes = find_genes(genome1)
+    genes2 = find_genes(genome1, include_reverse=true)
 
     println("  * find Genes")
-    for gene in genes
-        @printf "%d %s\n" gene.location gene.string
-    end
+    print_genes(genes)
+
+    println("  * find Genes 2")
+    print_genes(genes2)
+    # for gene in genes2
+    #     if gene.strand == positive
+    #         strand_str = "+"
+    #     else
+    #         strand_str = "-"
+    #     end
+
+    #     @printf "%s%d %s\n" strand_str gene.location gene.string
+    # end
 
     println("  * Gene transcripts")
     pseudogene_count = 0
@@ -929,12 +952,12 @@ function main()
 
     # Genome
     # test_gene()
-    # test_genome()
+    test_genome()
 
     # Simulation
-    test_cell()
-    test_veldt_point()
-    test_veldt()
+    # test_cell()
+    # test_veldt_point()
+    # test_veldt()
     # test_veldt_setup_2d()
     # test_veldt_setup_3d()
     # test_simulation_2d()
