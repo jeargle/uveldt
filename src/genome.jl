@@ -92,10 +92,10 @@ end
 Parse the reactants and products from a reaction string.
 
 # Arguments
-- `reaction_string::AbstractString`:
+- `reaction_string::AbstractString`: string representation of a Reaction
 
 # Returns
-- (reaction_type::ReactionType, reactants::Array, products::Array)
+- `(reaction_type::ReactionType, reactants::Array, products::Array)`
 """
 function parse_reaction(reaction_string::AbstractString)
     if isnothing(match(r"[\*/]", reaction_string))
@@ -126,7 +126,7 @@ end
 Search through a Genome and find all of the Reactions it codes for.
 
 # Arguments
-- `genome::Genome`:
+- `genome::Genome`: Genome from which to extract Reactions
 
 # Returns
 - `Array{Reaction, 1}`: Array of Reactions
@@ -167,8 +167,8 @@ Convert a Gene string into a valid Reaction string by removing redundant directi
 characters.
 
 # Arguments
-- `gene_string::AbstractString`:
-- `chemistry::Chemistry`:
+- `gene_string::AbstractString`: string representation of a Gene
+- `chemistry::Chemistry`: Chemistry for Reactions to use
 
 # Returns
 - `AbstractString`: Reaction string
@@ -227,8 +227,8 @@ end
 Randomly generate a valid Genome string.
 
 # Arguments
-- `size::Int64`:
-- `chemistry::Chemistry`:
+- `size::Int64`: size, in characters, that the Genome should be
+- `chemistry::Chemistry`: Chemistry for Genome to use
 
 # Returns
 - `AbstractString`: string representation of Genome contents
@@ -246,11 +246,11 @@ Genes from them.
 
 # Arguments
 - `genome_string::AbstractString`: string representation of Genome contents
-- `chemistry::Chemistry`:
-- `strand::GenomeStrand=positive`:
+- `chemistry::Chemistry`:  Chemistry for Genes to use
+- `strand::GenomeStrand=positive`: positive of negative
 
 # Returns
-- ``: Array of Genes
+- `Array{Gene, 1}`: Array of Genes
 """
 function find_genes(genome_string::AbstractString, chemistry::Chemistry; strand::GenomeStrand=positive)
     rx = r"\([^\(]*?\)"
@@ -268,11 +268,11 @@ Search through a Genome for patterns that match possible Gene strings and build 
 them.
 
 # Arguments
-- `genome::Genome`:
-- `include_reverse::Bool=false`:
+- `genome::Genome`:  Genome from which to extract Genes
+- `include_reverse::Bool=false`: whether or not to find genes by reading the Genome backwards
 
 # Returns
-- ``: Array of Genes
+- `Array{Gene, 1}`: Array of Genes
 """
 function find_genes(genome::Genome; include_reverse::Bool=false)
     genes = find_genes(genome.string, genome.chemistry)
@@ -296,10 +296,10 @@ is to have an empty transcript.  Repeated and tail-end directives get
 ignored.
 
 # Arguments
-- `gene::Gene`:
+- `gene::Gene`: Gene to examine
 
 # Returns
-- `Bool`:
+- `Bool`: whether or not the Gene is a pseudogene
 """
 function is_pseudogene(gene::Gene)
     elements = join(keys(gene.chemistry.element_table.elements))
@@ -326,7 +326,7 @@ Read a FASTA file and return the information as tuples of names and a genome str
 - `filename`: name of input FASTA file
 
 # Returns
-- ``: Array of tuples (name string, genome string)
+- `Array{(AbstractString, AbstractString), 1}`: Array of tuples (name string, genome string)
 """
 function read_fasta(filename)
     genome_info = []
@@ -391,7 +391,7 @@ end
 Write a FASTA file with the genome string for a single Genome.
 
 # Arguments
-- `genome::Genome`: Genome
+- `genome::Genome`: Genome to write to a FASTA file
 - `filename`: name of output FASTA file
 """
 function write_fasta(genome::Genome, filename)
