@@ -183,15 +183,39 @@ function test_molecule()
     mol1 = Molecule("mol1", "AAA", chem1)
     mol2 = Molecule("mol2", "BBB", chem1)
     mol3 = Molecule("mol3", "ABA", chem1)
+    mol4 = Molecule("BAB", chem1)
+    mol5 = Molecule("AAB", chem1)
+    mol6 = Molecule("BBA", chem1)
     println("mol1: ", mol1)
     println("mol2: ", mol2)
     println("mol3: ", mol3)
+    println("mol4: ", mol4)
+    println("mol5: ", mol5)
+    println("mol6: ", mol6)
     println()
+
+    @test mol1.name == "mol1"
+    @test mol2.name == "mol2"
+    @test mol3.name == "mol3"
+    @test mol4.name == "BAB"
+    @test mol5.name == "AAB"
+    @test mol6.name == "BBA"
 
     println("mass(mol1): ", mass(mol1))
     println("mass(mol2): ", mass(mol2))
     println("mass(mol3): ", mass(mol3))
+    println("mass(mol4): ", mass(mol4))
+    println("mass(mol5): ", mass(mol5))
+    println("mass(mol6): ", mass(mol6))
     println()
+
+    @test mass(mol1) == 3
+    @test mass(mol2) == 6
+    @test mass(mol3) == 4
+    @test mass(mol4) == 5
+    @test mass(mol5) == 4
+    @test mass(mol6) == 5
+
 end
 
 function test_reaction()
@@ -941,12 +965,12 @@ function main()
     # test_bond_table()
     # test_chemistry()
     # test_chemistry_setup()
-    # test_molecule()
+    test_molecule()
     # test_reaction()
 
     # Genome
     # test_gene()
-    test_genome()
+    # test_genome()
 
     # Simulation
     # test_cell()
