@@ -8,17 +8,17 @@ within.
 struct Cell
     uuid::UUID
     genome::Genome
-    molecule_counts::Array{DefaultDict{AbstractString, Int64}, 1}  # 2 Dicts: current, future
+    molecule_counts::Array{DefaultDict{Molecule, Int64}, 1}  # 2 Dicts: current, future
     energy::Int64
     reactions::Array{Reaction, 1}
-    pores::Set{AbstractString}
+    pores::Set{Molecule}
 
     function Cell(genome::Genome)
-        molecule_counts = Array{DefaultDict{AbstractString, Int64}, 1}(undef, 2)
-        molecule_counts[1] = DefaultDict{AbstractString, Int64}(0)
-        molecule_counts[2] = DefaultDict{AbstractString, Int64}(0)
+        molecule_counts = Array{DefaultDict{Molecule, Int64}, 1}(undef, 2)
+        molecule_counts[1] = DefaultDict{Molecule, Int64}(0)
+        molecule_counts[2] = DefaultDict{Molecule, Int64}(0)
         reactions = parse_reactions(genome)
-        pores = Set{AbstractString}()
+        pores = Set{Molecule}()
         for reaction in reactions
             if reaction.reaction_type == pore
                 push!(pores, reaction.reactants[1])
@@ -35,13 +35,13 @@ Unique location in a Veldt.  Contains two Molecule count buffers and possibly a 
 VeldtPoint time evolution is controlled by a Veldt.
 """
 mutable struct VeldtPoint
-    molecule_counts::Array{DefaultDict{AbstractString, Int64}, 1}  # 2 Dicts: current, future
+    molecule_counts::Array{DefaultDict{Molecule, Int64}, 1}  # 2 Dicts: current, future
     cell::Union{Cell, Nothing}
 
-    function VeldtPoint(; molecules=[], cell=nothing)
-        molecule_counts = Array{DefaultDict{AbstractString, Int64}, 1}(undef, 2)
-        molecule_counts[1] = DefaultDict{AbstractString, Int64}(0)
-        molecule_counts[2] = DefaultDict{AbstractString, Int64}(0)
+    function VeldtPoint(; cell=nothing)
+        molecule_counts = Array{DefaultDict{Molecule, Int64}, 1}(undef, 2)
+        molecule_counts[1] = DefaultDict{Molecule, Int64}(0)
+        molecule_counts[2] = DefaultDict{Molecule, Int64}(0)
 
         return new(molecule_counts, cell)
     end
@@ -55,8 +55,9 @@ mutable struct Veldt
     dims::Array{Int64, 1}   # num points per dimension; 2 or 3 dimensions
     points  # Array with length(dims) dimensions holding VeldtPoints
     current # buffer with current (not future) data, 1 or 2
-    molecule_counts::DefaultDict{AbstractString, Int64}  # Molecules in VeldtPoints
-    cell_molecule_counts::DefaultDict{AbstractString, Int64}  # Molecules in Cells
+    molecule_counts::DefaultDict{Molecule, Int64}  # Molecules in VeldtPoints
+    cell_molecule_counts::DefaultDict{Molecule, Int64}  # Molecules in Cells
+    molecule_table::Dict{AbstractString, Molecule}  # all Molecule types
 
     function Veldt(dims::Array{Int64, 1})
         if length(dims) == 2
@@ -69,10 +70,11 @@ mutable struct Veldt
         else
         end
 
-        molecule_counts = DefaultDict{AbstractString, Int64}(0)
-        cell_molecule_counts = DefaultDict{AbstractString, Int64}(0)
+        molecule_counts = DefaultDict{Molecule, Int64}(0)
+        cell_molecule_counts = DefaultDict{Molecule, Int64}(0)
+        molecule_table = Dict{AbstractString, Molecule}()
 
-        return new(dims, points, 1, molecule_counts, cell_molecule_counts)
+        return new(dims, points, 1, molecule_counts, cell_molecule_counts, molecule_table)
     end
 end
 
@@ -85,10 +87,14 @@ Initialize the Molecule count for a specific location in a Veldt.
 # Arguments
 - `veldt::Veldt`:
 - `coord::Array{Int64, 1}`:
-- `molecule_counts::DefaultDict{AbstractString, Int64}`:
+- `molecule_counts::DefaultDict{Molecule, Int64}`:
 """
-function init_molecules(veldt::Veldt, coord::Array{Int64, 1}, molecule_counts::DefaultDict{AbstractString, Int64})
+function init_molecules(veldt::Veldt, coord::Array{Int64, 1}, molecule_counts::DefaultDict{Molecule, Int64})
     for (mol, count) in molecule_counts
+        if !(mol in values(veldt.molecule_table))
+            veldt.molecule_table[mol.elements] = mol
+        end
+
         veldt.molecule_counts[mol] += count
 
         if length(coord) == 2
@@ -98,6 +104,34 @@ function init_molecules(veldt::Veldt, coord::Array{Int64, 1}, molecule_counts::D
             vp = veldt.points[coord[1]][coord[2]][coord[3]]
             vp.molecule_counts[1][mol] = count
         end
+    end
+end
+
+
+"""
+    add_molecules(veldt, coord, molecule, count)
+
+Add Molecules to a specific location in a Veldt.
+
+# Arguments
+- `veldt::Veldt`: Veldt
+- `coord::Array{Int64, 1}`: VeldtPoint coordinate
+- `molecule::Molecule`: molecule type to add
+- `count::Int64`: number of molecules to add
+"""
+function add_molecules(veldt::Veldt, coord::Array{Int64, 1}, molecule::Molecule, count::Int64)
+    if !(molecule in values(veldt.molecule_table))
+        veldt.molecule_table[molecule.elements] = molecule
+    end
+
+    veldt.molecule_counts[molecult] += count
+
+    if length(coord) == 2
+        vp = veldt.points[coord[1]][coord[2]]
+        vp.molecule_counts[1][molecule] += count
+    elseif length(coord) == 3
+        vp = veldt.points[coord[1]][coord[2]][coord[3]]
+        vp.molecule_counts[1][molecule] += count
     end
 end
 
@@ -312,19 +346,22 @@ function setup_veldt(filepath)
         for mol_info in setup["molecules"]
             if haskey(mol_info, "name")
                 mol_name = mol_info["name"]
+                molecule = Molecule(mol_name, chemistry)
             end
 
             if haskey(mol_info, "locations")
                 for loc_info in mol_info["locations"]
                     mol_loc = loc_info["location"]
                     mol_count = loc_info["count"]
-                    mol_counts = DefaultDict{AbstractString, Int64}(0)
-                    mol_counts[mol_name] = mol_count
+                    # mol_counts = DefaultDict{AbstractString, Int64}(0)
+                    mol_counts = DefaultDict{Molecule, Int64}(0)
+                    mol_counts[molecule] = mol_count
                     init_molecules(veldt, mol_loc, mol_counts)
                 end
             elseif haskey(mol_info, "distribution")
-                mol_dist_type = loc_info["location"]
-                mol_count = loc_info["count"]
+                mol_dist = mol_info["distribution"]
+                mol_dist_type = mol_dist["type"]
+                mol_dist_count = mol_dist["count"]
                 # init_molecules(veldt, mol_loc, mol_counts)
             end
         end
@@ -341,8 +378,9 @@ function setup_veldt(filepath)
             if haskey(cell_info, "molecules")
                 for mol_info in cell_info["molecules"]
                     mol_name = mol_info["name"]
+                    molecule = Molecule(mol_name, chemistry)
                     mol_count = mol_info["count"]
-                    cell.molecule_counts[1][mol_name] = mol_count
+                    cell.molecule_counts[1][molecule] = mol_count
                 end
             end
 
@@ -393,7 +431,7 @@ function step2D(veldt::Veldt)
                     # 1:4 neighbors, 5 cell or stay put, 6 stay put
                     chosen = rand([1, 2, 3, 4, 5, 6])
                     if chosen == 5
-                        if vp.cell != nothing
+                        if vp.cell != nothing && mol in vp.cell.pores
                             # Move Molecule into Cell.
                             vp.cell.molecule_counts[next][mol] += 1
                         else
@@ -411,26 +449,32 @@ function step2D(veldt::Veldt)
 
             if vp.cell != nothing
                 # Run reactions on shuffled reaction list
-                for reaction in shuffle(vp.cell.reactions)
+                for reaction in shuffle([r for r in vp.cell.reactions if r.reaction_type == reaction])
                     reactant_counts = DefaultDict{Molecule, Int64}(0)
                     for reactant in reaction.reactants
                         reactant_counts[reactant] += 1
                     end
 
+                    enough_molecules = true
                     for (reactant, count) in reactant_counts
                         if count > vp.cell.molecule_counts[current][reactant]
-                            continue
+                            enough_molecules = false
+                            break
                         end
+                    end
+
+                    if !enough_molecules
+                        continue
                     end
 
                     for (reactant, count) in reactant_counts
                         vp.cell.molecule_counts[current][reactant] -= count
                     end
 
+                    # Put products in next buffer
                     for product in reaction.products
                         vp.cell.molecule_counts[next][product] += 1
                     end
-                    # Put products in next buffer
                 end
 
                 # Choose molecules to move (transport or diffusion)

@@ -126,6 +126,9 @@ struct Molecule
     Molecule(name::AbstractString,
              elements::AbstractString,
              chemistry::Chemistry) = new(name, elements, chemistry)
+
+    Molecule(elements::AbstractString,
+             chemistry::Chemistry) = new(elements, elements, chemistry)
 end
 
 Base.show(io::IO, mol::Molecule) = show(io, string(mol.name, ", ", mol.elements))

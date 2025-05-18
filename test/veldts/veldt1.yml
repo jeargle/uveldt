@@ -5,12 +5,12 @@ chemistry: ../chemistries/chemistry1.yml
 molecules:
   - name: AAA
     distribution:
-    - type: even
-    - count: 10
+      type: even
+      count: 10
   - name: BBB
     distribution:
-    - type: even
-    - count: 30
+      type: even
+      count: 30
 
 genomes:
   - ../genomes/genomes1.fasta

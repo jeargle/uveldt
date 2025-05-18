@@ -465,6 +465,8 @@ function test_cell()
 
     println("  * create Chemistry")
     chem1 = Chemistry(el_table1, b_table1)
+    mol1 = Molecule("AAA", chem1)
+    mol2 = Molecule("BBB", chem1)
 
     genome_str = genome_string(200, chem1)
     println("genome_string: ", genome_str)
@@ -477,8 +479,8 @@ function test_cell()
     println("cell1: ", cell1)
 
     println("  * add Molecule counts")
-    cell1.molecule_counts[1]["AAA"] = 33
-    cell1.molecule_counts[1]["BBB"] = 44
+    cell1.molecule_counts[1][mol1] = 33
+    cell1.molecule_counts[1][mol2] = 44
     println("cell1: ", cell1)
 
     println()
@@ -497,28 +499,30 @@ function test_veldt_point()
 
     println("  * create Chemistry")
     chem1 = Chemistry(el_table1, b_table1)
+    mol1 = Molecule("AAA", chem1)
+    mol2 = Molecule("BBB", chem1)
 
     genome_str = genome_string(200, chem1)
     genome1 = Genome("genome1", genome_str, chem1)
     cell1 = Cell(genome1)
-    cell1.molecule_counts[1]["AAA"] = 33
-    cell1.molecule_counts[1]["BBB"] = 44
+    cell1.molecule_counts[1][mol1] = 33
+    cell1.molecule_counts[1][mol2] = 44
 
     println("  * VeldtPoints")
     veldt_pt1 = VeldtPoint()
-    veldt_pt2 = VeldtPoint(molecules=["AAA", "BBB", "ABA"])
+    veldt_pt2 = VeldtPoint()
     veldt_pt3 = VeldtPoint(cell=cell1)
     println("veldt_pt1: ", veldt_pt1)
     println("veldt_pt2: ", veldt_pt2)
     println("veldt_pt3: ", veldt_pt3)
 
     println("  * add Molecule counts")
-    veldt_pt1.molecule_counts[1]["AAA"] = 300
-    veldt_pt1.molecule_counts[1]["BBB"] = 400
-    veldt_pt2.molecule_counts[1]["AAA"] = 330
-    veldt_pt2.molecule_counts[1]["BBB"] = 440
-    veldt_pt2.molecule_counts[1]["AAA"] = 333
-    veldt_pt2.molecule_counts[1]["BBB"] = 444
+    veldt_pt1.molecule_counts[1][mol1] = 300
+    veldt_pt1.molecule_counts[1][mol2] = 400
+    veldt_pt2.molecule_counts[1][mol1] = 330
+    veldt_pt2.molecule_counts[1][mol2] = 440
+    veldt_pt2.molecule_counts[1][mol1] = 333
+    veldt_pt2.molecule_counts[1][mol2] = 444
     println("veldt_pt1: ", veldt_pt1)
     println("veldt_pt2: ", veldt_pt2)
     println("veldt_pt3: ", veldt_pt3)
@@ -539,6 +543,10 @@ function test_veldt()
 
     println("  * create Chemistry")
     chem1 = Chemistry(el_table1, b_table1)
+    mol1 = Molecule("AAA", chem1)
+    mol2 = Molecule("BBB", chem1)
+    mol3 = Molecule("AA", chem1)
+    mol4 = Molecule("BB", chem1)
 
     genome_str1 = genome_string(200, chem1)
     genome1 = Genome("genome1", genome_str1, chem1)
@@ -546,50 +554,51 @@ function test_veldt()
     genome2 = Genome("genome2", genome_str2, chem1)
 
     cell1 = Cell(genome1)
-    cell1.molecule_counts[1]["AAA"] = 11
-    cell1.molecule_counts[1]["BBB"] = 22
+    cell1.molecule_counts[1][mol1] = 11
+    cell1.molecule_counts[1][mol2] = 22
     cell2 = Cell(genome2)
-    cell2.molecule_counts[1]["AA"] = 33
-    cell2.molecule_counts[1]["AB"] = 44
+    cell2.molecule_counts[1][mol3] = 33
+    cell2.molecule_counts[1][mol4] = 44
 
     println("  * Veldt")
     veldt1 = Veldt([3, 4])
     println("veldt1: ", veldt1)
 
     println("  * initialize Molecule counts")
-    dd1 = DefaultDict{AbstractString, Int64}(0)
-    dd1["AAA"] = 10
-    dd1["BBB"] = 10
+
+    dd1 = DefaultDict{Molecule, Int64}(0)
+    dd1[mol1] = 10
+    dd1[mol2] = 10
     init_molecules(veldt1, [1, 1], dd1)
 
-    dd1 = DefaultDict{AbstractString, Int64}(0)
-    dd1["AAA"] = 10
-    dd1["BBB"] = 20
+    dd1 = DefaultDict{Molecule, Int64}(0)
+    dd1[mol1] = 10
+    dd1[mol2] = 20
     init_molecules(veldt1, [1, 2], dd1)
 
-    dd1 = DefaultDict{AbstractString, Int64}(0)
-    dd1["AAA"] = 10
-    dd1["BBB"] = 30
+    dd1 = DefaultDict{Molecule, Int64}(0)
+    dd1[mol1] = 10
+    dd1[mol2] = 30
     init_molecules(veldt1, [1, 3], dd1)
 
-    dd1 = DefaultDict{AbstractString, Int64}(0)
-    dd1["AAA"] = 20
-    dd1["BBB"] = 10
+    dd1 = DefaultDict{Molecule, Int64}(0)
+    dd1[mol1] = 20
+    dd1[mol2] = 10
     init_molecules(veldt1, [2, 1], dd1)
 
-    dd1 = DefaultDict{AbstractString, Int64}(0)
-    dd1["AAA"] = 20
-    dd1["BBB"] = 20
+    dd1 = DefaultDict{Molecule, Int64}(0)
+    dd1[mol1] = 20
+    dd1[mol2] = 20
     init_molecules(veldt1, [2, 2], dd1)
 
-    dd1 = DefaultDict{AbstractString, Int64}(0)
-    dd1["AAA"] = 20
-    dd1["BBB"] = 30
+    dd1 = DefaultDict{Molecule, Int64}(0)
+    dd1[mol1] = 20
+    dd1[mol2] = 30
     init_molecules(veldt1, [2, 3], dd1)
 
-    dd1 = DefaultDict{AbstractString, Int64}(0)
-    dd1["AAA"] = 30
-    dd1["BBB"] = 30
+    dd1 = DefaultDict{Molecule, Int64}(0)
+    dd1[mol1] = 30
+    dd1[mol2] = 30
     init_molecules(veldt1, [3, 3], dd1)
 
     println("veldt1: ", veldt1)
@@ -965,7 +974,7 @@ function main()
     # test_bond_table()
     # test_chemistry()
     # test_chemistry_setup()
-    test_molecule()
+    # test_molecule()
     # test_reaction()
 
     # Genome
@@ -976,14 +985,14 @@ function main()
     # test_cell()
     # test_veldt_point()
     # test_veldt()
-    # test_veldt_setup_2d()
-    # test_veldt_setup_3d()
-    # test_simulation_2d()
-    # test_simulation_3d()
-    # test_diffusion_2d()
-    # test_diffusion_3d()
-    # test_simulation_setup_2d()
-    # test_simulation_setup_3d()
+    test_veldt_setup_2d()
+    test_veldt_setup_3d()
+    test_simulation_2d()
+    test_simulation_3d()
+    test_diffusion_2d()
+    test_diffusion_3d()
+    test_simulation_setup_2d()
+    test_simulation_setup_3d()
 
     # Evolution
     # test_substitution_matrix()
