@@ -349,15 +349,6 @@ function test_genome()
 
     println("  * find Genes 2")
     print_genes(genes2)
-    # for gene in genes2
-    #     if gene.strand == positive
-    #         strand_str = "+"
-    #     else
-    #         strand_str = "-"
-    #     end
-
-    #     @printf "%s%d %s\n" strand_str gene.location gene.string
-    # end
 
     println("  * Gene transcripts")
     pseudogene_count = 0
@@ -379,10 +370,13 @@ function test_genome()
                 reaction_count += 1
             elseif reaction_type == pore
                 pore_count += 1
+                @test length(reactants) == 1
             elseif reaction_type == transport_in
                 transport_in_count += 1
+                @test length(reactants) == 1
             elseif reaction_type == transport_out
                 transport_out_count += 1
+                @test length(reactants) == 1
             end
         end
     end
