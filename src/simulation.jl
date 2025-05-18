@@ -11,14 +11,21 @@ struct Cell
     molecule_counts::Array{DefaultDict{AbstractString, Int64}, 1}  # 2 Dicts: current, future
     energy::Int64
     reactions::Array{Reaction, 1}
+    pores::Set{AbstractString}
 
     function Cell(genome::Genome)
         molecule_counts = Array{DefaultDict{AbstractString, Int64}, 1}(undef, 2)
         molecule_counts[1] = DefaultDict{AbstractString, Int64}(0)
         molecule_counts[2] = DefaultDict{AbstractString, Int64}(0)
         reactions = parse_reactions(genome)
+        pores = Set{AbstractString}()
+        for reaction in reactions
+            if reaction.reaction_type == pore
+                push!(pores, reaction.reactants[1])
+            end
+        end
 
-        return new(UUIDs.uuid4(), genome, molecule_counts, 0, reactions)
+        return new(UUIDs.uuid4(), genome, molecule_counts, 0, reactions, pores)
     end
 end
 
@@ -82,11 +89,7 @@ Initialize the Molecule count for a specific location in a Veldt.
 """
 function init_molecules(veldt::Veldt, coord::Array{Int64, 1}, molecule_counts::DefaultDict{AbstractString, Int64})
     for (mol, count) in molecule_counts
-        if haskey(veldt.molecule_counts, mol)
-            veldt.molecule_counts[mol] += count
-        else
-            veldt.molecule_counts[mol] = count
-        end
+        veldt.molecule_counts[mol] += count
 
         if length(coord) == 2
             vp = veldt.points[coord[1]][coord[2]]
@@ -111,11 +114,7 @@ Add a cell to a specific location in a Veldt.
 """
 function add_cell(veldt::Veldt, coord::Array{Int64, 1}, cell::Cell)
     for (mol, count) in cell.molecule_counts[1]
-        if haskey(veldt.cell_molecule_counts, mol)
-            veldt.cell_molecule_counts[mol] += count
-        else
-            veldt.cell_molecule_counts[mol] = count
-        end
+        veldt.molecule_counts[mol] += count
 
         if length(coord) == 2
             vp = veldt.points[coord[1]][coord[2]]
@@ -323,6 +322,10 @@ function setup_veldt(filepath)
                     mol_counts[mol_name] = mol_count
                     init_molecules(veldt, mol_loc, mol_counts)
                 end
+            elseif haskey(mol_info, "distribution")
+                mol_dist_type = loc_info["location"]
+                mol_count = loc_info["count"]
+                # init_molecules(veldt, mol_loc, mol_counts)
             end
         end
     end
@@ -391,28 +394,16 @@ function step2D(veldt::Veldt)
                     chosen = rand([1, 2, 3, 4, 5, 6])
                     if chosen == 5
                         if vp.cell != nothing
-                            if haskey(vp.cell.molecule_counts[next], mol)
-                                vp.cell.molecule_counts[next][mol] += 1
-                            else
-                                vp.cell.molecule_counts[next][mol] = 1
-                            end
+                            # Move Molecule into Cell.
+                            vp.cell.molecule_counts[next][mol] += 1
                         else
-                            if haskey(vp.molecule_counts[next], mol)
-                                vp.molecule_counts[next][mol] += 1
-                            else
-                                vp.molecule_counts[next][mol] = 1
-                            end
+                            # No Cell; keep Molecule here.
+                            vp.molecule_counts[next][mol] += 1
                         end
                     elseif chosen == 6
-                        if haskey(vp.molecule_counts[next], mol)
-                            vp.molecule_counts[next][mol] += 1
-                        else
-                            vp.molecule_counts[next][mol] = 1
-                        end
-                    elseif haskey(neighbors[chosen].molecule_counts[next], mol)
-                        neighbors[chosen].molecule_counts[next][mol] += 1
+                        vp.molecule_counts[next][mol] += 1
                     else
-                        neighbors[chosen].molecule_counts[next][mol] = 1
+                        neighbors[chosen].molecule_counts[next][mol] += 1
                     end
                 end
                 vp.molecule_counts[current][mol] = 0
@@ -493,11 +484,7 @@ function step3D(veldt::Veldt)
                     # Move molecules to neighboring VeldtPoints or internal Cell; next buffer
                     for k in 1:count
                         chosen = rand([1, 2, 3, 4, 5, 6])
-                        if haskey(neighbors[chosen].molecule_counts[next], mol)
-                            neighbors[chosen].molecule_counts[next][mol] += 1
-                        else
-                            neighbors[chosen].molecule_counts[next][mol] = 1
-                        end
+                        neighbors[chosen].molecule_counts[next][mol] += 1
                     end
                     vp.molecule_counts[current][mol] = 0
                 end
