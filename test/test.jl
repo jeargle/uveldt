@@ -952,6 +952,10 @@ function test_metabolism1()
         println(edge)
     end
 
+    submets1 = get_connected_submetabolisms(met1)
+    println("  submetabolisms")
+    @printf "submetabolisms: %d\n" length(submets1)
+
     println("  ** met2")
     println("  *** nodes")
     for node in met2.nodes
@@ -962,6 +966,11 @@ function test_metabolism1()
     for edge in met2.edges
         println(edge)
     end
+
+    submets2 = get_connected_submetabolisms(met1)
+    println("  submetabolisms")
+    @printf "submetabolisms: %d\n" length(submets2)
+
 end
 
 
@@ -985,14 +994,14 @@ function main()
     # test_cell()
     # test_veldt_point()
     # test_veldt()
-    test_veldt_setup_2d()
-    test_veldt_setup_3d()
-    test_simulation_2d()
-    test_simulation_3d()
-    test_diffusion_2d()
-    test_diffusion_3d()
-    test_simulation_setup_2d()
-    test_simulation_setup_3d()
+    # test_veldt_setup_2d()
+    # test_veldt_setup_3d()
+    # test_simulation_2d()
+    # test_simulation_3d()
+    # test_diffusion_2d()
+    # test_diffusion_3d()
+    # test_simulation_setup_2d()
+    # test_simulation_setup_3d()
 
     # Evolution
     # test_substitution_matrix()
@@ -1004,7 +1013,7 @@ function main()
     # test_genetic_algorithm2()
 
     # Metabolism
-    # test_metabolism1()
+    test_metabolism1()
 end
 
 main()

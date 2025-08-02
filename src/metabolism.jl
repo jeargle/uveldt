@@ -50,7 +50,7 @@ struct Metabolism
             end
         end
 
-        new(nodes, edges)
+        Metabolism(nodes, edges)
     end
 end
 
@@ -140,15 +140,37 @@ of its nodes.
 # Returns
 - `Metabolism`:
 """
-function get_connected_submetabolism(metabolism, node)
-    # Collect nodes and edges into dictionaries for fast lookup.
+function get_connected_submetabolism(metabolism::Metabolism, node::Union{Molecule, Reaction})
+    final_nodes = Set{Union{Molecule, Reaction}}()
+    final_edges = Set{Tuple{Union{Molecule, Reaction}, Union{Molecule, Reaction}}}()
 
-    next_nodes = Set{Union{Molecule, Reaction}}()
-    union!(next_nodes, metabolism.children[node])
-    union!(next_nodes, metabolism.parents[node])
-    # submetabolism = Metabolism(molecules, reactions, reactant_edges, product_edges)
+    next_nodes = Set{Union{Molecule, Reaction}}([node])
 
-    # return submetabolism
+    while length(next_nodes) > 0
+        temp_nodes = next_nodes
+        next_nodes = Set{Union{Molecule, Reaction}}()
+
+        for temp_node in temp_nodes
+            if !(temp_node in final_nodes)
+                children = metabolism.children[temp_node]
+                parents = metabolism.parents[temp_node]
+                union!(next_nodes, children)
+                union!(next_nodes, parents)
+
+                push!(final_nodes, temp_node)
+
+                for child in children
+                    push!(final_edges, (temp_node, child))
+                end
+
+                for parent in parents
+                    push!(final_edges, (parent, temp_node))
+                end
+            end
+        end
+    end
+
+    return Metabolism(final_nodes, final_edges)
 end
 
 
@@ -165,14 +187,12 @@ Metabolism.
 - `Array{Metabolism, 1}`:
 """
 function get_connected_submetabolisms(metabolism)
-    # Collect nodes and edges into dictionaries for fast lookup.
-
     submetabolisms = Array{Metabolism, 1}()
     used_nodes = Set{Union{Molecule, Reaction}}()
 
     for node in metabolism.nodes
-        if node not in used_nodes
-            submet = get_connected_submetebolism(metabolism, node)
+        if !(node in used_nodes)
+            submet = get_connected_submetabolism(metabolism, node)
             union!(used_nodes, submet.nodes)
             push!(submetabolisms, submet)
         end

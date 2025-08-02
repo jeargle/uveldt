@@ -37,7 +37,7 @@ export is_pseudogene, read_fasta, write_fasta
 # Metabolism
 include("metabolism.jl")
 export Metabolism
-export merge_pathways
+export merge_metabolisms, get_connected_submetabolisms
 
 # Evolution
 include("evolution.jl")
