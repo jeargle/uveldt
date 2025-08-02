@@ -16,49 +16,41 @@ struct Metabolism
         new(nodes, edges, children, parents)
     end
 
+    function Metabolism(nodes::Set{Union{Molecule, Reaction}}, edges::Set{Tuple{Union{Molecule, Reaction}, Union{Molecule, Reaction}}})
+        children = Dict{Union{Molecule, Reaction}, Set{Union{Molecule, Reaction}}}()
+        parents = Dict{Union{Molecule, Reaction}, Set{Union{Molecule, Reaction}}}()
+
+        for node in nodes
+            children[node] = Set{Union{Molecule, Reaction}}()
+            parents[node] = Set{Union{Molecule, Reaction}}()
+        end
+
+        for (parent, child) in edges
+            push!(children[parent], child)
+            push!(parents[child], parent)
+        end
+
+        new(nodes, edges, children, parents)
+    end
+
     function Metabolism(reactions::Array{Reaction, 1})
         nodes = Set{Union{Molecule, Reaction}}()
         edges = Set{Tuple{Union{Molecule, Reaction}, Union{Molecule, Reaction}}}()
-        children = Dict{Union{Molecule, Reaction}, Set{Union{Molecule, Reaction}}}()
-        parents = Dict{Union{Molecule, Reaction}, Set{Union{Molecule, Reaction}}}()
 
         for reaction in reactions
             push!(nodes, reaction)
             for reactant in reaction.reactants
                 push!(nodes, reactant)
                 push!(edges, (reactant, reaction))
-
-                if haskey(children, reactant)
-                    push!(children[reactant], reaction)
-                else
-                    children[reactant] = Set([reaction])
-                end
-
-                if haskey(parents, reaction)
-                    push!(parents[reaction], reactant)
-                else
-                    parents[reaction] = Set([reactant])
-                end
             end
 
             for product in reaction.products
                 push!(nodes, product)
                 push!(edges, (reaction, product))
-
-                if haskey(children, reaction)
-                    push!(children[reaction], product)
-                else
-                    children[reaction] = Set([product])
-                end
-
-                if haskey(parents, product)
-                    push!(parents[product], reaction)
-                else
-                    parents[product] = Set([reaction])
-                end
             end
         end
-        new(nodes, edges, children, parents)
+
+        new(nodes, edges)
     end
 end
 
@@ -175,7 +167,16 @@ Metabolism.
 function get_connected_submetabolisms(metabolism)
     # Collect nodes and edges into dictionaries for fast lookup.
 
-    # submetabolisms = Metabolism(molecules, reactions, reactant_edges, product_edges)
+    submetabolisms = Array{Metabolism, 1}()
+    used_nodes = Set{Union{Molecule, Reaction}}()
 
-    # return submetabolisms
+    for node in metabolism.nodes
+        if node not in used_nodes
+            submet = get_connected_submetebolism(metabolism, node)
+            union!(used_nodes, submet.nodes)
+            push!(submetabolisms, submet)
+        end
+    end
+
+    return submetabolisms
 end
