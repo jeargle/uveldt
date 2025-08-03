@@ -119,6 +119,16 @@ You can write one or more genomes to a FASTA file with `write_fasta()`.
 When you have a `Genome` loaded, you can use `find_genes()` to discover all of the `Genes` then turn them into their corresponding `Reactions` through calls to `transcribe_gene()` and `parse_reaction()`.
 
 
+Metabolism
+----------
+
+The set of all `Reactions` coded for by a `Genome` is a `Metabolism`.  The structure of a `Metabolism` is a directed graph where nodes are chemicals and reactions, and edges connect reactants to reactions which are also connected to products.  This results in a switching pattern (chemical -> reaction -> chemical -> reaction -> ...) for any path through the metabolic graph.  A chemical can be a product of multiple reactions as well as a reactant for multiple reactions.
+
+This style of graph is a little different from what you might see presented in a biochemistry book where metabolic pathways focus on the "large" molecules and how they change.  These graphs usually have the large molecules as nodes and reactions as edges.  Smaller molecules, like H+, H2O, and CO2 are frequently left out or just shown locally with many copies throughout the graph.  &mu;Veldt handles everything explicitly for completeness and ease of automated downstream analysis and visualization.
+
+`Metabolisms` allow systems biology techniques to be used on &mu;Veldt data.
+
+
 Evolution
 ---------
 
