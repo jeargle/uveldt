@@ -946,31 +946,55 @@ function test_metabolism1()
     for node in met1.nodes
         println(node)
     end
+    @test length(met1.nodes) == 12
 
     println("  *** edges")
     for edge in met1.edges
         println(edge)
     end
+    @test length(met1.edges) == 15
 
     submets1 = get_connected_submetabolisms(met1)
     println("  submetabolisms")
     @printf "submetabolisms: %d\n" length(submets1)
+    @test length(submets1) == 1
 
     println("  ** met2")
     println("  *** nodes")
     for node in met2.nodes
         println(node)
     end
+    @test length(met2.nodes) == 17
 
     println("  *** edges")
     for edge in met2.edges
         println(edge)
     end
+    @test length(met2.edges) == 22
 
     submets2 = get_connected_submetabolisms(met1)
     println("  submetabolisms")
     @printf "submetabolisms: %d\n" length(submets2)
+    @test length(submets2) == 1
 
+    met3 = merge_metabolisms(met1, met2)
+    println("  ** met3 = merge_metabolisms(met1, met2)")
+    println("  *** nodes")
+    for node in met3.nodes
+        println(node)
+    end
+    @test length(met3.nodes) == 22
+
+    println("  *** edges")
+    for edge in met3.edges
+        println(edge)
+    end
+    @test length(met3.edges) == 37
+
+    submets3 = get_connected_submetabolisms(met3)
+    println("  submetabolisms")
+    @printf "submetabolisms: %d\n" length(submets3)
+    @test length(submets3) == 1
 end
 
 

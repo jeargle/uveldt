@@ -116,14 +116,13 @@ full copies of the input Metabolisms.
 - `metabolism2`: Metabolism
 
 # Returns
-- `Metabolism`:
+- `Metabolism`: merged Metabolism
 """
 function merge_metabolisms(metabolism1, metabolism2)
-    # Collect nodes and edges into dictionaries for fast lookup.
+    nodes = union(metabolism1.nodes, metabolism2.nodes)
+    edges = union(metabolism1.edges, metabolism2.edges)
 
-    # merged_metabolism = Metabolism(molecules, reactions, reactant_edges, product_edges)
-
-    # return merged_metabolism
+    return Metabolism(nodes, edges)
 end
 
 
