@@ -271,7 +271,6 @@ function test_molecule()
     @test mass(mol4) == 5
     @test mass(mol5) == 4
     @test mass(mol6) == 5
-
 end
 
 function test_reaction()
@@ -282,7 +281,6 @@ function test_reaction()
 
     energies1 = [(-5.5, 1.5), (-4.5, 0.5), (3.6, 3.4)]
     bonds = create_bonds(el_table1, energies1)
-
     b_table1 = BondTable(bonds)
 
     println("  * create Chemistry")
@@ -295,31 +293,38 @@ function test_reaction()
                  Reaction(["AA"], ["A", "A"], chem1),
                  Reaction(["BB"], ["B", "B"], chem1),
                  Reaction(["ABBA"], ["AB", "BA"], chem1)]
-    for (i, reaction) in enumerate(reactions)
-        @printf "reaction%d: %s\n" i reaction
+    for (i, r) in enumerate(reactions)
+        @printf "reaction%d: %s\n" i r
+        @test r.reaction_type == reaction
     end
 
     println("  * Pores")
     reactions = [Reaction("A", chem1),
                  Reaction("BB", chem1),
                  Reaction("ABBA", chem1)]
-    for (i, reaction) in enumerate(reactions)
-        @printf "pore%d: %s\n" i reaction
+    for (i, r) in enumerate(reactions)
+        @printf "pore%d: %s\n" i r
+        @test r.reaction_type == pore
     end
 
     println("  * Transporters")
     reactions = [Reaction("A", chem1, transport_in, -3.0),
                  Reaction("BB", chem1, transport_in, -4.0),
-                 Reaction("ABBA", chem1, transport_in, -5.0),
-                 Reaction("A", chem1, transport_out, -3.0),
-                 Reaction("BB", chem1, transport_out, -4.0),
-                 Reaction("ABBA", chem1, transport_out, -5.0)]
-    for (i, reaction) in enumerate(reactions)
-        @printf "pore%d: %s\n" i reaction
+                 Reaction("ABBA", chem1, transport_in, -5.0)]
+    for (i, r) in enumerate(reactions)
+        @printf "in transporter%d: %s\n" i r
+        @test r.reaction_type == transport_in
+    end
+
+    reactions = [Reaction("A", chem1, transport_out, 3.0),
+                 Reaction("BB", chem1, transport_out, 4.0),
+                 Reaction("ABBA", chem1, transport_out, 5.0)]
+    for (i, r) in enumerate(reactions)
+        @printf "out transporter%d: %s\n" i r
+        @test r.reaction_type == transport_out
     end
 
     println()
-
 end
 
 function test_gene()
@@ -1062,9 +1067,9 @@ function main()
     # test_bond()
     # test_bond_table()
     # test_chemistry()
-    test_chemistry_setup()
+    # test_chemistry_setup()
     # test_molecule()
-    # test_reaction()
+    test_reaction()
 
     # Genome
     # test_gene()
