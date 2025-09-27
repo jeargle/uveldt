@@ -122,7 +122,7 @@ function test_bond_table()
     elements = create_elements(2)
     el_table1 = ElementTable(elements)
 
-    energies1 = [(-5.5, 1.5), (-4.5, 0.5), (3.5, 3.5)]
+    energies1 = [(-5.5, 1.5), (-4.5, 0.5), (3.6, 3.4)]
     bonds = create_bonds(el_table1, energies1)
 
     b_table1 = BondTable(bonds)
@@ -134,6 +134,11 @@ function test_bond_table()
     println("get_bond(b_table1, 'A', 'B'): ", get_bond(b_table1, 'A', 'B'))
     println("get_bond(b_table1, 'B', 'A'): ", get_bond(b_table1, 'B', 'A'))
     println()
+
+    @test get_bond(b_table1, 'A', 'A') == bonds[1]
+    @test get_bond(b_table1, 'A', 'B') == bonds[2]
+    @test get_bond(b_table1, 'B', 'A') == bonds[2]
+    @test get_bond(b_table1, 'B', 'B') == bonds[3]
 end
 
 function test_chemistry()
@@ -146,7 +151,7 @@ function test_chemistry()
     el_table2 = ElementTable(elements2)
 
     println("  * add Bonds")
-    energies1 = [(-5.5, 1.5), (-4.5, 0.5), (-4.5, 0.5), (3.5, 3.5), (3.5, 3.5), (3.5, 3.5)]
+    energies1 = [(-5.5, 1.5), (-4.5, 0.5), (-4.5, 0.5), (3.6, 3.4), (3.6, 3.4), (3.6, 3.4)]
     bonds = create_bonds(el_table2, energies1)
     bond1, bond2, bond3, bond4, bond5, bond6 = bonds
 
@@ -179,7 +184,7 @@ function test_molecule()
     elements = create_elements(2)
     el_table1 = ElementTable(elements)
 
-    energies1 = [(-5.5, 1.5), (-4.5, 0.5), (3.5, 3.5)]
+    energies1 = [(-5.5, 1.5), (-4.5, 0.5), (3.6, 3.4)]
     bonds = create_bonds(el_table1, energies1)
 
     b_table1 = BondTable(bonds)
@@ -231,7 +236,7 @@ function test_reaction()
     elements = create_elements(2)
     el_table1 = ElementTable(elements)
 
-    energies1 = [(-5.5, 1.5), (-4.5, 0.5), (3.5, 3.5)]
+    energies1 = [(-5.5, 1.5), (-4.5, 0.5), (3.6, 3.4)]
     bonds = create_bonds(el_table1, energies1)
 
     b_table1 = BondTable(bonds)
@@ -279,7 +284,7 @@ function test_gene()
     elements = create_elements(3)
     el_table1 = ElementTable(elements)
 
-    energies1 = [(-5.5, 1.5), (-4.5, 0.5), (-4.5, 0.5), (3.5, 3.5), (3.5, 3.5), (3.5, 3.5)]
+    energies1 = [(-5.5, 1.5), (-4.5, 0.5), (-4.5, 0.5), (3.6, 3.4), (3.6, 3.4), (3.6, 3.4)]
     bonds = create_bonds(el_table1, energies1)
 
     b_table1 = BondTable(bonds)
@@ -350,7 +355,7 @@ function test_genome()
     elements = create_elements(2)
     el_table1 = ElementTable(elements)
 
-    energies1 = [(-5.5, 1.5), (-4.5, 0.5), (3.5, 3.5)]
+    energies1 = [(-5.5, 1.5), (-4.5, 0.5), (3.6, 3.4)]
     bonds = create_bonds(el_table1, energies1)
 
     b_table1 = BondTable(bonds)
@@ -465,7 +470,7 @@ function test_cell()
     elements = create_elements(2)
     el_table1 = ElementTable(elements)
 
-    energies1 = [(-5.5, 1.5), (-4.5, 0.5), (3.5, 3.5)]
+    energies1 = [(-5.5, 1.5), (-4.5, 0.5), (3.6, 3.4)]
     bonds = create_bonds(el_table1, energies1)
 
     b_table1 = BondTable(bonds)
@@ -499,7 +504,7 @@ function test_veldt_point()
     elements = create_elements(2)
     el_table1 = ElementTable(elements)
 
-    energies1 = [(-5.5, 1.5), (-4.5, 0.5), (3.5, 3.5)]
+    energies1 = [(-5.5, 1.5), (-4.5, 0.5), (3.6, 3.4)]
     bonds = create_bonds(el_table1, energies1)
 
     b_table1 = BondTable(bonds)
@@ -543,7 +548,7 @@ function test_veldt()
     elements = create_elements(2)
     el_table1 = ElementTable(elements)
 
-    energies1 = [(-5.5, 1.5), (-4.5, 0.5), (3.5, 3.5)]
+    energies1 = [(-5.5, 1.5), (-4.5, 0.5), (3.6, 3.4)]
     bonds = create_bonds(el_table1, energies1)
 
     b_table1 = BondTable(bonds)
