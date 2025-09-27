@@ -163,9 +163,12 @@ function test_chemistry()
     chem2 = Chemistry(el_table2, b_table2)
     println("chem1: ", chem1)
     println("chem2: ", chem2)
-
     println()
 
+    @test chem1.element_table == el_table1
+    @test chem1.bond_table == b_table1
+    @test chem2.element_table == el_table2
+    @test chem2.bond_table == b_table2
 end
 
 function test_chemistry_setup()
@@ -1015,9 +1018,9 @@ function main()
     # Chemistry
     # test_element()
     # test_element_table()
-    test_bond()
-    test_bond_table()
-    # test_chemistry()
+    # test_bond()
+    # test_bond_table()
+    test_chemistry()
     # test_chemistry_setup()
     # test_molecule()
     # test_reaction()
