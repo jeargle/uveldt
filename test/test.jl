@@ -179,6 +179,47 @@ function test_chemistry_setup()
 
     println("chem1: ", chem1)
     println("chem2: ", chem2)
+
+    element1 = chem1.element_table.elements['A']
+    element2 = chem1.element_table.elements['B']
+    element3 = chem1.element_table.elements['C']
+    @test element1.name == 'A'
+    @test element1.mass == 1
+    @test element2.name == 'B'
+    @test element2.mass == 2
+    @test element3.name == 'C'
+    @test element3.mass == 3
+
+    bond1 = get_bond(chem1.bond_table, 'A', 'A')
+    bond2 = get_bond(chem1.bond_table, 'A', 'B')
+    bond3 = get_bond(chem1.bond_table, 'A', 'C')
+    @test bond1.energy_change == -5.5
+    @test bond1.transition_energy == 1.5
+    @test bond2.energy_change == -5.5
+    @test bond2.transition_energy == 1.5
+    @test bond3.energy_change == -6.5
+    @test bond3.transition_energy == 2.5
+
+    element1 = chem2.element_table.elements['H']
+    element2 = chem2.element_table.elements['C']
+    element3 = chem2.element_table.elements['O']
+    @test element1.name == 'H'
+    @test element1.mass == 1
+    @test element2.name == 'C'
+    @test element2.mass == 12
+    @test element3.name == 'O'
+    @test element3.mass == 16
+
+    bond1 = get_bond(chem2.bond_table, 'H', 'C')
+    bond2 = get_bond(chem2.bond_table, 'H', 'O')
+    bond3 = get_bond(chem2.bond_table, 'C', 'O')
+    @test bond1.energy_change == -4.5
+    @test bond1.transition_energy == 1.1
+    @test bond2.energy_change == -6.5
+    @test bond2.transition_energy == 1.3
+    @test bond3.energy_change == -8.5
+    @test bond3.transition_energy == 1.5
+
 end
 
 function test_molecule()
@@ -1020,8 +1061,8 @@ function main()
     # test_element_table()
     # test_bond()
     # test_bond_table()
-    test_chemistry()
-    # test_chemistry_setup()
+    # test_chemistry()
+    test_chemistry_setup()
     # test_molecule()
     # test_reaction()
 
