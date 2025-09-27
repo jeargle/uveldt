@@ -353,7 +353,6 @@ function setup_veldt(filepath)
                 for loc_info in mol_info["locations"]
                     mol_loc = loc_info["location"]
                     mol_count = loc_info["count"]
-                    # mol_counts = DefaultDict{AbstractString, Int64}(0)
                     mol_counts = DefaultDict{Molecule, Int64}(0)
                     mol_counts[molecule] = mol_count
                     init_molecules(veldt, mol_loc, mol_counts)

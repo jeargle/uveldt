@@ -57,7 +57,7 @@ struct Bond
                                            transition_energy)
 end
 
-Base.show(io::IO, b::Bond) = show(io, string(b.element1.name, '-', b.element2.name, ", trans: ", b.transition_energy, ", energy: ", b.energy_change))
+Base.show(io::IO, b::Bond) = show(io, string(b.element1.name, '-', b.element2.name, ", transition_energy: ", b.transition_energy, ", energy_change: ", b.energy_change))
 Base.show(io::IO, m::MIME"text/plain", b::Bond) = show(io, m, string(b.element1.name, "-", b.element2.name, ", trans: ", b.transition_energy, ", energy: ", b.energy_change))
 
 

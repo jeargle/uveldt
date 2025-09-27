@@ -101,12 +101,19 @@ function test_bond()
     elements = create_elements(2)
     el_table1 = ElementTable(elements)
 
-    energies1 = [(-5.5, 1.5), (-4.5, 0.5), (3.5, 3.5)]
+    energies1 = [(-5.5, 1.5), (-4.5, 0.5), (3.6, 3.4)]
     bond1, bond2, bond3 = create_bonds(el_table1, energies1)
     println("bond1: ", bond1)
     println("bond2: ", bond2)
     println("bond3: ", bond3)
     println()
+
+    @test bond1.energy_change == -5.5
+    @test bond1.transition_energy == 1.5
+    @test bond2.energy_change == -4.5
+    @test bond2.transition_energy == 0.5
+    @test bond3.energy_change == 3.6
+    @test bond3.transition_energy == 3.4
 end
 
 function test_bond_table()
@@ -1003,8 +1010,8 @@ function main()
     # Chemistry
     # test_element()
     # test_element_table()
-    # test_bond()
-    # test_bond_table()
+    test_bond()
+    test_bond_table()
     # test_chemistry()
     # test_chemistry_setup()
     # test_molecule()
@@ -1037,7 +1044,7 @@ function main()
     # test_genetic_algorithm2()
 
     # Metabolism
-    test_metabolism1()
+    # test_metabolism1()
 end
 
 main()
