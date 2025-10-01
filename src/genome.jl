@@ -54,7 +54,8 @@ struct Gene
     end
 
     function Gene(location::Int64, gene_string::AbstractString, chemistry::Chemistry)
-        Gene(location, gene_string, transcript, chemistry, positive)
+        transcript = transcribe_gene(gene_string, chemistry)
+        new(location, gene_string, transcript, chemistry, positive)
     end
 end
 
@@ -87,36 +88,36 @@ end
 
 
 """
-    parse_reaction(reaction_string::AbstractString)
+    parse_reaction(reaction_string::AbstractString, chemistry::Chemistry)
 
 Parse the reactants and products from a reaction string.
 
 # Arguments
 - `reaction_string::AbstractString`: string representation of a Reaction
+- `chemistry::Chemistry`: Chemistry for Reactions to use
 
 # Returns
-- `(reaction_type::ReactionType, reactants::Array, products::Array)`
+- `Reaction`
 """
-function parse_reaction(reaction_string::AbstractString)
+function parse_reaction(reaction_string::AbstractString, chemistry::Chemistry)
     if isnothing(match(r"[\*/]", reaction_string))
         reaction_type = pore
-        reactants = [reaction_string]
-        products = []
+        reaction1 = Reaction(reaction_string, chemistry)
     elseif reaction_string[1] == '*'
         reaction_type = transport_in
-        reactants = [replace(reaction_string, r"\*|/" => "")]
-        products = []
+        reactant = replace(reaction_string, r"\*|/" => "")
+        reaction1 = Reaction(reactant, chemistry, reaction_type, -3.0)
     elseif reaction_string[1] == '/'
         reaction_type = transport_out
-        reactants = [replace(reaction_string, r"\*|/" => "")]
-        products = []
+        reactant = replace(reaction_string, r"\*|/" => "")
+        reaction1 = Reaction(reactant, chemistry, reaction_type, -3.0)
     else
-        reaction_type = reaction
         reactants = split(replace(reaction_string, "/" => ""), "*")
         products = split(replace(reaction_string, "*" => ""), "/")
+        reaction1 = Reaction(reactants, products, chemistry)
     end
 
-    return (reaction_type, reactants, products)
+    return reaction1
 end
 
 
@@ -140,19 +141,7 @@ function parse_reactions(genome::Genome)
     for gene in genes
         # @printf "gene%d.transcript: %s\n" i genes[i].transcript
         if !is_pseudogene(gene)
-            reaction_type, reactants, products = parse_reaction(gene.transcript)
-            push!(reactions, )
-            # println("  reaction type: ", reaction_type)
-            # println("  reactants: ", reactants)
-            # println("  products: ", products)
-
-            if reaction_type == reaction
-                push!(reactions, Reaction(reactants, products, chemistry))
-            elseif reaction_type == pore
-                push!(reactions, Reaction(reactants[1], chemistry))
-            else
-                push!(reactions, Reaction(reactants[1], chemistry, reaction_type, -3.0))
-            end
+            push!(reactions, parse_reaction(gene.transcript))
         end
     end
 
