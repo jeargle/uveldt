@@ -458,20 +458,25 @@ function test_genome()
         else
             # reaction_type, reactants, products = parse_reaction(genes[i].transcript, chem1)
             reaction1 = parse_reaction(genes[i].transcript, chem1)
-            println("  reaction type: ", reaction_type)
-            println("  reactants: ", reactants)
-            println("  products: ", products)
+            println("  reaction type: ", reaction1.reaction_type)
+            println("  reactants: ", reaction1.reactants)
+            println("  products: ", reaction1.products)
             if reaction1.reaction_type == reaction
                 reaction_count += 1
+                @test length(reaction1.reactants) > 0
+                @test length(reaction1.products) > 0
             elseif reaction1.reaction_type == pore
                 pore_count += 1
                 @test length(reaction1.reactants) == 1
+                @test length(reaction1.products) == 0
             elseif reaction1.reaction_type == transport_in
                 transport_in_count += 1
                 @test length(reaction1.reactants) == 1
+                @test length(reaction1.products) == 0
             elseif reaction1.reaction_type == transport_out
                 transport_out_count += 1
                 @test length(reaction1.reactants) == 1
+                @test length(reaction1.products) == 0
             end
         end
     end
@@ -1082,8 +1087,8 @@ function main()
     # test_reaction()
 
     # Genome
-    test_gene()
-    # test_genome()
+    # test_gene()
+    test_genome()
 
     # Simulation
     # test_cell()
