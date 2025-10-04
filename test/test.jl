@@ -594,19 +594,36 @@ function test_veldt_point()
     veldt_pt2 = VeldtPoint()
     veldt_pt3 = VeldtPoint(cell=cell1)
     println("veldt_pt1: ", veldt_pt1)
+    @test veldt_pt1.cell == nothing
+    @test veldt_pt1.molecule_counts[1][mol1] == 0
+    @test veldt_pt1.molecule_counts[1][mol2] == 0
     println("veldt_pt2: ", veldt_pt2)
+    @test veldt_pt2.cell == nothing
+    @test veldt_pt2.molecule_counts[1][mol1] == 0
+    @test veldt_pt2.molecule_counts[1][mol2] == 0
     println("veldt_pt3: ", veldt_pt3)
+    @test veldt_pt3.cell == cell1
+    @test veldt_pt3.cell.molecule_counts[1][mol1] == 33
+    @test veldt_pt3.cell.molecule_counts[1][mol2] == 44
+    @test veldt_pt3.molecule_counts[1][mol1] == 0
+    @test veldt_pt3.molecule_counts[1][mol2] == 0
 
     println("  * add Molecule counts")
     veldt_pt1.molecule_counts[1][mol1] = 300
     veldt_pt1.molecule_counts[1][mol2] = 400
     veldt_pt2.molecule_counts[1][mol1] = 330
     veldt_pt2.molecule_counts[1][mol2] = 440
-    veldt_pt2.molecule_counts[1][mol1] = 333
-    veldt_pt2.molecule_counts[1][mol2] = 444
+    veldt_pt3.molecule_counts[1][mol1] = 333
+    veldt_pt3.molecule_counts[1][mol2] = 444
     println("veldt_pt1: ", veldt_pt1)
+    @test veldt_pt1.molecule_counts[1][mol1] == 300
+    @test veldt_pt1.molecule_counts[1][mol2] == 400
     println("veldt_pt2: ", veldt_pt2)
+    @test veldt_pt2.molecule_counts[1][mol1] == 330
+    @test veldt_pt2.molecule_counts[1][mol2] == 440
     println("veldt_pt3: ", veldt_pt3)
+    @test veldt_pt3.molecule_counts[1][mol1] == 333
+    @test veldt_pt3.molecule_counts[1][mol2] == 444
 
     println()
 end
@@ -1096,8 +1113,8 @@ function main()
     # test_genome()
 
     # Simulation
-    test_cell()
-    # test_veldt_point()
+    # test_cell()
+    test_veldt_point()
     # test_veldt()
     # test_veldt_setup_2d()
     # test_veldt_setup_3d()
