@@ -141,7 +141,7 @@ function parse_reactions(genome::Genome)
     for gene in genes
         # @printf "gene%d.transcript: %s\n" i genes[i].transcript
         if !is_pseudogene(gene)
-            push!(reactions, parse_reaction(gene.transcript))
+            push!(reactions, parse_reaction(gene.transcript, chemistry))
         end
     end
 

@@ -456,7 +456,6 @@ function test_genome()
             println("  *** pseudogene: " * genes[i].string)
             pseudogene_count += 1
         else
-            # reaction_type, reactants, products = parse_reaction(genes[i].transcript, chem1)
             reaction1 = parse_reaction(genes[i].transcript, chem1)
             println("  reaction type: ", reaction1.reaction_type)
             println("  reactants: ", reaction1.reactants)
@@ -553,11 +552,17 @@ function test_cell()
     println("  * Cells")
     cell1 = Cell(genome1)
     println("cell1: ", cell1)
+    @test cell1.genome == genome1
+    @test cell1.molecule_counts[1][mol1] == 0
+    @test cell1.molecule_counts[1][mol2] == 0
+    @test cell1.energy == 0
 
     println("  * add Molecule counts")
     cell1.molecule_counts[1][mol1] = 33
     cell1.molecule_counts[1][mol2] = 44
     println("cell1: ", cell1)
+    @test cell1.molecule_counts[1][mol1] == 33
+    @test cell1.molecule_counts[1][mol2] == 44
 
     println()
 end
@@ -1088,10 +1093,10 @@ function main()
 
     # Genome
     # test_gene()
-    test_genome()
+    # test_genome()
 
     # Simulation
-    # test_cell()
+    test_cell()
     # test_veldt_point()
     # test_veldt()
     # test_veldt_setup_2d()
