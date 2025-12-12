@@ -799,6 +799,21 @@ function test_simulation_setup_3d()
 end
 
 
+function test_phylo_node()
+    print_test_header("PhyloNode")
+end
+
+
+function test_phylo_edge()
+    print_test_header("PhyloEdge")
+end
+
+
+function test_phylogeny()
+    print_test_header("Phylogeny")
+end
+
+
 function test_substitution_matrix()
     print_test_header("SubstitutionMatrix")
 
@@ -1114,7 +1129,7 @@ function main()
 
     # Simulation
     # test_cell()
-    test_veldt_point()
+    # test_veldt_point()
     # test_veldt()
     # test_veldt_setup_2d()
     # test_veldt_setup_3d()
@@ -1126,6 +1141,9 @@ function main()
     # test_simulation_setup_3d()
 
     # Evolution
+    test_phylo_node()
+    test_phylo_edge()
+    test_phylogeny()
     # test_substitution_matrix()
     # test_evolution_params()
     # test_mutate()

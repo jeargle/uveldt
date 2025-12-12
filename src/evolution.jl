@@ -5,11 +5,17 @@
 Node in a Phylogeny.
 """
 struct PhyloNode
-    genomeName::AbstractString
-    genomeUuid::UUID
+    # genomeName::AbstractString
+    # genomeUuid::UUID
+    gene::Union{Gene, Nothing}
+    genome::Union{Genome, Nothing}
 
-    function PhyloNode(genome)
-        new(genome)
+    function PhyloNode(genome::Genome)
+        new(Nothing, genome)
+    end
+
+    function PhyloNode(gene::Gene)
+        new(gene, Nothing)
     end
 end
 
@@ -20,10 +26,10 @@ Edge in a Phylogeny.
 struct PhyloEdge
     parent::PhyloNode
     child::PhyloNode
-    mutations
+    # mutations
 
-    function PhyloNode(genome)
-        new(genome)
+    function PhyloEdge(parent, child)
+        new(parent, child)
     end
 end
 
