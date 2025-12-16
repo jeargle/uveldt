@@ -44,7 +44,17 @@ struct Phylogeny
     leaves::Array{PhyloNode, 1}
 
     function Phylogeny(nodes, edges)
-        new(nodes, edges)
+        # Check that nodes and edges agree with each other.
+        node_set = Set{PhyloNode}(nodes)
+        for edge in edges
+            if !(edge.parent in node_set) || !(edge.child in node_set)
+                throw(ArgumentError("PhyloEdge must use available PhyloNodes"))
+            end
+        end
+
+        # Find roots and leaves.
+
+        new(nodes, edges, roots, leaves)
     end
 end
 

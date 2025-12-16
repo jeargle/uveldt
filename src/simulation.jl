@@ -425,7 +425,7 @@ function step2D(veldt::Veldt)
             #   2D: 4 directions; +1 into Cell
             neighbors = get_neighbors(veldt, [i, j])
             for (mol, count) in vp.molecule_counts[current]
-                # Move molecules to neighboring VeldtPoints or internal Cell; next buffer
+                # Move molecules to neighboring VeldtPoints or internal Cell; next buffer.
                 for k in 1:count
                     # 1:4 neighbors, 5 cell or stay put, 6 stay put
                     chosen = rand([1, 2, 3, 4, 5, 6])
@@ -443,11 +443,12 @@ function step2D(veldt::Veldt)
                         neighbors[chosen].molecule_counts[next][mol] += 1
                     end
                 end
+                # Zero out current molecule count.
                 vp.molecule_counts[current][mol] = 0
             end
 
             if vp.cell != nothing
-                # Run reactions on shuffled reaction list
+                # Run reactions on shuffled reaction list.
                 for reaction in shuffle([r for r in vp.cell.reactions if r.reaction_type == reaction])
                     reactant_counts = DefaultDict{Molecule, Int64}(0)
                     for reactant in reaction.reactants
@@ -470,7 +471,7 @@ function step2D(veldt::Veldt)
                         vp.cell.molecule_counts[current][reactant] -= count
                     end
 
-                    # Put products in next buffer
+                    # Put products in next buffer.
                     for product in reaction.products
                         vp.cell.molecule_counts[next][product] += 1
                     end
@@ -478,11 +479,22 @@ function step2D(veldt::Veldt)
 
                 # Choose molecules to move (transport or diffusion)
                 #   1 direction out of Cell
-                # Move molecules to containing VeldtPoint; next buffer
-
-                # Transfer molecule counts from current to next
+                # Move molecules to containing VeldtPoint; next buffer.
                 for (mol, count) in vp.cell.molecule_counts[current]
-                    vp.cell.molecule_counts[next][mol] += vp.cell.molecule_counts[current][mol]
+                    if mol in vp.cell.pores
+                        for k in 1:count
+                            # 1 out, 2:6 stay put
+                            chosen = rand([1, 2, 3, 4, 5, 6])
+                            if chosen == 1
+                                # Move Molecule out of Cell.
+                                vp.molecule_counts[next][mol] += 1
+                            else
+                                # keep Molecule in Cell.
+                                vp.cell.molecule_counts[next][mol] += 1
+                            end
+                        end
+                    end
+                    # Zero out current molecule count.
                     vp.cell.molecule_counts[current][mol] = 0
                 end
             end
