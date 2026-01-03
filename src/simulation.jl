@@ -80,30 +80,29 @@ end
 
 
 """
-    init_molecules(veldt, coord, molecule_counts)
+    init_molecules(veldt, coord, molecule, molecule_count)
 
 Initialize the Molecule count for a specific location in a Veldt.
 
 # Arguments
-- `veldt::Veldt`:
-- `coord::Array{Int64, 1}`:
-- `molecule_counts::DefaultDict{Molecule, Int64}`:
+- `veldt::Veldt`: Veldt to update.
+- `coord::Array{Int64, 1}`: coordinate of VeldtPoint to update.
+- `molecule::Molecule`: Molecule type.
+- `molecule_count::Int64`: Molecule count.
 """
-function init_molecules(veldt::Veldt, coord::Array{Int64, 1}, molecule_counts::DefaultDict{Molecule, Int64})
-    for (mol, count) in molecule_counts
-        if !(mol in values(veldt.molecule_table))
-            veldt.molecule_table[mol.elements] = mol
-        end
+function init_molecules(veldt::Veldt, coord::Array{Int64, 1}, molecule::Molecule, molecule_count::Int64)
+    if !(molecule in values(veldt.molecule_table))
+        veldt.molecule_table[molecule.elements] = molecule
+    end
 
-        veldt.molecule_counts[mol] += count
+    veldt.molecule_counts[molecule] += molecule_count
 
-        if length(coord) == 2
-            vp = veldt.points[coord[1]][coord[2]]
-            vp.molecule_counts[1][mol] = count
-        elseif length(coord) == 3
-            vp = veldt.points[coord[1]][coord[2]][coord[3]]
-            vp.molecule_counts[1][mol] = count
-        end
+    if length(coord) == 2
+        vp = veldt.points[coord[1]][coord[2]]
+        vp.molecule_counts[1][molecule] = molecule_count
+    elseif length(coord) == 3
+        vp = veldt.points[coord[1]][coord[2]][coord[3]]
+        vp.molecule_counts[1][molecule] = molecule_count
     end
 end
 
@@ -353,9 +352,7 @@ function setup_veldt(filepath)
                 for loc_info in mol_info["locations"]
                     mol_loc = loc_info["location"]
                     mol_count = loc_info["count"]
-                    mol_counts = DefaultDict{Molecule, Int64}(0)
-                    mol_counts[molecule] = mol_count
-                    init_molecules(veldt, mol_loc, mol_counts)
+                    init_molecules(veldt, mol_loc, molecule, mol_count)
                 end
             elseif haskey(mol_info, "distribution")
                 mol_dist = mol_info["distribution"]

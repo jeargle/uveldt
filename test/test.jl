@@ -664,40 +664,26 @@ function test_veldt()
 
     println("  * initialize Molecule counts")
 
-    dd1 = DefaultDict{Molecule, Int64}(0)
-    dd1[mol1] = 10
-    dd1[mol2] = 10
-    init_molecules(veldt1, [1, 1], dd1)
+    init_molecules(veldt1, [1, 1], mol1, 10)
+    init_molecules(veldt1, [1, 1], mol2, 10)
 
-    dd1 = DefaultDict{Molecule, Int64}(0)
-    dd1[mol1] = 10
-    dd1[mol2] = 20
-    init_molecules(veldt1, [1, 2], dd1)
+    init_molecules(veldt1, [1, 2], mol1, 10)
+    init_molecules(veldt1, [1, 2], mol2, 20)
 
-    dd1 = DefaultDict{Molecule, Int64}(0)
-    dd1[mol1] = 10
-    dd1[mol2] = 30
-    init_molecules(veldt1, [1, 3], dd1)
+    init_molecules(veldt1, [1, 3], mol1, 10)
+    init_molecules(veldt1, [1, 3], mol2, 30)
 
-    dd1 = DefaultDict{Molecule, Int64}(0)
-    dd1[mol1] = 20
-    dd1[mol2] = 10
-    init_molecules(veldt1, [2, 1], dd1)
+    init_molecules(veldt1, [2, 1], mol1, 20)
+    init_molecules(veldt1, [2, 1], mol2, 10)
 
-    dd1 = DefaultDict{Molecule, Int64}(0)
-    dd1[mol1] = 20
-    dd1[mol2] = 20
-    init_molecules(veldt1, [2, 2], dd1)
+    init_molecules(veldt1, [2, 2], mol1, 20)
+    init_molecules(veldt1, [2, 2], mol2, 20)
 
-    dd1 = DefaultDict{Molecule, Int64}(0)
-    dd1[mol1] = 20
-    dd1[mol2] = 30
-    init_molecules(veldt1, [2, 3], dd1)
+    init_molecules(veldt1, [2, 3], mol1, 20)
+    init_molecules(veldt1, [2, 3], mol2, 30)
 
-    dd1 = DefaultDict{Molecule, Int64}(0)
-    dd1[mol1] = 30
-    dd1[mol2] = 30
-    init_molecules(veldt1, [3, 3], dd1)
+    init_molecules(veldt1, [3, 3], mol1, 30)
+    init_molecules(veldt1, [3, 3], mol2, 30)
 
     println("veldt1: ", veldt1)
 
@@ -1130,9 +1116,9 @@ function main()
     # Simulation
     # test_cell()
     # test_veldt_point()
-    # test_veldt()
-    # test_veldt_setup_2d()
-    # test_veldt_setup_3d()
+    test_veldt()
+    test_veldt_setup_2d()
+    test_veldt_setup_3d()
     # test_simulation_2d()
     # test_simulation_3d()
     # test_diffusion_2d()
@@ -1141,9 +1127,9 @@ function main()
     # test_simulation_setup_3d()
 
     # Evolution
-    test_phylo_node()
-    test_phylo_edge()
-    test_phylogeny()
+    # test_phylo_node()
+    # test_phylo_edge()
+    # test_phylogeny()
     # test_substitution_matrix()
     # test_evolution_params()
     # test_mutate()
