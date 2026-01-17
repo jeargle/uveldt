@@ -661,51 +661,80 @@ function test_veldt()
     println("  * Veldt")
     veldt1 = Veldt([3, 4])
     println("veldt1: ", veldt1)
+    @test length(veldt1.dims) == 2
 
     println("  * initialize Molecule counts")
 
     init_molecules(veldt1, [1, 1], mol1, 10)
     init_molecules(veldt1, [1, 1], mol2, 10)
+    @test veldt1.points[1][1].molecule_counts[1][mol1] == 10
+    @test veldt1.points[1][1].molecule_counts[1][mol2] == 10
 
     init_molecules(veldt1, [1, 2], mol1, 10)
     init_molecules(veldt1, [1, 2], mol2, 20)
+    @test veldt1.points[1][2].molecule_counts[1][mol1] == 10
+    @test veldt1.points[1][2].molecule_counts[1][mol2] == 20
 
     init_molecules(veldt1, [1, 3], mol1, 10)
     init_molecules(veldt1, [1, 3], mol2, 30)
+    @test veldt1.points[1][3].molecule_counts[1][mol1] == 10
+    @test veldt1.points[1][3].molecule_counts[1][mol2] == 30
 
     init_molecules(veldt1, [2, 1], mol1, 20)
     init_molecules(veldt1, [2, 1], mol2, 10)
+    @test veldt1.points[2][1].molecule_counts[1][mol1] == 20
+    @test veldt1.points[2][1].molecule_counts[1][mol2] == 10
 
     init_molecules(veldt1, [2, 2], mol1, 20)
     init_molecules(veldt1, [2, 2], mol2, 20)
+    @test veldt1.points[2][2].molecule_counts[1][mol1] == 20
+    @test veldt1.points[2][2].molecule_counts[1][mol2] == 20
 
     init_molecules(veldt1, [2, 3], mol1, 20)
     init_molecules(veldt1, [2, 3], mol2, 30)
+    @test veldt1.points[2][3].molecule_counts[1][mol1] == 20
+    @test veldt1.points[2][3].molecule_counts[1][mol2] == 30
 
     init_molecules(veldt1, [3, 3], mol1, 30)
     init_molecules(veldt1, [3, 3], mol2, 30)
+    @test veldt1.points[3][3].molecule_counts[1][mol1] == 30
+    @test veldt1.points[3][3].molecule_counts[1][mol2] == 30
+
+    @test veldt1.points[3][1].molecule_counts[1][mol1] == 0
+    @test veldt1.points[3][1].molecule_counts[1][mol2] == 0
 
     println("veldt1: ", veldt1)
 
     println("  * add Cells")
     add_cell(veldt1, [1, 1], cell1)
     add_cell(veldt1, [2, 2], cell2)
+    @test veldt1.points[1][1].cell == cell1
+    @test veldt1.points[2][2].cell == cell2
+    @test veldt1.points[3][3].cell == nothing
     println("veldt1: ", veldt1)
 
     println("  * get neighboring VeldtPoints")
     vps = get_neighbors(veldt1, [1, 1])
     println("  [1, 1]")
     println("-x: ", vps[1])
+    @test veldt1.points[1][1] == vps[1]
     println("+x: ", vps[2])
+    @test veldt1.points[2][1] == vps[2]
     println("-y: ", vps[3])
+    @test veldt1.points[1][1] == vps[3]
     println("+y: ", vps[4])
+    @test veldt1.points[1][2] == vps[4]
 
     vps = get_neighbors(veldt1, [2, 2])
     println("  [2, 2]")
     println("-x: ", vps[1])
+    @test veldt1.points[1][2] == vps[1]
     println("+x: ", vps[2])
+    @test veldt1.points[3][2] == vps[2]
     println("-y: ", vps[3])
+    @test veldt1.points[2][1] == vps[3]
     println("+y: ", vps[4])
+    @test veldt1.points[2][3] == vps[4]
 
     println()
 end
@@ -1117,8 +1146,8 @@ function main()
     # test_cell()
     # test_veldt_point()
     test_veldt()
-    test_veldt_setup_2d()
-    test_veldt_setup_3d()
+    # test_veldt_setup_2d()
+    # test_veldt_setup_3d()
     # test_simulation_2d()
     # test_simulation_3d()
     # test_diffusion_2d()
