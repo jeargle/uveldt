@@ -784,8 +784,47 @@ function test_veldt_setup_3d()
     print_test_header("Veldt Setup 3D")
 
     veldt2 = setup_veldt("./veldts/veldt2.yml")
-
     println("veldt2: ", veldt2)
+
+    mol1 = veldt2.molecule_table["AAA"]
+    mol2 = veldt2.molecule_table["BBB"]
+    mol3 = veldt2.molecule_table["AA"]
+    mol4 = veldt2.molecule_table["AB"]
+
+    @test veldt2.points[1][1][1].molecule_counts[1][mol1] == 15
+    @test veldt2.points[1][1][2].molecule_counts[1][mol1] == 15
+    @test veldt2.points[1][1][3].molecule_counts[1][mol1] == 15
+    @test veldt2.points[1][1][4].molecule_counts[1][mol1] == 15
+    @test veldt2.points[1][1][5].molecule_counts[1][mol1] == 15
+    @test veldt2.points[1][1][1].molecule_counts[1][mol2] == 25
+    @test veldt2.points[1][1][2].molecule_counts[1][mol2] == 25
+    @test veldt2.points[1][1][3].molecule_counts[1][mol2] == 25
+    @test veldt2.points[1][1][4].molecule_counts[1][mol2] == 25
+    @test veldt2.points[1][1][5].molecule_counts[1][mol2] == 25
+
+    cell1 = veldt2.points[1][1][1].cell
+    cell2 = veldt2.points[2][2][2].cell
+    cell3 = veldt2.points[3][3][3].cell
+    cell4 = veldt2.points[1][4][5].cell
+
+    @test veldt2.points[1][2][3].cell == nothing
+
+    @test cell1.molecule_counts[1][mol1] == 11
+    @test cell1.molecule_counts[1][mol2] == 22
+    @test cell2.molecule_counts[1][mol3] == 33
+    @test cell2.molecule_counts[1][mol4] == 44
+    @test cell3.molecule_counts[1][mol3] == 11
+    @test cell3.molecule_counts[1][mol4] == 22
+    @test cell4.molecule_counts[1][mol1] == 33
+    @test cell4.molecule_counts[1][mol2] == 44
+
+    @test veldt2.molecule_counts[mol1] == 900
+    @test veldt2.molecule_counts[mol2] == 1500
+
+    @test veldt2.cell_molecule_counts[mol1] == 44
+    @test veldt2.cell_molecule_counts[mol2] == 66
+    @test veldt2.cell_molecule_counts[mol3] == 44
+    @test veldt2.cell_molecule_counts[mol4] == 66
 end
 
 
@@ -1177,8 +1216,8 @@ function main()
     # test_cell()
     # test_veldt_point()
     # test_veldt()
-    test_veldt_setup_2d()
-    # test_veldt_setup_3d()
+    # test_veldt_setup_2d()
+    test_veldt_setup_3d()
     # test_simulation_2d()
     # test_simulation_3d()
     # test_diffusion_2d()
