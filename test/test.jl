@@ -748,8 +748,8 @@ function test_veldt_setup_2d()
 
     mol1 = veldt1.molecule_table["AAA"]
     mol2 = veldt1.molecule_table["BBB"]
-    # mol3 = veldt1.molecule_table["AA"]
-    # mol4 = veldt1.molecule_table["AB"]
+    mol3 = veldt1.molecule_table["AA"]
+    mol4 = veldt1.molecule_table["AB"]
 
     @test veldt1.points[1][1].molecule_counts[1][mol1] == 10
     @test veldt1.points[1][2].molecule_counts[1][mol1] == 10
@@ -767,9 +767,16 @@ function test_veldt_setup_2d()
 
     @test cell1.molecule_counts[1][mol1] == 11
     @test cell1.molecule_counts[1][mol2] == 22
-    # @test cell2.molecule_counts[1][mol3] == 33
-    # @test cell2.molecule_counts[1][mol4] == 44
+    @test cell2.molecule_counts[1][mol3] == 33
+    @test cell2.molecule_counts[1][mol4] == 44
 
+    @test veldt1.molecule_counts[mol1] == 120
+    @test veldt1.molecule_counts[mol2] == 360
+
+    @test veldt1.cell_molecule_counts[mol1] == 11
+    @test veldt1.cell_molecule_counts[mol2] == 22
+    @test veldt1.cell_molecule_counts[mol3] == 33
+    @test veldt1.cell_molecule_counts[mol4] == 44
 end
 
 

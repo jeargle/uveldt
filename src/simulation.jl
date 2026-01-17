@@ -90,7 +90,6 @@ Initialize the Molecule count for a specific location in a Veldt.
 - `molecule_count::Int64`: Molecule count.
 """
 function init_molecules(veldt::Veldt, molecule::Molecule, molecule_count::Int64)
-
     if length(veldt.dims) == 2
         for i in 1:veldt.dims[1]
             for j in 1:veldt.dims[2]
@@ -106,7 +105,6 @@ function init_molecules(veldt::Veldt, molecule::Molecule, molecule_count::Int64)
             end
         end
     end
-
 end
 
 
@@ -139,6 +137,28 @@ end
 
 
 """
+    add_molecules(cell, veldt, molecule, count)
+
+Add Molecules to a specific Cell in a Veldt.
+
+# Arguments
+- `cell::Cell`: Cell
+- `veldt::Veldt`: Veldt
+- `molecule::Molecule`: molecule type to add
+- `count::Int64`: number of molecules to add
+"""
+function add_molecules(cell:: Cell, veldt::Veldt, molecule::Molecule, count::Int64)
+    cell.molecule_counts[1][molecule] = count
+
+    if !(molecule in values(veldt.molecule_table))
+        veldt.molecule_table[molecule.elements] = molecule
+    end
+
+    veldt.cell_molecule_counts[molecule] += count
+end
+
+
+"""
     add_cell(veldt, coord, cell)
 
 Add a cell to a specific location in a Veldt.
@@ -149,16 +169,12 @@ Add a cell to a specific location in a Veldt.
 - `cell::Cell`:
 """
 function add_cell(veldt::Veldt, coord::Array{Int64, 1}, cell::Cell)
-    for (mol, count) in cell.molecule_counts[1]
-        veldt.molecule_counts[mol] += count
-
-        if length(coord) == 2
-            vp = veldt.points[coord[1]][coord[2]]
-            vp.cell = cell
-        elseif length(coord) == 3
-            vp = veldt.points[coord[1]][coord[2]][coord[3]]
-            vp.cell = cell
-        end
+    if length(coord) == 2
+        vp = veldt.points[coord[1]][coord[2]]
+        vp.cell = cell
+    elseif length(coord) == 3
+        vp = veldt.points[coord[1]][coord[2]][coord[3]]
+        vp.cell = cell
     end
 end
 
@@ -381,7 +397,7 @@ function setup_veldt(filepath)
                     mol_name = mol_info["name"]
                     molecule = Molecule(mol_name, chemistry)
                     mol_count = mol_info["count"]
-                    cell.molecule_counts[1][molecule] = mol_count
+                    add_molecules(cell, veldt, molecule, mol_count)
                 end
             end
 
