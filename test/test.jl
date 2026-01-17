@@ -665,38 +665,38 @@ function test_veldt()
 
     println("  * initialize Molecule counts")
 
-    init_molecules(veldt1, [1, 1], mol1, 10)
-    init_molecules(veldt1, [1, 1], mol2, 10)
+    add_molecules(veldt1, [1, 1], mol1, 10)
+    add_molecules(veldt1, [1, 1], mol2, 10)
     @test veldt1.points[1][1].molecule_counts[1][mol1] == 10
     @test veldt1.points[1][1].molecule_counts[1][mol2] == 10
 
-    init_molecules(veldt1, [1, 2], mol1, 10)
-    init_molecules(veldt1, [1, 2], mol2, 20)
+    add_molecules(veldt1, [1, 2], mol1, 10)
+    add_molecules(veldt1, [1, 2], mol2, 20)
     @test veldt1.points[1][2].molecule_counts[1][mol1] == 10
     @test veldt1.points[1][2].molecule_counts[1][mol2] == 20
 
-    init_molecules(veldt1, [1, 3], mol1, 10)
-    init_molecules(veldt1, [1, 3], mol2, 30)
+    add_molecules(veldt1, [1, 3], mol1, 10)
+    add_molecules(veldt1, [1, 3], mol2, 30)
     @test veldt1.points[1][3].molecule_counts[1][mol1] == 10
     @test veldt1.points[1][3].molecule_counts[1][mol2] == 30
 
-    init_molecules(veldt1, [2, 1], mol1, 20)
-    init_molecules(veldt1, [2, 1], mol2, 10)
+    add_molecules(veldt1, [2, 1], mol1, 20)
+    add_molecules(veldt1, [2, 1], mol2, 10)
     @test veldt1.points[2][1].molecule_counts[1][mol1] == 20
     @test veldt1.points[2][1].molecule_counts[1][mol2] == 10
 
-    init_molecules(veldt1, [2, 2], mol1, 20)
-    init_molecules(veldt1, [2, 2], mol2, 20)
+    add_molecules(veldt1, [2, 2], mol1, 20)
+    add_molecules(veldt1, [2, 2], mol2, 20)
     @test veldt1.points[2][2].molecule_counts[1][mol1] == 20
     @test veldt1.points[2][2].molecule_counts[1][mol2] == 20
 
-    init_molecules(veldt1, [2, 3], mol1, 20)
-    init_molecules(veldt1, [2, 3], mol2, 30)
+    add_molecules(veldt1, [2, 3], mol1, 20)
+    add_molecules(veldt1, [2, 3], mol2, 30)
     @test veldt1.points[2][3].molecule_counts[1][mol1] == 20
     @test veldt1.points[2][3].molecule_counts[1][mol2] == 30
 
-    init_molecules(veldt1, [3, 3], mol1, 30)
-    init_molecules(veldt1, [3, 3], mol2, 30)
+    add_molecules(veldt1, [3, 3], mol1, 30)
+    add_molecules(veldt1, [3, 3], mol2, 30)
     @test veldt1.points[3][3].molecule_counts[1][mol1] == 30
     @test veldt1.points[3][3].molecule_counts[1][mol2] == 30
 
@@ -744,8 +744,32 @@ function test_veldt_setup_2d()
     print_test_header("Veldt Setup 2D")
 
     veldt1 = setup_veldt("./veldts/veldt1.yml")
-
     println("veldt1: ", veldt1)
+
+    mol1 = veldt1.molecule_table["AAA"]
+    mol2 = veldt1.molecule_table["BBB"]
+    # mol3 = veldt1.molecule_table["AA"]
+    # mol4 = veldt1.molecule_table["AB"]
+
+    @test veldt1.points[1][1].molecule_counts[1][mol1] == 10
+    @test veldt1.points[1][2].molecule_counts[1][mol1] == 10
+    @test veldt1.points[1][3].molecule_counts[1][mol1] == 10
+    @test veldt1.points[1][4].molecule_counts[1][mol1] == 10
+    @test veldt1.points[1][1].molecule_counts[1][mol2] == 30
+    @test veldt1.points[1][2].molecule_counts[1][mol2] == 30
+    @test veldt1.points[1][3].molecule_counts[1][mol2] == 30
+    @test veldt1.points[1][4].molecule_counts[1][mol2] == 30
+
+    cell1 = veldt1.points[1][1].cell
+    cell2 = veldt1.points[2][2].cell
+
+    @test veldt1.points[3][3].cell == nothing
+
+    @test cell1.molecule_counts[1][mol1] == 11
+    @test cell1.molecule_counts[1][mol2] == 22
+    # @test cell2.molecule_counts[1][mol3] == 33
+    # @test cell2.molecule_counts[1][mol4] == 44
+
 end
 
 
@@ -1145,8 +1169,8 @@ function main()
     # Simulation
     # test_cell()
     # test_veldt_point()
-    test_veldt()
-    # test_veldt_setup_2d()
+    # test_veldt()
+    test_veldt_setup_2d()
     # test_veldt_setup_3d()
     # test_simulation_2d()
     # test_simulation_3d()
