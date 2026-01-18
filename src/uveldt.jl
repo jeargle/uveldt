@@ -26,7 +26,7 @@ include("chemistry.jl")
 export Element, ElementTable, Bond, BondTable, Chemistry, Molecule
 export ReactionType, Reaction
 
-export get_bond, mass, setup_chemistry
+export alphabet_string, get_bond, mass, setup_chemistry
 
 # Genome
 include("genome.jl")

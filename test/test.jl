@@ -908,10 +908,27 @@ function test_substitution_matrix()
     println("  * Read SubstitutionMatrix")
     sm1 = read_substitution_matrix("./evolution_params/sub1.txt", chem1)
 
+    @test sm1.alphabet == alphabet_string(chem1)
+
     println(sm1.substitutions['A'])
+    @test isapprox(sm1.substitutions['A'].p[1], 0)
+    @test isapprox(sm1.substitutions['A'].p[2], 5/14)
+    @test isapprox(sm1.substitutions['A'].p[4], 1/14)
+
     println(sm1.substitutions['B'])
+    @test isapprox(sm1.substitutions['B'].p[1], 5/14)
+    @test isapprox(sm1.substitutions['B'].p[2], 0)
+    @test isapprox(sm1.substitutions['B'].p[4], 1/14)
+
     println(sm1.substitutions['('])
+    @test isapprox(sm1.substitutions['('].p[1], 2/9)
+    @test isapprox(sm1.substitutions['('].p[4], 0)
+    @test isapprox(sm1.substitutions['('].p[5], 1/9)
+
     println(sm1.substitutions['/'])
+    @test isapprox(sm1.substitutions['/'].p[1], 2/9)
+    @test isapprox(sm1.substitutions['/'].p[4], 1/9)
+    @test isapprox(sm1.substitutions['/'].p[7], 0)
 end
 
 
@@ -1105,6 +1122,7 @@ function test_genetic_algorithm2()
     end
 end
 
+
 function test_metabolism1()
     print_test_header("Metabolism 1")
 
@@ -1196,7 +1214,6 @@ function test_metabolism1()
 end
 
 
-
 function main()
     # Chemistry
     # test_element()
@@ -1217,7 +1234,7 @@ function main()
     # test_veldt_point()
     # test_veldt()
     # test_veldt_setup_2d()
-    test_veldt_setup_3d()
+    # test_veldt_setup_3d()
     # test_simulation_2d()
     # test_simulation_3d()
     # test_diffusion_2d()
@@ -1229,7 +1246,7 @@ function main()
     # test_phylo_node()
     # test_phylo_edge()
     # test_phylogeny()
-    # test_substitution_matrix()
+    test_substitution_matrix()
     # test_evolution_params()
     # test_mutate()
     # test_select_genomes()
