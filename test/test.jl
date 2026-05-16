@@ -12,6 +12,7 @@
 using DataStructures
 using Printf
 using Test
+
 using uveldt
 
 
@@ -1020,7 +1021,7 @@ function test_select_cells()
     chem1 = setup_chemistry("./chemistries/chemistry1.yml")
 
     println("  * Setup SelectionParams")
-    sel_params = SelectionParams()
+    sel_params = SelectionParams(fitness_functions["gene_count"], select_count=10)
 
     println("  * Create Genomes")
     cells = [Cell(Genome("genome$i", genome_string(500, chem1), chem1))
@@ -1243,16 +1244,16 @@ function main()
     # test_simulation_setup_3d()
 
     # Evolution
-    # test_phylo_node()
-    # test_phylo_edge()
-    # test_phylogeny()
+    test_phylo_node()
+    test_phylo_edge()
+    test_phylogeny()
     test_substitution_matrix()
-    # test_evolution_params()
-    # test_mutate()
-    # test_select_genomes()
-    # test_select_cells()
-    # test_genetic_algorithm1()
-    # test_genetic_algorithm2()
+    test_evolution_params()
+    test_mutate()
+    test_select_genomes()
+    test_select_cells()
+    test_genetic_algorithm1()
+    test_genetic_algorithm2()
 
     # Metabolism
     # test_metabolism1()

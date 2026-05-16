@@ -141,18 +141,15 @@ Take an Array of Genomes and return a subset of them based on
 calculated fitness scores.
 
 # Arguments
-- `genomes::Array{Genome, 1}`:
-- `params::SelectionParams`:
+- `genomes::Array{Genome, 1}`: initial Genomes
+- `params::SelectionParams`: fitness parameters
 
 # Returns
 - `Array{Genome, 1}`: sub array of selected Genomes
 """
 function select_genomes(genomes, params::SelectionParams)
-    uuid_to_genome = Dict(genome.uuid => genome
-                          for genome in genomes)
-
     # Calculate fitness scores.
-    fitnesses = [(params.fitness_function(genome), genome.uuid)
+    fitnesses = [(params.fitness_function(genome), genome)
                  for genome in genomes]
 
     # Sort by fitness.
@@ -175,8 +172,7 @@ function select_genomes(genomes, params::SelectionParams)
         filter!(fitness -> fitness >= params.fitness_threshold, fitnesses)
     end
 
-    selected_genomes = [uuid_to_genome[uuid]
-                        for (fitness, uuid) in fitnesses]
+    selected_genomes = [genome for (fitness, genome) in fitnesses]
 
     return selected_genomes
 end
@@ -189,18 +185,15 @@ Take an Array of Cells and return a subset of them based on
 calculated fitness scores.
 
 # Arguments
-- `cells::Array{Cell, 1}`:
-- `params::SelectionParams`:
+- `cells::Array{Cell, 1}`: initial Cells
+- `params::SelectionParams`: fitness parameters
 
 # Returns
 - `Array{Cell, 1}`: sub array of selected Cells
 """
 function select_cells(cells, params::SelectionParams)
-    uuid_to_cell = Dict(cell.uuid => cell
-                        for cell in cells)
-
     # Calculate fitness scores.
-    fitnesses = [(params.fitness_function(cell), cell.uuid)
+    fitnesses = [(params.fitness_function(cell.genome), cell)
                  for cell in cells]
 
     # Sort by fitness.
@@ -223,8 +216,8 @@ function select_cells(cells, params::SelectionParams)
         filter!(fitness -> fitness >= params.fitness_threshold, fitnesses)
     end
 
-    selected_cells = [uuid_to_cell[uuid]
-                      for (fitness, cell) in fitnesses]
+    selected_cells = [cell for (fitness, cell) in fitnesses]
+
 
     return selected_cells
 end
@@ -235,32 +228,32 @@ end
 #####
 
 """
-    gene_count(genome)
+    gene_count(genome::Genome)
 
-x
+Return the number of Genes in a Genome.
 
 # Arguments
-- `genome`:
+- `genome::Genome`: input Genome
 
 # Returns
-- ``:
+- `Int64`: number of Genes in the Genome
 """
-function gene_count(genome)
+function gene_count(genome::Genome)
     return length(find_genes(genome))
 end
 
 """
-    gene_count(genome)
+    gene_length(genome::Genome)
 
-x
+Return the number of characters in a Genome.
 
 # Arguments
-- `genome`:
+- `genome::Genome`: input Genome
 
 # Returns
-- ``:
+- `Int64`: number of characters in the Genome
 """
-function genome_length(genome)
+function genome_length(genome::Genome)
     return length(genome.string)
 end
 
@@ -292,11 +285,11 @@ will remain the same so the matrix diagonal (Mii) should normally be
 set to 0.
 
 # Arguments
-- `filename`:
-- `chemistry`:
+- `filename`: name of substitution matrix file
+- `chemistry`: Chemistry used by the substitution matrix
 
 # Returns
-- `SubstitutionMatrix`:
+- `SubstitutionMatrix`: new SubstitutionMatrix
 """
 function read_substitution_matrix(filename, chemistry)
     alphabet = alphabet_string(chemistry)
@@ -328,11 +321,11 @@ end
 Pick a substitution character based on a SubstitutionMatrix.
 
 # Arguments
-- `sub_mat::SubstitutionMatrix`:
-- `original_char::Char`:
+- `sub_mat::SubstitutionMatrix`: SubstitutionMatrix to use
+- `original_char::Char`: initial Char
 
 # Returns
-- `Char`:
+- `Char`: randomly substituted Char
 """
 function substitution(sub_mat::SubstitutionMatrix, original_char::Char)
     return sub_mat.alphabet[random(sub_mat.substitutions[original_char])]
@@ -340,17 +333,17 @@ end
 
 
 """
-    add_snvs(genome, rate; sub_mat)
+    add_snvs(genome::Genome, rate; sub_mat::Union{SubstitutionMatrix, Nothing}=nothing)
 
 Add SNVs to Genome.
 
 # Arguments
-- `genome::Genome`:
-- `rate`:
-- `sub_mat::SubstitutionMatrix`:
+- `genome::Genome`: initial Genome
+- `rate`: substitution rate
+- `sub_mat::SubstitutionMatrix`: SubstitutionMatrix to use; optional
 
 # Returns
-- `Genome`: Mutated Genome
+- `Genome`: mutated Genome
 """
 function add_snvs(genome::Genome, rate; sub_mat::Union{SubstitutionMatrix, Nothing}=nothing)
     geom_dist = Geometric(rate)
@@ -379,17 +372,17 @@ end
 
 
 """
-    add_insertions(genome, rate; size_param)
+    add_insertions(genome::Genome, rate; size_param)
 
 Add small insertions to Genome.
 
 # Arguments
-- `genome::Genome`:
-- `rate`:
-- `size_param`:
+- `genome::Genome`: initial Genome
+- `rate`: insertion rate
+- `size_param`: geometric distribution parameter for insertion size; default 0.5
 
 # Returns
-- `Genome`: Mutated Genome
+- `Genome`: mutated Genome
 """
 function add_insertions(genome::Genome, rate; size_param=0.5)
     location_dist = Geometric(rate)
@@ -417,17 +410,17 @@ end
 
 
 """
-    remove_deletions(genome, rate; size_param)
+    remove_deletions(genome::Genome, rate; size_param)
 
 Remove small deletions from Genome.
 
 # Arguments
-- `genome::Genome`:
-- `rate`:
-- `size_param`:
+- `genome::Genome`: initial Genome
+- `rate`: deletion rate
+- `size_param`: geometric distribution parameter for deletion size; default 0.5
 
 # Returns
-- `Genome`: Mutated Genome
+- `Genome`: mutated Genome
 """
 function remove_deletions(genome::Genome, rate; size_param=0.5)
     geom_dist = Geometric(rate)
@@ -452,17 +445,17 @@ end
 
 
 """
-    add_duplications(genome, rate; size_param)
+    add_duplications(genome::Genome, rate; size_param)
 
 Add large duplications to Genome.
 
 # Arguments
-- `genome::Genome`:
-- `rate`:
-- `size_param`:
+- `genome::Genome`: initial Genome
+- `rate`: duplication rate
+- `size_param`: geometric distribution parameter for duplication size; default 0.5
 
 # Returns
-- `Genome`: Mutated Genome
+- `Genome`: mutated Genome
 """
 function add_duplications(genome::Genome, rate; size_param=0.5)
     location_dist = Geometric(rate)
@@ -518,17 +511,17 @@ end
 
 
 """
-    add_inversions(genome, rate; size_param)
+    add_inversions(genome::Genome, rate; size_param)
 
 Add large inversions to Genome.
 
 # Arguments
-- `genome::Genome`:
-- `rate`:
-- `size_param`:
+- `genome::Genome`: initial Genome
+- `rate`: inversion rate
+- `size_param`: geometric distribution parameter for inversion size; default 0.5
 
 # Returns
-- `Genome`: Mutated Genome
+- `Genome`: mutated Genome
 """
 function add_inversions(genome::Genome, rate; size_param=0.5)
     geom_dist = Geometric(rate)
@@ -557,17 +550,17 @@ end
 
 
 """
-    add_translocations(genome, rate; size_param)
+    add_translocations(genome::Genome, rate; size_param)
 
 Add large translocations to Genome.
 
 # Arguments
-- `genome::Genome`:
-- `rate`:
-- `size_param`:
+- `genome::Genome`: initial Genome
+- `rate`: translocation rate
+- `size_param`: geometric distribution parameter for translocation size; default 0.5
 
 # Returns
-- `Genome`: Mutated Genome
+- `Genome`: mutated Genome
 """
 function add_translocations(genome::Genome, rate; size_param=0.5)
     location_dist = Geometric(rate)
@@ -636,16 +629,16 @@ end
 
 
 """
-    cross_over(genome1, genome2)
+    cross_over(genome1::Genome, genome2::Genome)
 
 Cross over two Genomes to produce two child Genomes.
 
 # Arguments
-- `genome1::Genome`:
-- `genome2::Genome`:
+- `genome1::Genome`: first initial Genome
+- `genome2::Genome`: second initial Genome
 
 # Returns
-- `(String, String)`: Tuple of mutated Genome Strings
+- `(String, String)`: tuple of mutated Genome Strings
 """
 function cross_over(genome1::Genome, genome2::Genome)
     if genome1.chemistry != genome2.chemistry
@@ -674,7 +667,7 @@ end
 
 
 """
-    mutate(genomes, params)
+    mutate(genomes::Array{Genome, 1}, params::MutationParams)
 
 Take an Array of cloned parent Genomes and create a set of child Genomes.
 
@@ -682,12 +675,13 @@ Replication is done prior to this step so the number of input Genomes
 should equal the number of mutant child Genomes.
 
 # Arguments
-- `genomes::Array{Genome, 1}`:
+- `genomes::Array{Genome, 1}`: Array of parent Genomes
+- `params::MutationParams`: parameters for mutation types
 
 # Returns
 - `Array{Genome, 1}`: Array containing new child Genomes
 """
-function mutate(genomes, params::MutationParams)
+function mutate(genomes::Array{Genome, 1}, params::MutationParams)
     child_genomes = []
 
     for genome in genomes
@@ -752,7 +746,7 @@ Create SelectionParams and MutationParams from a YAML setup file.
 - `filename`: name of YAML setup file
 
 # Returns
-- `(SelectionParams, MutationParams)`:
+- `(SelectionParams, MutationParams)`: new SelectionParams and MutationParams
 """
 function read_evolution_params(filename)
     setup = YAML.load(open(filename))
