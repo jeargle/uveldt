@@ -1,6 +1,6 @@
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.12.3"
+julia_version = "1.12.5"
 manifest_format = "2.0"
 project_hash = "8a4c8dfb26587dfe34d0f72742efd7146db3e316"
 
@@ -40,9 +40,9 @@ version = "1.16.0"
 
 [[deps.DataStructures]]
 deps = ["OrderedCollections"]
-git-tree-sha1 = "e357641bb3e0638d353c4b29ea0e40ea644066a6"
+git-tree-sha1 = "e86f4a2805f7f19bec5129bc9150c38208e5dc23"
 uuid = "864edb3b-99cc-5e75-8d2d-829cb0a9cfe8"
-version = "0.19.3"
+version = "0.19.4"
 
 [[deps.Dates]]
 deps = ["Printf"]
@@ -202,7 +202,7 @@ version = "1.2.0"
 
 [[deps.MozillaCACerts_jll]]
 uuid = "14a3606d-f60d-562e-9121-12d972cd8159"
-version = "2025.5.20"
+version = "2025.11.4"
 
 [[deps.NetworkOptions]]
 uuid = "ca575930-c2e3-43a9-ace4-1e988b2c1908"
